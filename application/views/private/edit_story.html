@@ -1,0 +1,62 @@
+<div class="span9" id="onEditStory">	
+	<h2>Add some paragraphes</h2>
+	<div class="input-prepend">
+		<span class="add-on">Title</span><input class="span9" type="text" id="title" name="title" value="{title}" /><a class="btn">Update</a>
+	</div>
+	
+	<a href="#addParagraphModal" class="btn btn-primary" data-toggle="modal">Add a new paragraph</a>
+	<a href="{baseUrl}index.php/generate/html/{sid}" class="btn btn-primary">Generate the story</a>
+	<br />
+	<br />
+	
+	{paragraphes}
+	<div class="paragraph span8 well" id="{Name}">
+		{text}
+		<a href="#addLinkModal" class="btn addLinkModal" style="float:right;" data-toggle="modal">Add link</a>
+	</div>
+	{/paragraphes}
+
+	<div class="modal hide fade" id="addParagraphModal">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			<h3>Add a new paragraph</h3>
+		</div>
+		<div class="modal-body">
+			<textarea class="span12" rows="19" cols="30" id="newParagraph"></textarea>
+			<label class="checkbox">
+				<input name="isFirstParagraph" id="isFirstParagraph" type="checkbox" />
+				First paragraph of the story (will erase the old one)
+			</label>
+			<label class="checkbox">
+				<input name="isEnd" id="isEnd" type="checkbox" />
+				This paragraph is an end of the story
+			</label>
+		</div>
+		<div class="modal-footer">
+			<a href="#" class="btn btn-primary addParagraph" id="{sid}" data-dismiss="modal">Save changes</a>
+		</div>
+    </div>
+	
+	<div class="modal hide fade" id="addLinkModal">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			<h3>Add a new link</h3>
+		</div>
+		
+		<div class="modal-body">	
+			Text: <input type="text" id="choice" name="choice" class="span9" /><br />
+			Link to:<br />
+			
+			{paragraphesToLink}
+			<div class="paragraphToLink span8 well chooseDest" id="{Name}">
+				{text}
+			</div>
+			{/paragraphesToLink}
+		</div>		
+		
+		<div class="modal-footer">
+			<a href="#" class="btn btn-primary addLink" id="{sid}" data-dismiss="modal">Save changes</a>
+		</div>
+	</div>
+	
+</div>

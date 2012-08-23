@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+<title>paws Introduction</title>
+
+<link rel="stylesheet" href="aux_files/paws_docs.css" type="text/css" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head>
+<body>
+<div class="section" lang="en">
+	<div class="titlepage">
+		<h1 class="topictitle">paws: A High Level PHP Library for Amazon Web Services</h1>
+	</div>
+
+	<div class="section" lang="en">
+		<div class="titlepage">
+			<h2 class="title" style="clear: both;">Introduction</h2>
+		</div>
+<p>The paws library has been designed to provide a natural PHP interface to <a href="http:/aws.amazon.com" title="Amazon Web Services" target="_blank">Amazon Web Services</a> (AWS). [For now, only the <code>pawsSDB</code> class for SimpleDB is done.] While the example code and libraries provided by AWS can do the job, they are more oriented to how AWS works, and not how PHP works.
+<p>While this reference manual is fairly complete in its descriptions of the functions, it does assume that you have a basic understanding of the concepts and structure of AWS. So, for example, it assumes you know what is meant by Simple DB domain names, items, and attributes, and the tree/spreadsheet cross of its data representation. We tried to be consistent with the terminology used by AWS.
+
+<h1>AWS SimpleDB</h1>
+<p>While <a href="http://www.amazon.com/SimpleDB-AWS-Service-Pricing/b/ref=sc_fe_l_2?ie=UTF8&node=342335011&no=3435361&me=A36L942TSJ2AJA" title="AWS SimpleDB" target="_blank">AWS SimpleDB</a> is a database, it is significantly different than traditional relational databases. Specifically, specific operations are provided for accessing data, while there is a special query expression language for searching an AWS database. Even so, mySQL served somewhat as a model for designing the<code> pawsSDB</code> class - we hope the good parts.
+<p>We hope this class is easy to use. It seems difficult to imagine making it much easier to use. The entire class consists of just a dozen or so functions. Data from SimpleDB is handled using PHP associative arrays. This just seemed the most natrual way to handle the data - associative arrays are at the core of PHP. Each item in the database has an itemName and a set of attributes. Each attribute has a name and one more values for each name. Thus, it just seems logical to use the attribute name as the index to an associative array, and to store the value or values as the value of the array element. Because PHP is so typeless, it is easy to store either a single value or an array of values as the &quot;value&quot; of the attribute name. All this is explained in the page for<a href="paws_putAttributes.html" title="putAttributes" target="main">putAttributes</a>.
+<h2>The Basics</h2>
+<p>The paws access to AWS SimpleDB is built into a single class: <code>pawsSDB</code>. This class, in turn, uses the
+<a href="http://developer.amazonwebservices.com/connect/entry.jspa?externalID=1135&categoryID=138" title="Amazon_SimpleDB" target="_blank">Amazon_SimpleDB</a>
+library. This is good in that it is a reasonable assumption that Amazon will keep that library up to date. This is bad in that there is not total agreement that the <em>Amazon_SimpleDB</em> library uses the fastest protocol to talk to AWS. Whatever. If that is really an issue, it should be possible to rewrite the low level interface to SimpleDB and keep the <code>pawsSDB</code> class interface to the programmer unchanged. For now, it seemed best to make the initial implementation based on <em>Amazon_SimpleDB</em>.
+<p>To use <code>pawsSDB</code>, you edit the configuration file with your AWS id and secret password, perhaps editing some path stuff. You then include the <code>pawsSDB</code> php class file. You instantiate an instance of the class (or more instances if you need them), and use the functions to access SimpleDB.
+<p>There are a few interesting extras included with the class file. First, there is this complete documentation. Second, there is a demo web application that lets you test the <code>pawsSDB</code> class, and actually play with SimpleDB by creating domains, items, etc. There is a PHP terminal based utility that will download and dump your entire SimpleDB database, and one to restore it.
+<h2>The Details</h2>
+<p>The<code> pawsSDB.php</code> file is designed to be installed in a directory called <code>/paws</code> that is at the same level as the /Amazon directory of the Amazon_SimpleDB library distribution. For example, on my development platform, I have a directory off my root called <code>/libs</code>. Under<code> /libs</code> is the <code>./libs/Amazon</code> directory with <em>Amazon_SimpleDB</em>, and the <code>./libs/paws</code> directory with the <code>pawsSDB</code> class.
+<p>I've moved the configuration file for <em>Amazon_SimpleDB</em> to the <code>/paws</code> directory - <code>pawsConfig.php</code>. This file has the defines for your AWS id and password. It also has an include path definition, and the definition for the magic <code>__autoload</code> function. These were pretty much copied/dictated by the needs of <em>Amazon_SimpleDB</em>. As always, you should be able to trivially move around where things are found, especially since <code>pawsSDB</code> is all in one file.
+<hr />
+<h2>About the Author</h2>
+<p>This library was developed by Bruce Wampler. I'm a digital pioneer, and been in this business for over 30 years. I've had a couple of successful software companies, taught computer science at the University of New Mexico, wrote a book about Java programming, and even been on the local school board. Now I'm working a new web project.</p>
+<h4>My Development Platform</h4>
+<p>I thought it might be interesting to hear about the motivation behing pawsSDB (and evenutally pawsEC2 and pawsS3). First, the development platform. I prefer Ubuntu Linux running in a virtual machine on a Mac Pro box. I use VMWare Fusion to run Ubuntu. This lets me test everything on one machine - Linux, Mac OS X, and all the Windows platforms (XP, XP Pro, Vista Home, Vista Ultimate, etc.). I have versions of every modern browser available. And I use Komodo to do the actual development. I find using a Mac browser connected to the Apache server on the Ubuntu VM works really well to simulate the real world. I've been programming for over 30 years, and I've never found a development platform that come close to this. The Mac is really the ultimate programmer's productivity tool. Your editor/IDE is a personal choice. I played around with some, and found for me that Komodo works best, especialy across platforms.
+<p>I'm working on a new project that I need to design to handle thousands or millions of users. And do it for little up front capital costs. Thus, AWS. What an option.
+<p>So, the first thing I needed was SimpleDB. And I found the PHP interface very hard to think about, yet alone use. So I dediced to do what I always do - write a great library to work the way I think. So, pawsSDB. My next step will be data storage, so pawsS3 shouldn't be too far behind. And finally, I suppose I'll need EC2, and pawsEC2.
+<p>I'm also doing some blogging about this as I go, so you might want to read along at <a href="http://brucewampler.wordpress.com" title="Bruce Wampler's Blog" target="_blank">brucewampler.wordpress.com</a>.
+<p>Thanks for trying paws!
+<p>
+<p>Bruce Wampler, June 2, 2008
+<p>&nbsp;</p>
+</div>
+	</div>
+
+
+</div></body></html>

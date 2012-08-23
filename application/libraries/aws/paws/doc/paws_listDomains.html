@@ -1,0 +1,108 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+<title>pawsSDB::listDomains</title>
+
+<link rel="stylesheet" href="aux_files/paws_docs.css" type="text/css" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"></head>
+<body>
+<div class="section" lang="en">
+	<div class="titlepage">
+		<h1 class="topictitle">pawsSDB::listDomains($maxNumberOfDomains)</h1>
+	</div>
+
+	<div class="section" lang="en">
+		<div class="titlepage">
+			<h2 class="title" style="clear: both;">Description</h2>
+		</div>
+	  <p>The <code class="function">listDomains</code> function lists all domains associated with the Access Key ID. It returns a PHP array of domain names up to the limit set by 
+      <code><var>$maxNumberOfDomains</var></code>. </p>
+    </div>
+<div class="section" lang="en">
+			<div class="titlepage">
+				<h2 class="title" style="clear: both;">Parameters</h2>
+			</div>
+			<div class="informaltable">
+				<table border="0" cellspacing="0"><colgroup><col><col><col></colgroup>
+					<thead><tr><th>Name</th><th>Description</th><th>Required?</th></tr></thead>
+				    <tbody>
+						<tr><td><code><var>$maxNumberOfDomains</var></code></td>
+						  <td><p xmlns="" class="simpara">The maximum number of domain names you want returned. </p>
+							  <p xmlns="" class="simpara"> Type: String </p>
+							  <p xmlns="" class="simpara"> The range is 1 to 100. </p>
+							  <p xmlns="" class="simpara"> The default setting is 100. </p>	
+						  </td>
+							<td><p>No</p>
+						    </td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<div class="section" lang="en">
+			<div class="titlepage">
+			<h2 class="title" style="clear: both;">Return Value</h2>
+		</div>
+			<p>An array of AWS domain names on success. Return <code>NULL</code> if no domain names defined, or bad <code><var>$maxNumberOfDomains</var></code>.</p>
+<div class="titlepage">
+			<h2 class="title" style="clear: both;">Special Errors</h2>
+		</div>
+		<div class="informaltable">
+			<table border="0" cellspacing="0"><colgroup><col><col></colgroup>
+			<thead><tr><th>Error</th><th>Description</th></tr></thead>
+			<tbody>
+				<tr><td><code>InvalidParameterValue</code></td>
+					<td>Value for parameter <em class="parameter"><code>$maxNumberOfDomains</code></em> is invalid. <em class="parameter"><code>$maxNumberOfDomains</code></em> must be between 1 and 100.</td>
+			  </tr>
+
+			</tbody>
+			</table>
+		</div>
+		<div class="section" lang="en">
+			<div class="titlepage">
+				<h2 class="title" style="clear: both;">Examples</h2>
+			</div>
+		<div class="section" lang="en">
+			<div class="titlepage"><h3 class="title">Sample Code</h3>
+		</div>
+		<pre class="programlisting">
+    /**
+     *	simple example of paws function listDomains
+     */
+    ...
+    include('pawsSDB.php');
+    $mySDB = new pawsSDB();
+    ...
+    $domainNameList = $mySDB->listDomains();	// get array of domain names
+    if ($domainNameList == null) {
+        echo("**** No domains defined ****\n");
+        return false;
+    } else {
+	   echo("&lt;ul>");
+       foreach ($domainNameList as $domainName) {	// echo all names returned
+           echo("&lt;li>DomainName: ");
+           echo($domainName . "&lt;/li>\n");
+       }
+       echo("&lt;/ul>\n");
+    }
+    ...
+</pre>
+	
+		
+<div class="section" lang="en">
+	<div class="titlepage">
+		<h2 class="title" style="clear: both;">Related Functions</h2>
+	</div>
+	<div class="itemizedlist">
+		<ul type="disc">
+			<li>
+			  <p><a href="paws_deleteDomain.html"><code>deleteDomain</code></a></p>
+			</li>
+			<li>
+			  <p><a href="paws_createDomain.html"><code>createDomain</code></a></p>
+		  </li>
+		</ul>
+	</div>
+</div>
+<p style="text-align:center; font-size:9px">Copyright &copy; 2008 Bruce E. Wampler</p>
+</div></body></html>

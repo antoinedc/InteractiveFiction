@@ -1,0 +1,311 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+<title>pawsSDB::query</title>
+<link rel="stylesheet" href="aux_files/paws_docs.css" type="text/css" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head>
+<body>
+<div class="section" lang="en">
+<div class="titlepage">
+  <h1 class="topictitle">pawsSDB::query($queryExpression)</h1>
+</div>
+<div class="section" lang="en">
+  <div class="titlepage">
+    <h2 class="title" style="clear: both;">Description</h2>
+  </div>
+  <p>The query function performs a query on the current domain name (<a href="paws_setDomain.html" title="setDomain" target="main"><code>setDomain()</code></a>). The query operation results in a list of <var>itemNames</var> that match the query expression. Following the query call, you retrieve the <var>itemNames</var> one at a time by sequential calls to the <code>getNextQueryItemName</code> function. See the example code to see how this works. This mode of performing a query is modelled after the mySQL approach.</p>
+  <p>Using an empty <var>$<code>queryExpression</code></var> (<code>NULL</code> value) matches all items in the domain.</p>
+  <p>Using complex query expressions can result in <code>query</code> operations that run longer than 5 seconds, and will likely time-out and return a time-out error response.</p>
+  <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+    <table summary="Note" border="0">
+      <tbody>
+        <tr>
+          <td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="aux_files/note.png"></td>
+          <th align="left">Note</th>
+        </tr>
+        <tr>
+          <td align="left" valign="top"><p class="simpara">The current timeout for long queries is 5 seconds.</p>
+            <p xmlns="" class="simpara">Your application should <span xmlns="http://www.w3.org/1999/xhtml" class="emphasis"><em>not</em></span> excessively retry queries that return <em xmlns="http://www.w3.org/1999/xhtml" class="parameter"><code>RequestTimeout</code></em> errors. If you receive too many <em xmlns="http://www.w3.org/1999/xhtml" class="parameter"><code>RequestTimeout</code></em> errors, reduce the complexity of your query 
+              expression.</p>
+            <p>Because Amazon SimpleDB makes multiple copies of your data and uses an <strong><em>eventual consistency</em></strong> update model, a <code>getAllAttributes</code> or <code>query</code> request (read) immediately after a <code>putAttributes</code> or <code>deleteAttributes</code> operation (write) might not return the updated data.</p></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<div class="section" lang="en">
+  <div class="titlepage">
+    <h2 class="title" style="clear: both;">Parameters</h2>
+  </div>
+  <div class="informaltable">
+    <table border="0" cellspacing="0">
+      <colgroup>
+      <col>
+      <col>
+      <col>
+      </colgroup>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Description</th>
+          <th>Required?</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><em class="parameter"><code>$queryExpression</code></em></td>
+          <td><p class="simpara"> The query string, specified using the syntax described below.</p>
+            <p class="simpara">Type: String</p>
+            <p class="simpara">Default: null, which matches all items of domain.</p></td>
+          <td>No</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<div class="section" lang="en">
+<div class="section" lang="en" xml:lang="en">
+  <div class="titlepage">
+    <div>
+      <div>
+        <h3 class="title">Query Expression Syntax</h3>
+      </div>
+    </div>
+  </div>
+  <p>This section describes the query expression syntax.</p>
+  <div class="section" lang="en" xml:lang="en">
+    <div class="titlepage">
+      <div>
+        <div>
+          <h4 class="title">Example 1</h4>
+        </div>
+      </div>
+    </div>
+    <p><code class="code">['City' = 'Berkeley']</code></p>
+    <p>This query expression will match all items in the domain that have an <em>attribute</em> named &quot;City&quot; whose value is &quot;Berkeley&quot;. </p>
+  </div>
+  <div class="section" lang="en" xml:lang="en">
+    <div class="titlepage">
+      <div>
+        <div>
+          <h4 class="title">Example 2</h4>
+        </div>
+      </div>
+    </div>
+    <p><code class="code">['Price' &lt; '0014.99'] intersection ['Color' = 'Blue']</code></p>
+    <p>This example determines the intersection of two sets of <em class="parameter"><code>ItemNames</code></em>.</p>
+    <p>The following is a summary of the allowed syntax for query expressions.</p>
+    <pre class="programlisting">query ::= predicates 
+predicates ::= predicate |
+	       &quot;not&quot; predicate |
+	       predicate &quot;intersection&quot; predicates |
+	       &quot;not&quot; predicate &quot;intersection&quot; predicates |
+	       predicate &quot;union&quot; predicates |
+	       &quot;not&quot; predicate &quot;union&quot; predicates
+predicate ::= &quot;[&quot; attribute_comparision &quot;]&quot;
+attribute_comparision ::= identifier comp_op constant |
+	      &quot;not&quot; identifier comp_op constant |
+	      identifier comp_op constant &quot;and&quot; attribute_comparision |
+	      &quot;not&quot; identifier comp_op constant &quot;and&quot; attribute_comparision |
+	      identifier comp_op constant &quot;or&quot; attribute_comparision |
+	      &quot;not&quot; identifier comp_op constant &quot;or&quot; attribute_comparision
+identifier ::= quoted (single quotes) UTF-8 string (any quotes within the string have to be properly escaped)
+constant ::= quoted (single quotes) UTF-8 string (any quotes within the string have to be properly escaped)
+comp_op ::= &quot;starts-with&quot; |
+	    &quot;=&quot; |
+	    &quot;&lt;&quot; |
+	    &quot;&gt;&quot; |
+	    &quot;&lt;=&quot; |
+	    &quot;&gt;=&quot; |
+	    &quot;!=&quot; |
+            </pre>
+  </div>
+  <div class="section" lang="en" xml:lang="en">
+    <div class="itemizedlist">
+      <ul type="disc">
+        <li>
+          <p>The Boolean operators <code class="code">AND</code> and <code class="code">OR</code> can be used to combine tests on an attribute within a single predicate. The following are examples of Boolean operators: <code class="code">['price'&gt;'0010.00' AND 'price'&lt;'0100.00']
+            ['price'='0010.00' OR 'price'='0100.00']</code>.</p>
+        </li>
+        <li>
+          <p>All attribute names within a single predicate (within [ ] brackets) have to be the same. For instance, <code class="code">['price'&gt;'0010.00' AND 'price'&lt;'0100.00'] </code> is legal, while <code class="code">['price'&gt;'0010.00' AND 'weight'&lt;'0100.00']</code> is <span class="emphasis"><em>not</em></span> legal.</p>
+        </li>
+        <li>
+          <p>Each predicate is evaluated individually to produce a set of item names that match 
+            the conditions specified within that predicate. The operators <code class="code">not</code>, <code class="code">union</code>, and <code class="code">intersection</code> can be used to perform set operations.</p>
+        </li>
+        <li>
+          <p> Multi-predicate expressions are evaluated in the order specified (left to right) with the exception 
+            of <code class="code">not</code>, which always takes precedence. </p>
+        </li>
+        <li>
+          <p> For attributes with multiple values, an item is selected if <span class="emphasis"><em>any</em></span> of the values match the predicate 
+            condition. </p>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="section" lang="en" xml:lang="en">
+    <div class="titlepage">
+      <div>
+        <div>
+          <h4 class="title">Lexicographical Comparison of Different Data Types</h4>
+        </div>
+      </div>
+    </div>
+    <p>Amazon SimpleDB treats all entities as UTF-8 strings. Keep this in mind when storing and querying different data types, 
+      such as numbers or dates. Design clients to convert their data into an appropriate string format, 
+      so that query expression return expected results.</p>
+    <p>The
+      following are suggested methods for converting different data types
+      into strings for proper lexicographical order enforcement.</p>
+    <div class="itemizedlist">
+      <ul type="disc">
+        <li>
+          <p>Positive
+            integers should be zero-padded to match the largest number of digits in
+            your data set. For example, if the largest number you are planning to
+            use in a range is 1,000,000, every number that you store in Amazon
+            SimpleDB should be zero-padded to at least 7 digits. You would store 25
+            as 0000025, 4597 as 0004597, and so on.</p>
+        </li>
+        <li>
+          <p>Negative
+            integers should be offset and turned into positive numbers and
+            zero-padded. For example, if the smallest negative integer in your data
+            set is -500, your application should add at least 500 to every number
+            that you store. This ensures that every number is now positive and
+            enables you to use the zero-padding technique.</p>
+        </li>
+        <li>
+          <p>To ensure proper lexicographical order, convert dates to the ISO 8601 format.</p>
+        </li>
+      </ul>
+    </div>
+    <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+      <table summary="Note" border="0">
+        <tbody>
+          <tr>
+            <td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="aux_files/note.png" /></td>
+            <th align="left">Note</th>
+          </tr>
+          <tr>
+            <td align="left" valign="top"><p xmlns="" class="simpara"> Amazon SimpleDB provides utility functions within our sample libraries
+                that help you perform these conversions in your application. </p></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<div class="titlepage">
+  <h2 class="title" style="clear: both;">Return Value</h2>
+</div>
+<p>True or false. Call <code>getErrorCode</code> on false. A common reason for failure is malformed query expressions (<code class="code">InvalidQueryExpression</code>).</p>
+<div class="titlepage">
+  <h2 class="title" style="clear: both;">Special Errors</h2>
+</div>
+<div class="informaltable">
+  <table border="0" cellspacing="0">
+    <colgroup>
+    <col>
+    <col>
+    </colgroup>
+    <thead>
+      <tr>
+        <th>Error</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code class="code">InvalidParameterValue</code> </td>
+        <td> Value (" + value + ") for parameter <em class="parameter"><code>MaxNumberOfItems</code></em> is invalid. <em class="parameter"><code>MaxNumberOfItems</code></em> must be between 1 and 250.</td>
+      </tr>
+      <tr>
+        <td><code class="code">InvalidNextToken</code> </td>
+        <td> The specified next token is not valid.</td>
+      </tr>
+      <tr>
+        <td><code class="code">InvalidNumberPredicates</code> </td>
+        <td> Too many predicates in the query expression.</td>
+      </tr>
+      <tr>
+        <td><code class="code">InvalidNumberValueTests</code> </td>
+        <td> Too many value tests per predicate in the query expression.</td>
+      </tr>
+      <tr>
+        <td><code class="code">InvalidQueryExpression</code> </td>
+        <td> The specified query expression syntax is not valid.</td>
+      </tr>
+      <tr>
+        <td><code class="code">MissingParameter</code> </td>
+        <td> The request must contain the parameter <em class="parameter"><code>DomainName</code></em>.</td>
+      </tr>
+      <tr>
+        <td><code class="code">NoSuchDomain</code> </td>
+        <td> The specified domain does not exist.</td>
+      </tr>
+      <tr>
+        <td><code class="code">RequestTimeout</code> </td>
+        <td> A timeout occurred when attempting to query domain &lt;domain name&gt; with query expression &lt;query
+          expression&gt;. BoxUsage [&lt;box usage value&gt;]"</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<div class="titlepage">
+  <h2 class="title" style="clear: both;">Examples</h2>
+</div>
+<div class="section" lang="en">
+  <div class="titlepage">
+    <h3 class="title">Sample Code</h3>
+  </div>
+  <pre class="programlisting">
+    /**
+     *	example of paws functions query and getNextQueryItemName 
+     */
+    ...
+    include('pawsSDB.php');
+    $mySDB = new pawsSDB();
+    $mySDB = setDomain('MemberList');
+
+    
+    // list itemNames of everyone in MemberList whose FirstName is Bruce
+    
+    $queryExpression = "['FirstName'='Bruce']";
+    
+    if (!$mySDB->query($queryExpression)) {	// make the query
+        echo "&lt;p>Query failed. " .  $mySDB->getErrorCode() . "&lt;/p>\n";
+    } else {
+        echo "&lt;p>Matching items: &lt;p>\n";
+        for (;;) {				// loop through all matching itemNames
+            $nextItem = $mySDB->getNextQueryItemName();
+
+            if ($nextVal != null) {
+                // typically, you would now use $nextItem with getAllAttributes,
+                // but we will just list the itemName...
+                echo "itemName: " . $nextItem . "&lt;br>\n";
+            } else {
+                echo "&lt;br>\n";			// all done when get NULL back
+                break;
+            }
+        } 
+    }
+		</pre>
+  <div class="section" lang="en">
+    <div class="titlepage">
+      <h2 class="title" style="clear: both;">Related Functions</h2>
+    </div>
+    <div class="itemizedlist">
+      <ul type="disc">
+        <li> <a href="paws_getAllAttributes.html"><code>getAllAttributes</code></a> </li>
+        <li> <a href="paws_getAttributeValues.html"><code>getAttributeValues</code></a> </li>
+      </ul>
+    </div>
+  </div>
+  <p style="text-align:center; font-size:9px">Copyright &copy; 2008 Bruce E. Wampler</p>
+</div>
+</body>
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+<title>pawsSDB::deleteDomain</title>
+
+<link rel="stylesheet" href="aux_files/paws_docs.css" type="text/css" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"></head>
+<body>
+<div class="section" lang="en">
+	<div class="titlepage">
+		<h1 class="topictitle">pawsSDB::deleteDomain($domainName)</h1>
+	</div>
+
+	<div class="section" lang="en">
+		<div class="titlepage">
+			<h2 class="title" style="clear: both;">Description</h2>
+		</div>
+		<p>The <code class="function">DeleteDomain</code> function deletes a domain. Any items (and their attributes) in the domain are deleted as well. The <code class="function">deleteDomain</code> operation might take 10 or more seconds to complete.</a></p>
+  <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+			<table summary="Note" border="0">
+			<tbody>
+				<tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="aux_files/note.png"></td>
+					<th align="left">Note</th></tr>
+				<tr><td align="left" valign="top">
+						<p class="simpara">Running <code class="function">deleteDomain</code> on a domain that does not exist or running the function multiple times using the same domain name will <span class="emphasis"><em>not</em></span> result in an error response.</p>
+			  </td></tr>
+			</tbody>
+			</table>
+		</div>
+	</div>
+
+		<div class="section" lang="en">
+			<div class="titlepage">
+				<h2 class="title" style="clear: both;">Parameters</h2>
+			</div>
+			<div class="informaltable">
+				<table border="0" cellspacing="0"><colgroup><col><col><col></colgroup>
+					<thead><tr><th>Name</th><th>Description</th><th>Required?</th></tr></thead>
+				    <tbody>
+						<tr><td><em class="parameter"><code>$domainName</code></em></td>
+							<td><p class="simpara"> The name of the domain to delete.</p>
+								<p class="simpara">Type: String</p></td>
+							<td>Yes</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<div class="section" lang="en">
+			<div class="titlepage">
+			<h2 class="title" style="clear: both;">Return Value</h2>
+		</div>
+			<p>True or false. Call <code>getErrorCode</code> on false.</p>
+		<div class="titlepage">
+			<h2 class="title" style="clear: both;">Special Errors</h2>
+		</div>
+		<div class="informaltable">
+			<table border="0" cellspacing="0"><colgroup><col><col></colgroup>
+			<thead><tr><th>Error</th><th>Description</th></tr></thead>
+			<tbody>
+				<tr><td><code>InvalidParameterValue</code></td>
+					<td>Value (" + value + ") for parameter DomainName is invalid.</td>
+				</tr>
+                <tr>
+			  <td><code>DomainNameNotSet</code></td>
+			  <td>The request must contain the parameter <em class="parameter"><code>DomainName</code></em>.</td></tr>
+				<tr><td><code>MissingParameter</code></td>
+					<td>The request must contain the parameter <em class="parameter"><code>DomainName</code></em>.</td></tr>
+			</tbody>
+			</table>
+		</div>
+		<div class="section" lang="en">
+			<div class="titlepage">
+				<h2 class="title" style="clear: both;">Examples</h2>
+			</div>
+		<div class="section" lang="en">
+			<div class="titlepage"><h3 class="title">Sample Code</h3>
+		</div>
+		<pre class="programlisting">
+    /**
+     *	simple example of deleteDomain
+     */
+     ...
+     include('pawsSDB.php');
+     $mySDB = new pawsSDB();
+     ...
+     
+     if (!$mySDB->deleteDomain('newDomainName')) {
+         echo("&lt;p>Create failed, error code: "); echo($mySDB->getErrorCode()); echo("&lt;p>");
+         handle_error();
+     }
+	...
+		</pre>
+	
+<div class="section" lang="en">
+	<div class="titlepage">
+		<h2 class="title" style="clear: both;">Related Functions</h2>
+	</div>
+	<div class="itemizedlist">
+		<ul type="disc">
+<li>
+<a href="paws_createDomain.html" target="main"><code>createDomain</code></a></li>
+<li>
+<a href="paws_listDomains.html" target="main"><code>listDomains</code></a></li>
+<li>
+<a href="paws_setDomain.html" target="main"><code>setDomain</code></a></li>
+
+		</ul>
+	</div>
+</div>		
+
+</div></body></html>

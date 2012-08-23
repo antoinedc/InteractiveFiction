@@ -1,0 +1,16 @@
+a:1:{s:12:"pawsBeginSDB";s:10:"example DB";}
+a:1:{s:15:"pawsBeginDomain";s:11:"testDomain1";}
+a:1:{s:12:"pawsItemName";s:6:"item01";}
+a:4:{s:2:"N1";s:2:"V1";s:2:"N2";s:2:"V2";s:3:"N3m";a:3:{i:0;s:3:"v3a";i:1;s:3:"v3b";i:2;s:3:"v3c";}s:2:"N4";s:26:"v4 will be longer for now.";}
+a:1:{s:12:"pawsItemName";s:6:"item02";}
+a:4:{s:2:"N1";s:2:"v2";s:2:"N2";s:4:"val2";s:3:"N3m";s:7:"onlyone";s:2:"N4";s:17:"shorter this time";}
+a:1:{s:12:"pawsItemName";s:6:"item03";}
+a:4:{s:2:"N1";s:5:"v2abc";s:2:"N2";s:5:"val44";s:3:"N3m";a:3:{i:0;s:1:"a";i:1;s:1:"b";i:2;s:1:"c";}s:2:"N4";s:14:"something else";}
+a:1:{s:13:"pawsEndDomain";s:11:"testDomain1";}
+a:1:{s:15:"pawsBeginDomain";s:11:"testDomain2";}
+a:1:{s:12:"pawsItemName";s:7:"2item01";}
+a:4:{s:3:"2N1";s:3:"2V1";s:3:"2N2";s:3:"2V2";s:4:"2N3m";a:3:{i:0;s:4:"2v3a";i:1;s:4:"2v3b";i:2;s:4:"2v3c";}s:3:"2N4";s:27:"2v4 will be longer for now.";}
+a:1:{s:12:"pawsItemName";s:7:"2item02";}
+a:4:{s:3:"2N1";s:3:"2v2";s:3:"2N2";s:5:"2val2";s:4:"2N3m";s:8:"2onlyone";s:3:"2n4";s:18:"2shorter this time";}
+a:1:{s:13:"pawsEndDomain";s:11:"testDomain2";}
+a:1:{s:10:"pawsEndSDB";s:10:"example DB";}
