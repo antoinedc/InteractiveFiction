@@ -50,7 +50,7 @@ class Stories extends CI_Model {
 		{
 			$filter['_id'] = new MongoId($filter['_id']);
 			$res = $this->mongo_db->where('_id', $filter['_id'])->get($this->collectionName);
-		
+			var_dump($res);
 			if (count($res))
 			{
 				$res = $res[0];
