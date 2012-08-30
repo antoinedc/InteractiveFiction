@@ -34,7 +34,8 @@ class Generate extends CI_Controller {
 		$writeOnS3 = true;
 		$res = 0;
 		$return = array();
-		$story = $this->stories->select($sid)[0];
+		$story = $this->stories->select($sid);
+		$story = $story[0];
 		
 		$path = 'stories/html/' . $story['title'] . '/';
 		if (!file_exists($path))

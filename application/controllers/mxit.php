@@ -59,7 +59,9 @@ class Mxit extends CI_Controller {
 			{
 				$sid = $this->input->get('sid');
 				$pid = $this->input->get('pid');
-				$story = $this->stories->select($sid)[0];
+				$story = $this->stories->select($sid);
+				$story = $story[0];
+				
 				$baseLink = base_url() . 'index.php/mxit/read/?code=' . $_GET['code'] . '&sid=' . $story['_id']->{'$id'};
 				if ($pid == '')
 					$paragraph = $this->paragraphes->select(array('_id' => $story['start']));
