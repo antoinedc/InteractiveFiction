@@ -6,17 +6,15 @@ class Mystories extends CI_Controller {
 	{
 		parent::__construct();
 		
-		$this->load->spark('amazon-sdk/0.1.8');
+		$this->load->spark('mongodb/0.5.2');
 		
-		$this->load->helper('assets');
 		$this->load->helper('url');
 		
 		$this->load->library('session');
 		$this->load->library('parser');
-		$this->load->library('encrypt');
+		$this->load->library('mongo_db');
 		
-		$this->load->model('users');
-		$this->load->model('stories');
+		$this->load->model('mongo/stories');
 	}
 	
 	function index()
@@ -26,7 +24,7 @@ class Mystories extends CI_Controller {
 		
 		$uid = $this->session->userdata('oid');
 		
-		$stories = $this->stories->select('SELECT * FROM Stories WHERE owner = "' . $uid . '"');
+		$stories = $this->stories->select(array());
 		
 		$data_my_stories = array(
 									'baseUrl' => base_url(),

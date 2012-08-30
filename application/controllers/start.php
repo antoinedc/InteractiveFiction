@@ -6,14 +6,10 @@ class Start extends CI_Controller {
 	{
 		parent::__construct();
 		
-		$this->load->spark('amazon-sdk/0.1.8');
-		
-		$this->load->helper('assets');
 		$this->load->helper('url');
 		
 		$this->load->library('session');
 		$this->load->library('parser');
-		$this->load->library('encrypt');
 	}
 	
 	public function index()

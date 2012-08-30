@@ -6,7 +6,7 @@ class Home extends CI_Controller {
 	{
 		parent::__construct();
 		
-		$this->load->spark('amazon-sdk/0.1.8');
+		$this->load->spark('mongodb/0.5.2');
 		
 		$this->load->helper('assets');
 		$this->load->helper('url');
@@ -14,8 +14,9 @@ class Home extends CI_Controller {
 		$this->load->library('session');
 		$this->load->library('parser');
 		$this->load->library('encrypt');
+		$this->load->library('mongo_db');
 		
-		$this->load->model('users');
+		$this->load->model('mongo/users');
 	}
 	
 	public function index()
@@ -43,20 +44,15 @@ class Home extends CI_Controller {
 			if  (empty($email) || empty($password))
 				redirect('home/?error=blankFields');
 			
-			$user = $this->users->select('SELECT * FROM Users WHERE email = "' . $email . '" AND password = "' . $this->encrypt->sha1($password) . '"');
+			$user = $this->users->select(array('email' => $email));
 			
-			if (!empty($user->body->SelectResult))
+			if ($user && $user->password == $this->encrypt->sha1($password))
 			{
-				$attributes = array();
-				
-				$attributes['Name'] = (string)$user->body->SelectResult->Item->Name;
-				foreach ($user->body->SelectResult->Item->Attribute as $result)
-					$attributes[(string)$result->Name] = (string)$result->Value;
-				
 				$this->session->set_userdata(array(
-														'email' => $attributes['email'],
-														'oid' => $attributes['Name']
-												));
+														'email' => $user->email,
+														'uid' => $user->getId()->{'$id'}
+												)
+											);
 			}
 			else
 				redirect('home/?error=wrongCreds');
@@ -85,12 +81,16 @@ class Home extends CI_Controller {
 		if ($password != $confpass)
 			redirect('home/?error=wrongConf');
 		
-		$newUser= new Users;
+		$newUser = new Users;
 		$newUser->email = $email;
 		$newUser->password = $this->encrypt->sha1($password);
-		$newUser->insert();
+		$uid = $newUser->insert();
 		
-		$this->session->set_userdata(array('email' => $email));
+		$this->session->set_userdata(array(
+												'email' => $email,
+												'uid' => $uid->_id->{'$id'}
+										)
+									);
 		
 		redirect('home');
 	}

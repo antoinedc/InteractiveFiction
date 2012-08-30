@@ -19,6 +19,8 @@ $(function(){
 				$('.paragraph').last().after('<div class="paragraph span8 well">Loading...</div>');
 			},
 			success: function(data) {
+				if (data.status < 0)
+					$('.paragraph').last().remove();
 				$('.paragraph').last().html($('#newParagraph').val().replace(/(\\n|\n)/g,"<br />" )+'<a href="#addLinkModal" class="btn addLinkModal" style="float:right;" data-toggle="modal">Add link</a>');
 			},
 			error:function(a, b, c){
@@ -30,7 +32,7 @@ $(function(){
 	});
 	
 	$('.addLinkModal').live('click', function() {
-		originId = $(this).parents('.paragraphToLink').attr('id');
+		originId = $(this).parents('.paragraph').attr('id');
 	});
 	
 	$('.chooseDest').hover(function(){
@@ -72,6 +74,43 @@ $(function(){
 				console.log(b);
 				console.log(c);
 			}		
+		});
+	});
+	
+	$('.generateHtml').live('click', function() {
+		
+		$.ajax({
+		
+			url: BASE_URL + 'index.php/generate/html/' + $(this).attr('id'),
+			dataType: 'json',
+			beforeSend: function() {
+				$.blockUI({
+					message: 'Generating story..',
+					css: 
+					{ 
+						border: 'none', 
+						padding: '15px', 
+						backgroundColor: '#000', 
+						'-webkit-border-radius': '10px', 
+						'-moz-border-radius': '10px', 
+						opacity: .5, 
+						color: '#fff' 
+					}
+				});
+			},
+			success: function(data) {
+				$.unblockUI();
+				$.growlUI($('div.growlUI.success').html());
+				console.log(data);
+				$('.paragraph').first().before('<div class="paragraph span8 well">Link to your story: <a target="_blank" href="http://' + data.url + '">' + data.url + '</a></div>');
+				
+			},
+			error: function(a, b, c) {
+				$.unblockUI();
+				console.log(a);
+				console.log(b);
+				console.log(c);
+			}	
 		});
 	});
 	

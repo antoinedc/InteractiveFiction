@@ -1,16 +1,32 @@
 <div class="span9" id="onEditStory">	
+	<div class="growlUI success" style="display:none">
+		<h2>Story successfully generated !</h2>
+    </div>
 	<h2>Add some paragraphes</h2>
 	<div class="input-prepend">
 		<span class="add-on">Title</span><input class="span9" type="text" id="title" name="title" value="{title}" /><a class="btn">Update</a>
 	</div>
 	
-	<a href="#addParagraphModal" class="btn btn-primary" data-toggle="modal">Add a new paragraph</a>
-	<a href="{baseUrl}index.php/generate/html/{sid}" class="btn btn-primary">Generate the story</a>
+	<div class="btn-toolbar">
+		<div class="btn-group">
+			<a href="#addParagraphModal" class="btn btn-primary" data-toggle="modal">Add a new paragraph</a>
+		</div>
+		<div class="btn-group">
+			<a class="btn dropdown-toggle btn-primary" data-toggle="dropdown" href="#">
+				Generate the story
+				<span class="caret"></span>
+			</a>
+			<ul class="dropdown-menu">
+				<li><a href="#" id="{sid}" class="generateHtml">Publish online</a></li>
+				<li><a href="#" id="{sid}" class="generateMxit">Publish on Mxit</a></li>
+			</ul>
+		</div>
+	</div>
 	<br />
 	<br />
 	
 	{paragraphes}
-	<div class="paragraph span8 well" id="{Name}">
+	<div class="paragraph span8 well" id="{_id}">
 		{text}
 		<a href="#addLinkModal" class="btn addLinkModal" style="float:right;" data-toggle="modal">Add link</a>
 	</div>
@@ -48,7 +64,7 @@
 			Link to:<br />
 			
 			{paragraphesToLink}
-			<div class="paragraphToLink span8 well chooseDest" id="{Name}">
+			<div class="paragraphToLink span8 well chooseDest" id="{_id}">
 				{text}
 			</div>
 			{/paragraphesToLink}
