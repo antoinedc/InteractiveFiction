@@ -35,6 +35,7 @@ class Generate extends CI_Controller {
 		$res = 0;
 		$return = array();
 		$story = $this->stories->select($sid);
+		var_dump($story);
 		$story = $story[0];
 		
 		$path = 'stories/html/' . $story['title'] . '/';
@@ -42,7 +43,7 @@ class Generate extends CI_Controller {
 			mkdir($path);
 		
 		$baseDir = $this->session->userdata('uid') . '/Stories/' . $sid . '/html/';
-		var_dump($story);
+		
 		foreach ($story['paragraphes'] as $paragraph)
 		{
 			$content = $paragraph['text'] . '<br /><br />';
