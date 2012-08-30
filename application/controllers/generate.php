@@ -35,14 +35,14 @@ class Generate extends CI_Controller {
 		$res = 0;
 		$return = array();
 		$story = $this->stories->select($sid);
-		$story = $story[0];
+		//$story = $story[0];
 		
 		$path = 'stories/html/' . $story['title'] . '/';
 		if (!file_exists($path))
 			mkdir($path);
 		
 		$baseDir = $this->session->userdata('uid') . '/Stories/' . $sid . '/html/';
-		foreach ($story['paragraphes']as $paragraph)
+		foreach ($story['paragraphes'] as $paragraph)
 		{
 			$content = $paragraph['text'] . '<br /><br />';
 			$pid = $paragraph['_id']->{'$id'};
