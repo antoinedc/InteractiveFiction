@@ -45,7 +45,7 @@ class Mxit extends CI_Controller {
 				echo "</ul>";
 			}
 			else
-				$this->api->request_access('http://localhost/Stellenbosch/InteractiveFiction/index.php/mxit', 'graph/read');
+				$this->api->request_access(base_url() . 'index.php/mxit', 'graph/read');
 		} catch (Exception $e) {
 			echo $e->getMessage();
 		}
@@ -83,7 +83,7 @@ class Mxit extends CI_Controller {
 						
 			}
 			else
-				$this->api->request_access('http://localhost/Stellenbosch/InteractiveFiction/index.php/mxit', 'profile/public');
+				$this->api->request_access(base_url() . 'index.php/mxit', 'profile/public');
 		} catch (Exception $e) {
 			echo $e->getMessage();
 		}
