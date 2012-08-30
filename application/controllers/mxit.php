@@ -31,6 +31,7 @@ class Mxit extends CI_Controller {
 		try
 		{
 			$this->api = new MxitAPI($this->key, $this->secret);
+			
 			if (isset($_GET) && isset($_GET['code'])) 
 			{
 				echo "Choose a story: <br />";
