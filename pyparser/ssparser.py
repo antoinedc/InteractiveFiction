@@ -145,7 +145,6 @@ class State(object):
 		stategraph[self.label] = self
 
 
-web.wsgi.runwsgi = lambda func, addr=None: web.wsgi.runfcgi(func, addr)
 if __name__ == '__main__':
 
 	inf = open('/var/www/html/interactivefiction/pyparser/test.slc', 'r')
@@ -174,4 +173,6 @@ if __name__ == '__main__':
 				print("%d) %s" % (number+1, choice_desc))
 			choice = raw_input("\nType the number of your choice: ")
 			state = stategraph[state.successors[int(choice)-1][1]]
-
+			
+app = web.application(urls, globals(), autoreload=False)
+application = app.wsgifunc()
