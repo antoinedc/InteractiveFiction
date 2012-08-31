@@ -50,11 +50,10 @@ class Paragraphes extends CI_Model {
 				);
 		
 		$res = $this->mongo_db->where('_id', new MongoId($this->sid))->push('paragraphes', $data)->update('stories');
-		if ($this->isStart == 'true')
-		{
+		
+		if ($this->isStart)
 			$res2 = $this->mongo_db->where('_id', new MongoId($this->sid))->set(array('start' => new MongoId($data['_id'])))->update('stories');
-			echo $res2;
-		}
+
 		if (!$res)
 			return false;
 			
@@ -69,14 +68,19 @@ class Paragraphes extends CI_Model {
 			$filter['_id'] = new MongoId($filter['_id']);
 			
 			$res = $this->mongo_db->where(array('paragraphes._id' => $filter['_id']))->select(array('paragraphes'))->get('stories');
-			foreach ($res[0]['paragraphes'] as $p)
+			if ($res)
 			{
-				if ($p['_id']->{'$id'} == $filter['_id'])
+				foreach ($res[0]['paragraphes'] as $p)
 				{
-					$res = $p;
-					break;
+					if ($p['_id']->{'$id'} == $filter['_id']->{'$id'})
+					{
+						$res = $p;
+						break;
+					}
 				}
 			}
+			else
+				return false;
 			
 			if (count($res))
 			{

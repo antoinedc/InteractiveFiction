@@ -109,23 +109,6 @@ class Edit extends CI_Controller {
 		{
 			$story = $this->stories->select(array('_id' => $sid));
 
-			if ($isStart)
-			{
-				$story = $this->stories->select(array('_id' => $sid));
-				
-				if (!$story)
-				{
-					echo json_encode(array('status' => -2));
-					return;
-				}
-				$story->start = $res;
-				$res = $story->update();
-				if (!$res)
-				{
-					echo json_encode(array('status' => -3));
-					return;
-				}
-			}
 			echo json_encode(array('status' => 1));	
 			return;
 		}

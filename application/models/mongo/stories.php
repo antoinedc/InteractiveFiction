@@ -35,7 +35,7 @@ class Stories extends CI_Model {
 		
 		$data = array(	
 						'title' => $this->title ? $this->title : '',
-						'start' => '',
+						'start' => $this->start ? $this->start : -1,
 						'owner' => new MongoId($this->session->userdata('uid')),
 						'paragraphes' => $this->paragraphes ? $this->paragraphes : array()
 					);

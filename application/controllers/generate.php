@@ -49,7 +49,7 @@ class Generate extends CI_Controller {
 			$content = $paragraph['text'] . '<br /><br />';
 			$pid = $paragraph['_id']->{'$id'};
 			$filename = $pid . '.html';
-			if ($paragraph['isStart'] == 'true')
+			if ($paragraph['_id'] == $story['_id'])
 			{
 				$filename = 'index.html';
 				$start = $pid;
