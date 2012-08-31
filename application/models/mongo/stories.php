@@ -40,22 +40,22 @@ class Stories extends CI_Model {
 						'paragraphes' => $this->paragraphes ? $this->paragraphes : array()
 					);
 					
-		return $this->mongo_db->select($this->database)->insert($this->collectionName, $data);
+		return $this->mongo_db->select($this->database)->insert($this->collectionName, array('development' => $data, 'production' => array()));
 	}
 	
-	function select($filter)
+	function select($filter, $prod = false)
 	{
 		//selectById - 1 result
 		if (isset($filter['_id']) && $filter['_id'] != '')
 		{
 			$filter['_id'] = new MongoId($filter['_id']);
-			
-			$res = $this->mongo_db->where('_id', $filter['_id'])->get($this->collectionName);
+			$version = ($prod?'production':'development');
+			$res = $this->mongo_db->select(array($version))->where('_id', $filter['_id'])->get($this->collectionName);
 			
 			if (count($res))
 			{
-				$res = $res[0];
-				$this->_id = $res['_id'];
+				$this->_id = $res[0]['_id'];
+				$res = $res[0][$version];
 				$this->title = $res['title'];
 				$this->start = $res['start'];
 				$this->owner = $res['owner'];
@@ -73,8 +73,8 @@ class Stories extends CI_Model {
 			$res = $this->mongo_db->where('title', $filter['title'])->get($this->collectionName);
 			if (count($res))
 			{
-				$res = $res[0];
-				$this->_id = $res['_id'];
+				$this->_id = $res[0]['_id'];
+				$res = $res[0]['development'];
 				$this->title = $res['title'];
 				$this->start = $res['start'];
 				$this->owner = $res['owner'];
@@ -92,6 +92,14 @@ class Stories extends CI_Model {
 	function selectAll()
 	{
 		return $this->mongo_db->get($this->collectionName);	
+	}
+	
+	function goToProd($filter)
+	{
+		$dev = $this->mongo_db->select(array('development'))->where('_id', new MongoId($filter['_id']))->get($this->collectionName);
+		$dev = $dev[0]['development'];
+		$res = $this->mongo_db->where('_id', new MongoId($filter['_id']))->set('production', $dev)->update('stories');
+		return $res;
 	}
 	
 	function update()

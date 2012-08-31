@@ -96,6 +96,11 @@ class Generate extends CI_Controller {
 						));
 	}
 	
+	function mxit($sid)
+	{
+		$this->stories->goToProd(array('_id' => $sid));
+	}
+	
 	function s3()
 	{
 		$data = array('salut' => 'coucou', array(1 => 'test'));

@@ -114,4 +114,39 @@ $(function(){
 		});
 	});
 	
+	$('.generateMxit').live('click', function() {
+	
+		$.ajax({
+		
+			url: BASE_URL + 'index.php/generate/mxit/' + $(this).attr('id'),
+			dataType: 'json',
+			beforeSend: function() {
+				$.blockUI({
+					message: 'Generating story..',
+					css: 
+					{ 
+						border: 'none', 
+						padding: '15px', 
+						backgroundColor: '#000', 
+						'-webkit-border-radius': '10px', 
+						'-moz-border-radius': '10px', 
+						opacity: .5, 
+						color: '#fff' 
+					}
+				});
+			},
+			success: function(data) {
+				$.unblockUI();
+				$.growlUI($('div.growlUI.successMxit').html());
+				console.log(data);
+			},
+			error: function(a, b, c) {
+				$.unblockUI();
+				console.log(a);
+				console.log(b);
+				console.log(c);
+			}
+		});
+	});
+	
 });

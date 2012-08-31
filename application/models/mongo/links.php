@@ -44,8 +44,8 @@ class Links extends CI_Model {
 						'sid' => $this->sid
 					);
 		
-		$res = $this->mongo_db->where(array('paragraphes._id' => new MongoId($this->origin))
-														)->push('paragraphes.$.links', $data)->update('stories');
+		$res = $this->mongo_db->where(array('development.paragraphes._id' => new MongoId($this->origin))
+														)->push('development.paragraphes.$.links', $data)->update('stories');
 														
 		return $res;
 	}
