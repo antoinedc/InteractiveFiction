@@ -34,22 +34,21 @@ class Generate extends CI_Controller {
 		$writeOnS3 = true;
 		$res = 0;
 		$return = array();
-		$story = $this->stories->select($sid);
-		var_dump($story);
-		$story = $story[0];
+		$start = 0;
+		$story = $this->stories->select(array('_id' => $sid));		
 		
-		$path = 'stories/html/' . $story['title'] . '/';
+		$path = 'stories/html/' . $story->title . '/';
 		if (!file_exists($path))
 			mkdir($path);
 		
 		$baseDir = $this->session->userdata('uid') . '/Stories/' . $sid . '/html/';
 		
-		foreach ($story['paragraphes'] as $paragraph)
+		foreach ($story->paragraphes as $paragraph)
 		{
 			$content = $paragraph['text'] . '<br /><br />';
 			$pid = $paragraph['_id']->{'$id'};
 			$filename = $pid . '.html';
-			if ($paragraph['_id'] == $story['_id'])
+			if ($paragraph['_id'] == $story->start)
 			{
 				$filename = 'index.html';
 				$start = $pid;
@@ -58,7 +57,7 @@ class Generate extends CI_Controller {
 			foreach($paragraph['links'] as $link)
 			{
 				if (!empty($link))
-					$content .= '<a href="' . ($link['destination'] == $start ? 'index.html' : $link['destination'] . '.html') . '">' . $link['text']. '</a><br />';			
+					$content .= '<a href="' . ($link['destination'] == $start ? 'index.htm>l' : $link['destination'] . '.html') . '">' . $link['text']. '</a><br />';			
 			}
 			
 			if ($paragraph['isEnd'] == 'true')
@@ -89,7 +88,7 @@ class Generate extends CI_Controller {
 							
 			}
 			
-			$return[] = array($filename => $res);
+			$return[] = array($filename => $res->status);
 		}
 		echo json_encode(array(
 							'filesStatus' => $return,
