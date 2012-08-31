@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import sys, os
-abspath = os.path.dirname(__file__)
+abspath = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(abspath)
 os.chdir(abspath)
 from pyparsing import *
