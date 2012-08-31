@@ -22,7 +22,7 @@
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 #from __future__ import generators
-
+#!/usr/bin/env python
 __doc__ = \
 """
 pyparsing module - Classes and methods to define and execute parsing grammars
