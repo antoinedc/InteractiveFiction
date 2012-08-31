@@ -6,6 +6,9 @@ os.chdir(abspath)
 from pyparsing import *
 import web
 
+urls = (
+  '/', 'index'
+)
 word = Word(alphanums+"()-,./?;:!&'\"")
 finish = CaselessKeyword('*finish')
 page_break = CaselessKeyword('*page_break')
@@ -145,34 +148,34 @@ class State(object):
 		stategraph[self.label] = self
 
 
-if __name__ == '__main__':
+class index:
+	def GET(self):
+		inf = open('/var/www/html/interactivefiction/pyparser/test.slc', 'r')
+		outf = open('/var/www/html/interactivefiction/pyparser/test.slcx', 'w')
+		preprocess_ws(inf, outf)
+		inf.close()
+		outf.close()
 
-	inf = open('/var/www/html/interactivefiction/pyparser/test.slc', 'r')
-	outf = open('test.slcx', 'w')
-	preprocess_ws(inf, outf)
-	inf.close()
-	outf.close()
+		tokens = script.parseFile('test.slcx')
 
-	tokens = script.parseFile('test.slcx')
+		stategraph = {}
 
-	stategraph = {}
+		root = State(tokens[0], stategraph, 'root')
+		state = root
 
-	root = State(tokens[0], stategraph, 'root')
-	state = root
-
-	while True:
-		D = str(state.description)
-		print(D.replace('<p>','').replace('</p>','\n'))
-		if state.redirect:
-			state = stategraph[state.redirect]
-		elif len(state.successors) == 0:
-			print("Thank you for playing!\n")
-			break
-		else:
-			for (number, (choice_desc, dest_state)) in enumerate(state.successors):
-				print("%d) %s" % (number+1, choice_desc))
-			choice = raw_input("\nType the number of your choice: ")
-			state = stategraph[state.successors[int(choice)-1][1]]
+		while True:
+			D = str(state.description)
+			print(D.replace('<p>','').replace('</p>','\n'))
+			if state.redirect:
+				state = stategraph[state.redirect]
+			elif len(state.successors) == 0:
+				print("Thank you for playing!\n")
+				break
+			else:
+				for (number, (choice_desc, dest_state)) in enumerate(state.successors):
+					print("%d) %s" % (number+1, choice_desc))
+				choice = raw_input("\nType the number of your choice: ")
+				state = stategraph[state.successors[int(choice)-1][1]]
 			
 app = web.application(urls, globals(), autoreload=False)
 application = app.wsgifunc()
