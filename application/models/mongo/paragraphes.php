@@ -51,7 +51,7 @@ class Paragraphes extends CI_Model {
 		
 		$res = $this->mongo_db->where('_id', new MongoId($this->sid))->push('paragraphes', $data)->update('stories');
 		
-		if ($this->isStart)
+		if ($this->isStart == 'true')
 			$res2 = $this->mongo_db->where('_id', new MongoId($this->sid))->set(array('start' => new MongoId($data['_id'])))->update('stories');
 
 		if (!$res)
