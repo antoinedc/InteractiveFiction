@@ -137,7 +137,8 @@ $(function(){
 			},
 			success: function(data) {
 				$.unblockUI();
-				$.growlUI($('div.growlUI.successMxit').html());
+				if (data.status == 1)
+					$.growlUI($('div.growlUI.successMxit').html());
 				console.log(data);
 			},
 			error: function(a, b, c) {

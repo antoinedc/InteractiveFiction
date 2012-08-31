@@ -37,10 +37,15 @@ class Mxit extends CI_Controller {
 				echo "Choose a story: <br />";
 				
 				$stories = $this->stories->selectAll();
+				
+				
 				echo "<ul>";
 				foreach ($stories as $story)
 				{
-					echo '<li><a href="' . base_url() . 'index.php/mxit/read/?code=' . $_GET['code'] . '&sid=' . $story['_id']->{'$id'} . '">' . $story['title'] . '</a></li>';
+					$id = $story['_id']->{'$id'};
+					$story = $story['production'];
+			
+					echo '<li><a href="' . base_url() . 'index.php/mxit/read/?code=' . $_GET['code'] . '&sid=' . $id . '">' . $story['title'] . '</a></li>';
 				}
 				echo "</ul>";
 			}
@@ -63,22 +68,30 @@ class Mxit extends CI_Controller {
 				$story = $this->stories->select(array('_id' => $sid), true);
 				
 				$baseLink = base_url() . 'index.php/mxit/read/?code=' . $_GET['code'] . '&sid=' . $story->getId();
-				if ($pid == '')
-					$paragraph = $this->paragraphes->select(array('_id' => $story->start));
-				else
-					$paragraph = $this->paragraphes->select(array('_id' => $pid));
 				
-				echo $paragraph->text;
+				if ($pid == '')
+					$pid = $story->start;
+				
+				foreach ($story->paragraphes as $p)
+				{
+					if ($p['_id']->{'$id'} == $pid)
+					{
+						$paragraph = $p;
+						break;
+					}
+				}
+				
+				echo $paragraph['text'];
 				echo "<br /><br />";
 	
-				foreach($paragraph->links as $link)
+				foreach($paragraph['links'] as $link)
 				{
 					
 					if (!empty($link))
 						echo '<a href="' . $baseLink . ($link['destination'] == $story->start ? '' : '&pid=' . $link['destination']) . '">' . $link['text']. '</a><br />';			
 				}
 				
-				if ($paragraph->isEnd == 'true')
+				if ($paragraph['isEnd'] == 'true')
 					echo '<br /><br />-------------------<br />End of the story !<br /><a href="' . $baseLink . '">Go back at the beginning</a>';
 						
 			}

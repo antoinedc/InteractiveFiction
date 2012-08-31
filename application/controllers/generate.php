@@ -98,7 +98,8 @@ class Generate extends CI_Controller {
 	
 	function mxit($sid)
 	{
-		$this->stories->goToProd(array('_id' => $sid));
+		$res = $this->stories->goToProd(array('_id' => $sid));
+		echo json_encode(array('status' => 1));
 	}
 	
 	function s3()
