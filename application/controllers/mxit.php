@@ -57,7 +57,7 @@ class Mxit extends CI_Controller {
 		{
 			if (isset($_GET) && isset($_GET['code'])) 
 			{
-				$sid = $this->input->get('sid');
+				$sid = $_GET['sid'];
 				$pid = $this->input->get('pid');
 				$story = $this->stories->select($sid);
 				$story = $story[0];
