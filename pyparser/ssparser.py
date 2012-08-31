@@ -148,7 +148,7 @@ class State(object):
 web.wsgi.runwsgi = lambda func, addr=None: web.wsgi.runfcgi(func, addr)
 if __name__ == '__main__':
 
-	inf = open('test.slc', 'r')
+	inf = open('/var/www/html/interactivefiction/pyparser/test.slc', 'r')
 	outf = open('test.slcx', 'w')
 	preprocess_ws(inf, outf)
 	inf.close()
