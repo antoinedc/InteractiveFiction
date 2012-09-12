@@ -53,13 +53,33 @@ class Edit extends CI_Controller {
 				
 		if (!$story)
 			redirect('./home/?error=emptyStory');
-					
+		
+		$statsMain = array();
+		$statsOthersChars = array();
+		$temp = array();
+		
+		while (list($key, $val) = each($story->characters[0]))
+			if ($key != '_id')
+				$statsMain[] = array('key' => $key, 'value' => $val);
+			
+		for ($i = 1; $i < count($story->characters); $i++)
+		{
+			while (list($key, $val) = each($story->characters[$i]))
+			{
+				$temp = array_merge($temp, array($key => $val));
+				$temp['_id'] = $i;
+			}
+			$statsOthersChars[] = $temp;
+		}
+		
 		$data_edit_story = array(
 									'baseUrl' => base_url(),
 									'title' => $story->title,
 									'sid' => $sid,
 									'paragraphes' => $story->paragraphes,
-									'paragraphesToLink' => $story->paragraphes
+									'paragraphesToLink' => $story->paragraphes,
+									'mainCharStats' => array_reverse($statsMain),
+									'statsOthersChars' => array_reverse($statsOthersChars)
 								);
 		
 		$data_layout = array(
@@ -146,6 +166,32 @@ class Edit extends CI_Controller {
 			echo json_encode(array('status' => -2));
 		else
 			echo json_encode(array('status' => 1));
+	}
+	
+	function addCharProperties($cid = -1)
+	{
+		$properties = $this->input->post('properties');
+		$sid = $this->input->post('sid');
+		
+		if (empty($sid) || empty($properties))
+		{
+			echo json_encode(array('status' => -1));
+			return;
+		}
+		
+		$newProperties = array();
+		foreach ($properties as $p)
+			if (!empty($p['key']) && !empty($p['value']))
+				$newProperties = array_merge(array($p['key'] => $p['value']), $newProperties);
+		$story = $this->stories->select(array('_id' => $sid));
+		echo $story->updateCharStats($cid, $newProperties);
+	}
+	
+	function getCharProperties($cid)
+	{
+		$sid = $this->input->post('sid');
+		$story = $this->stories->select(array('_id' => $sid));
+		echo json_encode(array_merge(array('status'=> 1), $story->getCharacter($cid)));
 	}
 	
 	private function isOwnerOfTheStory($sid)

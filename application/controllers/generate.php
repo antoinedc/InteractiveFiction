@@ -14,6 +14,7 @@ class Generate extends CI_Controller {
 		
 		$this->load->library('session');
 		$this->load->library('mongo_db');
+		$this->load->library('parser');
 		
 		$this->load->model('mongo/stories');
 	}
@@ -30,66 +31,81 @@ class Generate extends CI_Controller {
 			return;
 		}
 		
-		$writeLocally = false;
-		$writeOnS3 = true;
-		$res = 0;
 		$return = array();
-		$start = 0;
+		
 		$story = $this->stories->select(array('_id' => $sid));		
+		$bucketName = 'interactivefiction';
+		$s3 = $this->awslib->get_s3();
 		
-		$path = 'stories/html/' . $story->title . '/';
-		if (!file_exists($path))
-			mkdir($path);
+		$baseDir = 'Stories/' . $sid . '/';
 		
-		$baseDir = $this->session->userdata('uid') . '/Stories/' . $sid . '/html/';
+		/**Generate the javascript**/
+		$js_base = $baseDir . 'js/loader.js';
+		$data_layout_js = array(
+			'variables' => array(
+				array(
+					'key' => 'BASE_URL',
+					'value' => base_url()
+				),
+				array(
+					'key' => 'sid',
+					'value' => $sid
+				)
+			),
+		);
 		
-		foreach ($story->paragraphes as $paragraph)
-		{
-			$content = $paragraph['text'] . '<br /><br />';
-			$pid = $paragraph['_id']->{'$id'};
-			$filename = $pid . '.html';
-			if ($paragraph['_id'] == $story->start)
-			{
-				$filename = 'index.html';
-				$start = $pid;
-			}
-			
-			foreach($paragraph['links'] as $link)
-			{
-				if (!empty($link))
-					$content .= '<a href="' . ($link['destination'] == $start ? 'index.htm>l' : $link['destination'] . '.html') . '">' . $link['text']. '</a><br />';			
-			}
-			
-			if ($paragraph['isEnd'] == 'true')
-				$content .= '<br /><br />-------------------<br />End of the story !<br /><a href="index.html">Go back at the beginning</a>';
-			
-			//Writing locally
-			if ($writeLocally)
-				$res = write_file($path . $filename, $content);
-			
-			//Writing on S3
-			if ($writeOnS3)
-			{
-				$s3 = $this->awslib->get_s3();
-				$bucketName = 'interactivefiction';
-				$dir = $baseDir . $filename;
-				$res = $s3->create_object(
-					$bucketName,
-					$dir,
-					array(
-						'body' => $content,
-						'contentType' => 'text/html',
-						'meta' => array(
-									'owner' => $this->session->userdata('uid'),
-									'sid' => $sid
-						)
-					)
-				);
-							
-			}
-			
-			$return[] = array($filename => $res->status);
-		}
+		$js_file = $this->parser->parse('generator/layout.js', $data_layout_js, TRUE);
+	
+		$res = $s3->create_object(
+			$bucketName,
+			$js_base,
+			array(
+				'body' => $js_file,
+				'contentType' => 'text/javascript',
+				'meta' => array(
+					'owner' => $this->session->userdata('uid'),
+					'sid' => $sid
+				)
+			)
+		);
+		/***************************/
+		
+		$result[] = array(
+			'file' => $js_file,
+			'status' => $res->status
+		);
+		
+		/**Generate the HTML**/
+		$html_base = $baseDir . 'html/index.html'; 
+		$data_layout_html = array(
+			'title' => $story->title,
+			'js_src' => '../js/loader.js',
+			'css_src' => '../css/' . $sid . '.css',
+			'paragraph' => $story->paragraphes[0]['text'],
+			'links' => $story->paragraphes[0]['links']
+		);
+		
+		$html_file = $this->parser->parse('generator/layout.html', $data_layout_html, TRUE);
+		
+		$res = $s3->create_object(
+			$bucketName,
+			$html_base,
+			array(
+				'body' => $html_file,
+				'contentType' => 'text/html',
+				'meta' => array(
+					'owner' => $this->session->userdata('uid'),
+					'sid' => $sid
+				)
+			)
+		);
+		/*********************/
+		
+		$result[] = array(
+			'file' => $html_file,
+			'status' => $res->status
+		);
+		
 		echo json_encode(array(
 							'filesStatus' => $return,
 							'url' => $bucketName . '.s3-website-us-east-1.amazonaws.com/' . $baseDir . 'index.html'

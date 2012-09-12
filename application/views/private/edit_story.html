@@ -25,6 +25,16 @@
 				<li><a href="#" id="{sid}" class="generateMxit">Publish on Mxit</a></li>
 			</ul>
 		</div>
+		<div class="btn-group">
+			<a class="btn dropdown-toggle btn-primary" data-toggle="dropdown" href="#">
+				Edit characters stats
+				<span class="caret"></span>
+			</a>
+			<ul class="dropdown-menu">
+				<li><a href="#editMainCharacterModal" data-toggle="modal" id="editMainCharacter">Edit main character</a></li>
+				<li><a href="#editOthersCharacterModal" data-toggle="modal" id="editOthersCharacters">Edit others characters</a></li>
+			</ul>
+		</div>
 	</div>
 	<br />
 	<br />
@@ -78,5 +88,59 @@
 			<a href="#" class="btn btn-primary addLink" id="{sid}" data-dismiss="modal">Save changes</a>
 		</div>
 	</div>
+
+	<div class="modal hide fade" id="editMainCharacterModal">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			<h3>Edit main character stats</h3>
+		</div>
+		<div class="modal-body">
+			<div class="currentStats">
+				<div class="mainCharStat">
+					{mainCharStats}
+						<div class="input-prepend charStat">
+							Name: <input type="text" class="key span4" value="{key}" />
+							Value: <input type="text" class="value span4" value="{value}" />
+							<a class="btn" href="#" id="addStat"><i class="icon-plus"></i></a>
+							<a class="btn" href="#" id="rmStat"><i class="icon-minus"></i></a>
+						</div>
+					{/mainCharStats}
+					<div class="input-prepend charStat">
+						Name: <input type="text" class="key span4" />
+						Value: <input type="text" class="value span4" />
+						<a class="btn" href="#" id="addStat"><i class="icon-plus"></i></a>
+						<a class="btn" href="#" id="rmStat"><i class="icon-minus"></i></a>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="modal-footer">
+			<a href="#" class="btn btn-primary updateMainCharStats" id="{sid}" data-dismiss="modal">Save changes</a>
+			<a href="#" class="btn btn-primary cancelMainCharStats" id="{sid}" data-dismiss="modal">Cancel</a>
+		</div>
+    </div>
 	
+	<div class="modal hide fade" id="editOthersCharacterModal">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			<h3>Edit other characters stats</h3>
+		</div>
+		<div class="modal-body">
+			<div class="selectChar">
+				<select class="otherCharSelector">
+					<option value="-1">Select a char</option>
+					{statsOthersChars}
+						<option value="{_id}">{name}</option>
+					{/statsOthersChars}
+				</select>
+			</div>	
+			or <input type="button" id="addNewChar" class="btn" value="Add a new character" />
+			<div class="editOtherChar">
+			</div>
+		</div>
+		<div class="modal-footer">
+			<a href="#" class="btn btn-primary validateAddNewChars" id="{sid}" data-dismiss="modal">Save changes</a>
+			<a href="#" class="btn btn-primary cancelEditOtherChars" id="{sid}" data-dismiss="modal">Cancel</a>
+		</div>
+    </div>
 </div>

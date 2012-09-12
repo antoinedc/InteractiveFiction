@@ -12,7 +12,7 @@ class Stories extends CI_Model {
 	var $start;
 	private $owner;
 	var $paragraphes;
-	
+	var $characters;	
 	
 	function __construct()
 	{
@@ -37,7 +37,8 @@ class Stories extends CI_Model {
 						'title' => $this->title ? $this->title : '',
 						'start' => $this->start ? $this->start : -1,
 						'owner' => new MongoId($this->session->userdata('uid')),
-						'paragraphes' => $this->paragraphes ? $this->paragraphes : array()
+						'paragraphes' => $this->paragraphes ? $this->paragraphes : array(),
+						'character' => $this->characters
 					);
 					
 		return $this->mongo_db->select($this->database)->insert($this->collectionName, array('development' => $data, 'production' => array()));
@@ -59,7 +60,8 @@ class Stories extends CI_Model {
 				$this->title = $res['title'];
 				$this->start = $res['start'];
 				$this->owner = $res['owner'];
-				$this->paragraphes = $res['paragraphes'];				
+				$this->paragraphes = $res['paragraphes'];			
+				$this->characters = $res['characters'];
 				
 				return $this;
 			}
@@ -79,6 +81,8 @@ class Stories extends CI_Model {
 				$this->start = $res['start'];
 				$this->owner = $res['owner'];
 				$this->paragraphes = $res['paragraphes'];
+				$this->characters = $res['characters'];
+				
 				return $this;
 			}
 			else
@@ -108,10 +112,26 @@ class Stories extends CI_Model {
 						'title' => $this->title ? $this->title : '',
 						'start' => $this->start ? $this->start : '',
 						'owner' => $this->owner,
-						'paragraphes' => $this->paragraphes ? $this->paragraphes : array()
+						'paragraphes' => $this->paragraphes ? $this->paragraphes : array(),
+						'characters' => $this->characters
 					);
 					
 		return $this->mongo_db->update($this->collectionName, $data);
+	}
+	
+	function updateCharStats($cid, $data)
+	{
+		$data = array_merge($data, array('_id' => new MongoId()));
+		if ($cid >= 0)
+			return $this->mongo_db->where('_id', $this->_id)->set('development.characters.' . $cid, $data)->update('stories');
+		else
+			return $this->mongo_db->where('_id', $this->_id)->push('development.characters', $data)->update('stories');
+	}
+	
+	function getCharacter($cid)
+	{
+		$characters = $this->mongo_db->where('_id', $this->_id)->select(array('development.characters'))->get('stories');
+		return $characters[0]['development']['characters'][$cid];
 	}
 	
 	function delete()

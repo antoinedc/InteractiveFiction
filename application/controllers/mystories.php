@@ -26,9 +26,16 @@ class Mystories extends CI_Controller {
 		
 		$stories = $this->stories->select(array());
 		
+		$s = array();
+		
+		foreach ($stories as $story)
+			$s[] = array_merge($story['development'], array('_id' => $story['_id']->{'$id'}));
+		
+		$s = array_reverse($s);
+		
 		$data_my_stories = array(
 									'baseUrl' => base_url(),
-									'stories' => $stories
+									'stories' => $s
 								);
 		
 		$data_layout = array(

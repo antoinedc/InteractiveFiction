@@ -150,4 +150,136 @@ $(function(){
 		});
 	});
 	
+	$('#addStat').live('click', function() {
+		
+		var id = $(this).parent().children('.input-prepend').length;
+		
+		var html = '<div class="input-prepend">\
+						Name: <input type="text" class="key span4" />\
+						Value: <input type="text" class="value span4" />\
+						<a class="btn" href="#" id="addStat"><i class="icon-plus"></i></a>\
+						<a class="btn" href="#" id="rmStat"><i class="icon-minus"></i></a>\
+					</div>';
+					
+		$(this).parent().parent().append(html);
+	});
+	
+	$('#rmStat').live('click', function() {
+		
+		if ($(this).parent().parent().children('.input-prepend').length-1)
+			$(this).parent().remove();
+	});
+	
+	$('.updateMainCharStats').live('click', function() {
+		
+		var properties = {};
+		$('.mainCharStat > .input-prepend').each(function(i) {
+			properties[i] = {key:$(this).children('.key').val(), value:$(this).children('.value').val()}
+		});
+		
+		$.ajax({
+		
+			url: BASE_URL + 'index.php/edit/addCharProperties/0',
+			type: 'POST',
+			data: {properties:properties, sid:$(this).attr('id')},
+			dataType: 'json',
+			beforeSend: function() {
+			},
+			success: function(data) {
+				console.log(data);
+			},
+			error: function(a, b, c) {
+				console.log(a);
+				console.log(b);
+				console.log(c);
+			}		
+		});
+	});
+	
+	$('#addNewChar').live('click', function() {
+		
+		$('.editOtherChar').empty();
+		var mandProp = '<div class="otherCharProp input-prepend mandatory">\
+							<h5>Mandatory properties</h5>\
+							<input type="hidden" class="key" value="name" />\
+							Name of the new character: <input type="text" class="otherCharName value span4" />\
+						</div>';
+							
+		var optProp =  '<div class="input-prepend otherCharProp">\
+							<h5>Optional properties</h5>\
+							Name: <input type="text" class="key span4" />\
+							Value: <input type="text" class="value span4" />\
+							<a class="btn" href="#" id="addStat"><i class="icon-plus"></i></a>\
+							<a class="btn" href="#" id="rmStat"><i class="icon-minus"></i></a>\
+						</div>';
+						
+		$('.editOtherChar').html('<hr />' + mandProp + '<hr />' + optProp);
+	});
+	
+	$('.validateAddNewChars').live('click', function() {
+	
+		var properties = [];
+		$('.editOtherChar > .input-prepend').each(function(i) {
+			properties[i] = {key:$(this).children('.key').val(), value:$(this).children('.value').val()}
+		});
+		
+		cid = $('.otherCharSelector').attr('value');
+			
+		$.ajax({
+		
+			url: BASE_URL + 'index.php/edit/addCharProperties/' + cid,
+			type: 'POST',
+			data: {properties:properties, sid:$(this).attr('id')},
+			dataType: 'json',
+			beforeSend: function() {
+			},
+			success: function(data) {
+				console.log(data);
+			},
+			error: function(a, b, c) {
+				console.log(a);
+				console.log(b);
+				console.log(c);
+			}
+		});
+	});
+	
+	$('.otherCharSelector').change(function() {
+	
+		if ($(this).attr('value') == -1) return;
+		
+		var cid = $(this).attr('value');
+		
+		$.ajax({
+		
+			url: BASE_URL + 'index.php/edit/getCharProperties/' + cid,
+			type: 'POST',
+			data: {sid:$('.validateAddNewChars').attr('id')},
+			dataType: 'json',
+			beforeSend: function() {
+			},
+			success: function(data) {
+				$('.editOtherChar').empty();
+				$('.editOtherChar').append('<hr/>');
+				$('.editOtherChar').append('<h5>Properties</h5>');
+				$.each(data, function(i, el) {
+					if (i != '_id' && i != 'status')
+					{
+						var html = '<div class="input-prepend">\
+										Name: <input type="text" value="' + i + '" class="key span4" />\
+										Value: <input type="text" value="' + el + '" class="value span4" />\
+										<a class="btn" href="#" id="addStat"><i class="icon-plus"></i></a>\
+										<a class="btn" href="#" id="rmStat"><i class="icon-minus"></i></a>\
+									</div>';
+						$('.editOtherChar').append(html);
+					}
+				});
+			},
+			error: function(a, b, c) {
+				console.log(a);
+				console.log(b);
+				console.log(c);
+			}
+		});
+	});
 });
