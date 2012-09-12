@@ -58,18 +58,21 @@ class Edit extends CI_Controller {
 		$statsOthersChars = array();
 		$temp = array();
 		
-		while (list($key, $val) = each($story->characters[0]))
-			if ($key != '_id')
-				$statsMain[] = array('key' => $key, 'value' => $val);
-			
-		for ($i = 1; $i < count($story->characters); $i++)
-		{
-			while (list($key, $val) = each($story->characters[$i]))
+		if (count($story->characters) > 0)
+		{		
+			while (list($key, $val) = each($story->characters[0]))
+				if ($key != '_id')
+					$statsMain[] = array('key' => $key, 'value' => $val);
+				
+			for ($i = 1; $i < count($story->characters); $i++)
 			{
-				$temp = array_merge($temp, array($key => $val));
-				$temp['_id'] = $i;
+				while (list($key, $val) = each($story->characters[$i]))
+				{
+					$temp = array_merge($temp, array($key => $val));
+					$temp['_id'] = $i;
+				}
+				$statsOthersChars[] = $temp;
 			}
-			$statsOthersChars[] = $temp;
 		}
 		
 		$data_edit_story = array(

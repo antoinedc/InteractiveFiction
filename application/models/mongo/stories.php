@@ -38,7 +38,7 @@ class Stories extends CI_Model {
 						'start' => $this->start ? $this->start : -1,
 						'owner' => new MongoId($this->session->userdata('uid')),
 						'paragraphes' => $this->paragraphes ? $this->paragraphes : array(),
-						'character' => $this->characters
+						'characters' => $this->characters ? $this->characters : array()
 					);
 					
 		return $this->mongo_db->select($this->database)->insert($this->collectionName, array('development' => $data, 'production' => array()));
@@ -55,6 +55,7 @@ class Stories extends CI_Model {
 			
 			if (count($res))
 			{
+				
 				$this->_id = $res[0]['_id'];
 				$res = $res[0][$version];
 				$this->title = $res['title'];
