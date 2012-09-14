@@ -142,6 +142,9 @@ class Generate extends CI_Controller {
 		$output .= '}';
 		
 		echo $output;
+		
+		$graph = new Image_GraphViz($output);
+		$graph->image();
 			
 	}
 	
