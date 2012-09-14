@@ -131,7 +131,7 @@ class Generate extends CI_Controller {
 		require_once 'Image/GraphViz.php';
 		
 		$graph = new Image_GraphViz();
-		$graph->addAttributes(array('rankdir' => 'LR'));
+		$graph->addAttributes(array('rankdir' => 'LR')); 
 		foreach ($story->paragraphes as $paragraph)
 			$graph->addNode($paragraph['_id']->{'$id'}, array(
 				'url' => 'url',
