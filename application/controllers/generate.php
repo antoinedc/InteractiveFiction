@@ -125,17 +125,24 @@ class Generate extends CI_Controller {
 		echo json_encode(array('status' => 1));
 	}
 	
-	function s3()
+	function stateMachine($sid)
 	{
-		$data = array('salut' => 'coucou', array(1 => 'test'));
-		$obj = (object) $data;
-		$s3 = $this->awslib->get_s3();
-				$bucketName = 'interactivefiction';
-				$dir = 'test';
-				$s3->create_object(
-					$bucketName,
-					'test',
-					array($this)
-				);
+		$story = $this->stories->select(array('_id' => $sid));
+		require_once 'Image/GraphViz.php';
+		$output = 
+		'digraph finite_state_machine {
+			rankdir=LR;
+			size="8.5"
+			node [shape = circle];';
+			
+		foreach ($story->paragraphes as $paragraph)
+			foreach ($paragraph['links'] as $link)
+				$output .= $link['origin'] . '->' . $link['destination'] . ';';
+		
+		$output .= '}';
+		
+		echo $output;
+			
 	}
+	
 }
