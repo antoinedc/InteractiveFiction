@@ -129,24 +129,18 @@ class Generate extends CI_Controller {
 	{
 		$story = $this->stories->select(array('_id' => $sid));
 		require_once 'Image/GraphViz.php';
-		$output = 
-		'digraph finite_state_machine {
-			rankdir=LR;
-			size="8.5"
-			node [shape = circle];';
 		
 		$graph = new Image_GraphViz();
 		foreach ($story->paragraphes as $paragraph)
+			$graph->addNode($paragraph['_id']->{'$id'}, array(
+				'url' => 'url',
+				'label' => 'label',
+			));
+		foreach ($story->paragraphes as $paragraph)
 			foreach ($paragraph['links'] as $link)
-				$output .= $link['origin'] . '->' . $link['destination'] . ';';
+				$graph->addEdge(array($link['origin'] => $link['destination']));
 		
-		$output .= '}';
-		
-		echo $output;
-		
-		$graph->load($output);
-		$graph->image();
-			
+		$graph->image();			
 	}
 	
 }
