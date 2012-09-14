@@ -134,7 +134,8 @@ class Generate extends CI_Controller {
 			rankdir=LR;
 			size="8.5"
 			node [shape = circle];';
-			
+		
+		$graph = new Image_GraphViz();
 		foreach ($story->paragraphes as $paragraph)
 			foreach ($paragraph['links'] as $link)
 				$output .= $link['origin'] . '->' . $link['destination'] . ';';
@@ -143,7 +144,7 @@ class Generate extends CI_Controller {
 		
 		echo $output;
 		
-		$graph = new Image_GraphViz($output);
+		$graph->load($output);
 		$graph->image();
 			
 	}
