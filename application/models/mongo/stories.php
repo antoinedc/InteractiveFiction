@@ -55,7 +55,6 @@ class Stories extends CI_Model {
 			
 			if (count($res))
 			{
-				
 				$this->_id = $res[0]['_id'];
 				$res = $res[0][$version];
 				$this->title = $res['title'];
@@ -133,6 +132,30 @@ class Stories extends CI_Model {
 	{
 		$characters = $this->mongo_db->where('_id', $this->_id)->select(array('development.characters'))->get('stories');
 		return $characters[0]['development']['characters'][$cid];
+	}
+	
+	function getFirstParagraph()
+	{
+		$paragraph = false;
+		foreach($this->paragraphes as $p)
+		{
+			if ($p['isStart'] == 'true')
+			{
+				$paragraph = $p;
+				break;
+			}
+		}
+		
+		return $paragraph;
+	}
+	
+	function getParagraphById($pid)
+	{
+		if (!$pid) return false;
+		foreach ($this->paragraphes as $p)
+			if ($p['_id']->{'$id'} == $pid)
+				return $p;
+		return false;
 	}
 	
 	function delete()

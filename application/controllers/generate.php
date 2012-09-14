@@ -30,10 +30,11 @@ class Generate extends CI_Controller {
 			echo json_encode(array('status' => -1));
 			return;
 		}
-		
+		$this->stories->goToProd(array('_id' => $sid));
 		$return = array();
 		
-		$story = $this->stories->select(array('_id' => $sid));		
+		$story = $this->stories->select(array('_id' => $sid));
+		$firstParagraph = $story->getFirstParagraph();			
 		$bucketName = 'interactivefiction';
 		$s3 = $this->awslib->get_s3();
 		
@@ -50,6 +51,10 @@ class Generate extends CI_Controller {
 				array(
 					'key' => 'sid',
 					'value' => $sid
+				),
+				array(
+					'key' => 'firstPid',
+					'value' => $firstParagraph['_id']->{'$id'}
 				)
 			),
 		);
@@ -77,12 +82,14 @@ class Generate extends CI_Controller {
 		
 		/**Generate the HTML**/
 		$html_base = $baseDir . 'html/index.html'; 
+		
 		$data_layout_html = array(
 			'title' => $story->title,
 			'js_src' => '../js/loader.js',
 			'css_src' => '../css/' . $sid . '.css',
-			'paragraph' => $story->paragraphes[0]['text'],
-			'links' => $story->paragraphes[0]['links']
+			'notifications' => '',
+			'paragraph' => $firstParagraph['text'],
+			'links' => $firstParagraph['links']
 		);
 		
 		$html_file = $this->parser->parse('generator/layout.html', $data_layout_html, TRUE);
@@ -108,7 +115,7 @@ class Generate extends CI_Controller {
 		
 		echo json_encode(array(
 							'filesStatus' => $return,
-							'url' => $bucketName . '.s3-website-us-east-1.amazonaws.com/' . $baseDir . 'index.html'
+							'url' => $bucketName . '.s3-website-us-east-1.amazonaws.com/' . $html_base
 						));
 	}
 	

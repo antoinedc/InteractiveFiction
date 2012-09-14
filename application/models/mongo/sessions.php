@@ -1,17 +1,22 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 
-class Stories extends CI_Model {
+class Sessions extends CI_Model {
 
 	private $database;
-	private $collectionName;
 	private $_collection;
 	
 	private $_id;
-	var $type;
+	
+	/**Sessions id**
+	***0: user logged
+	***1: user not logged (cookie)
+	***2: mxit user
+	*****************/
+	var $sessionid;
 	var $sid;
 	var $pid;
-	var $stats;	
+	var $stats;
 	
 	function __construct()
 	{
@@ -22,31 +27,30 @@ class Stories extends CI_Model {
 		$this->load->library('session');
 		
 		$this->database = 'local';
-		$this->collectionName = 'sessions';
+		$this->collection = 'sessions';
 	}
 	
-	function insert($id = '')
+	function insert()
 	{
 		$data = array(
-			'_id' => (empty($id) ? new MongoId() : $id),
-			'type' => $this->type,
+			'sessionid' => $this->sessionid,
 			'sid' => $this->sid,
 			'pid' => $this->pid,
 			'stats' => $this->stats
 		);
 		
-		return $this->mongo_db->select($this->database)->insert($this->collectionName, $data);
+		return $this->mongo_db->select($this->database)->insert($this->collection, $data);
 	}
 	
 	function select($sessionId)
 	{
-		$session = $this->mongo_db->where('_id', new MongoId($sessionId))->get($this->collectionName);
+		$session = $this->mongo_db->where('sessionid', $sessionId)->get($this->collection);
 		
 		if (count($session))
 		{
 			$session = $session[0];
-			$this->_id = new MongoId($session['_id']);
-			$this->type = $session['type'];
+			$this->_id = new MongoId($session['_id']->{'$id'});
+			$this->sessionid = $session['sessionid'];
 			$this->sid = $session['sid'];
 			$this->pid = $session['pid'];
 			$this->stats = $session['stats'];
@@ -57,8 +61,20 @@ class Stories extends CI_Model {
 			return false;
 	}
 	
+	function update()
+	{
+		$data = array(
+				'sessionid' => $this->sessionid,
+				'sid' => $this->sid,
+				'pid' => $this->pid,
+				'stats' => $this->stats
+			);
+
+		return $this->mongo_db->where('_id', new MongoId($this->_id))->update($this->collection, $data);
+	}
+	
 	function delete()
 	{
-		return $this->mongo_db->delete($this->collectionName, array('_id', $this->_id));
+		return $this->mongo_db->delete($this->collection, array('_id', $this->_id));
 	}
 }

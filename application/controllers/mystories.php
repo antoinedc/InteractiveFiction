@@ -19,10 +19,8 @@ class Mystories extends CI_Controller {
 	
 	function index()
 	{
-		if (!$this->session->userdata('email'))
-			redirect('./home');
-		
-		$uid = $this->session->userdata('oid');
+		if (!$this->session->userdata('uid'))
+			redirect('./home?error=notLogged');
 		
 		$stories = $this->stories->select(array());
 		

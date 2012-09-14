@@ -10,6 +10,7 @@ class Home extends CI_Controller {
 		
 		$this->load->helper('assets');
 		$this->load->helper('url');
+		$this->load->helper('cookie');
 		
 		$this->load->library('session');
 		$this->load->library('parser');
@@ -49,8 +50,8 @@ class Home extends CI_Controller {
 			if ($user && $user->password == $this->encrypt->sha1($password))
 			{
 				$this->session->set_userdata(array(
-														'email' => $user->email,
-														'uid' => $user->getId()->{'$id'}
+												'email' => $user->email,
+												'uid' => $user->getId()->{'$id'}
 												)
 											);
 			}
