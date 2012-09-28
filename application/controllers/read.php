@@ -84,11 +84,17 @@ class Read extends CI_Controller {
 					
 					if ($paragraph)
 					{
+						$stats = array();
+						
+						foreach ($session->stats[0] as $key => $value)
+							$stats[] = array('key' => $key, 'value' => $value);
+							
 						echo json_encode(array(
 							'status' => 1,						
 							'session' => array(
 								'text' => $paragraph['text'],
-								'links' => $paragraph['links']
+								'links' => $paragraph['links'],
+								'stats' => $stats
 							)
 						));
 					}

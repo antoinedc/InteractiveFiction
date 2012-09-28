@@ -11,6 +11,7 @@ class Links extends CI_Model {
 	var $destination;
 	var $sid;
 	var $text;
+	var $action;
 	
 	function __construct()
 	{
@@ -32,7 +33,8 @@ class Links extends CI_Model {
 													'origin' => $this->origin,
 													'destination' => $this->destination,
 													'text' => $this->text,
-													'sid' => $this->sid
+													'sid' => $this->sid,
+													'action' => $this->action
 											)
 										)->get('stories')))
 			return false;
@@ -41,7 +43,8 @@ class Links extends CI_Model {
 						'origin'=> $this->origin,
 						'destination' => $this->destination,
 						'text' => $this->text,
-						'sid' => $this->sid
+						'sid' => $this->sid,
+						'action' => $this->action
 					);
 		
 		$res = $this->mongo_db->where(array('development.paragraphes._id' => new MongoId($this->origin))
@@ -65,6 +68,7 @@ class Links extends CI_Model {
 				$this->destination = $res['destination'];
 				$this->text = $res['text'];
 				$this->sid = $res['sid'];
+				$this->action = $res['action'];
 				return $this;
 			}
 			else

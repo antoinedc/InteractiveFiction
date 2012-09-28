@@ -35,14 +35,17 @@
 				<li><a href="#editOthersCharacterModal" data-toggle="modal" id="editOthersCharacters">Edit others characters</a></li>
 			</ul>
 		</div>
+		<br />
+		<br />
 	</div>
-	<br />
-	<br />
+	
 	
 	{paragraphes}
-	<div class="paragraph span8 well" id="{_id}">
-		{text}
-		<a href="#addLinkModal" class="btn addLinkModal" style="float:right;" data-toggle="modal">Add link</a>
+	<div class="paragraph span8 well sidebar-box"  contenteditable="true" id="{_id}">
+		<div class="text">{text}</div>
+		<!--<a href="#addLinkModal" class="btn addLinkModal" style="float:right;" data-toggle="modal">Add link</a>-->
+		<p class="read-more" style="position: absolute;bottom: 0; left: 0;width: 100%;text-align: center;margin: 0; padding: 30px 0; "></p>
+			
 	</div>
 	{/paragraphes}
 
@@ -74,14 +77,56 @@
 		</div>
 		
 		<div class="modal-body">	
-			Text: <input type="text" id="choice" name="choice" class="span9" /><br />
-			Link to:<br />
+		
+			<ul class="nav nav-tabs" id="linkTabs">
+				<li class="active"><a href="#linkBase">Mandatory properties</a></li>
+				<li><a href="#linkOthers">Other properties</a></li>
+			</ul>
 			
-			{paragraphesToLink}
-			<div class="paragraphToLink span8 well chooseDest" id="{_id}">
-				{text}
+			<div class="tab-content">
+				<div class="tab-pane active" id="linkBase">
+					Text: <input type="text" id="choice" name="choice" class="span9" /><br />
+					Link to:<br />
+					
+					{paragraphesToLink}
+					<div class="paragraphToLink span8 well chooseDest" id="{_id}">
+						{text}
+					</div>
+					{/paragraphesToLink}
+				</div>
+				<div class="tab-pane" id="linkOthers">
+					<h3>Change a property</h3>
+					<hr />
+					<table>
+						<tr>
+							<th><h4>Operation</h4></th>
+							<th><h4>Value</h4></th>
+						<tr>
+						<tr>
+							<td>
+								<select class="selectOperation">
+									<option value="0">+</option>
+									<option value="1">-</option>
+									<option value="2">/</option>
+									<option value="3">*</option>
+									<option value="4">Text</option>
+								</select>
+							</td>
+
+							<td>
+								<input type="text" class="newValue"/>
+							</td>
+						</tr>
+					</table>
+					<hr />
+					<h4>Apply to</h4>
+					{propList}
+						<div class="well mainCharStats addOperation">
+							<span class="key">{key}</span> (default value: {value})
+						</div>
+					{/propList}
+				</div>
 			</div>
-			{/paragraphesToLink}
 		</div>		
 		
 		<div class="modal-footer">

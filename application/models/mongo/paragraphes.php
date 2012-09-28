@@ -12,6 +12,8 @@ class Paragraphes extends CI_Model {
 	var $isStart;
 	var $isEnd;
 	var $links;
+	var $idref;
+	var $temp_links;
 	
 	function __construct()
 	{
@@ -33,7 +35,7 @@ class Paragraphes extends CI_Model {
 																array('text' => $this->text)
 															)
 														,
-														'_id' => new MongoId($this->sid)
+														'_id' => ($this->_id?$this->_id:new MongoId($this->sid))
 														)
 													)->get('stories')
 												);
@@ -41,7 +43,7 @@ class Paragraphes extends CI_Model {
 		if ($isTextPresent) return false;
 		
      	$data = array(
-						'_id' => new MongoId(),
+						'_id' => ($this->_id?$this->_id:new MongoId()),
 						'text' => $this->text,
 						'sid' => new MongoId($this->sid),
 						'isStart' => $this->isStart,
@@ -50,7 +52,7 @@ class Paragraphes extends CI_Model {
 				);
 		
 		$res = $this->mongo_db->where('_id', new MongoId($this->sid))->push('development.paragraphes', $data)->update('stories');
-		
+		echo $this->sid;
 		if ($this->isStart == 'true')
 			$res2 = $this->mongo_db->where('_id', new MongoId($this->sid))->set(array('development.start' => new MongoId($data['_id'])))->update('stories');
 
@@ -63,16 +65,18 @@ class Paragraphes extends CI_Model {
 	function select($filter)
 	{
 		//selectById - 1 result
-		if (isset($filter['_id']) && $filter['_id'] != '')
+		if (isset($filter['_pid']) && $filter['_pid'] != '' && isset($filter['_sid']) && $filter['_sid'] != '')
 		{
-			$filter['_id'] = new MongoId($filter['_id']);
+			$filter['_pid'] = new MongoId($filter['_pid']);
+			$filter['_sid'] = new MongoId($filter['_sid']);
 			
-			$res = $this->mongo_db->where(array('paragraphes._id' => $filter['_id']))->select(array('paragraphes'))->get('stories');
+			$res = $this->mongo_db->where(array('development.paragraphes._id' => $filter['_pid'], '_id' => $filter['_sid']))->select(array('development.paragraphes'))->get('stories');
+			
 			if ($res)
 			{
-				foreach ($res[0]['paragraphes'] as $p)
+				foreach ($res[0]['development']['paragraphes'] as $p)
 				{
-					if ($p['_id']->{'$id'} == $filter['_id']->{'$id'})
+					if ($p['_id']->{'$id'} == $filter['_pid']->{'$id'})
 					{
 						$res = $p;
 						break;
@@ -85,7 +89,7 @@ class Paragraphes extends CI_Model {
 			if (count($res))
 			{
 				$this->_id = $res['_id'];
-				$this->text = $res['text'];
+				$this->text = (isset($res['text'])?$res['text']:'');
 				$this->sid = $res['sid'];
 				$this->isStart = $res['isStart'];
 				$this->isEnd = $res['isEnd'];
@@ -103,23 +107,28 @@ class Paragraphes extends CI_Model {
 	function update()
 	{
 		$data = array(
-						'text' => $this->text,
-						'sid' => $this->sid,
-						'isStart' => $this->isStart,
-						'isEnd' => $this->isEnd,
-						'links' => $this->links
+						'development.paragraphes.$.text' => $this->text,
+						'development.paragraphes.$.sid' => $this->sid,
+						'development.paragraphes.$.isStart' => $this->isStart,
+						'development.paragraphes.$.isEnd' => $this->isEnd,
+						'development.paragraphes.$.links' => $this->links
 					);
 		
-		return $this->mongo_db->update($this->collection, $data);
+		$paragraphes = $this->mongo_db->where(array('_id' => new MongoId($this->sid)))->select('development.paragraphes');
+		
+		return $this->mongo_db->where('development.paragraphes._id', new MongoId($this->_id))->set($data, array('false', 'true'))->update('stories');
 	}
 	
 	function delete()
 	{
-		return $this->mongo_db->delete($this->collection, array('_id', $this->_id));
+		return $this->mongo_db->where('_id', new MongoId($this->_id))->delete($this->collection, array('_id', $this->_id));
 	}
 	
 	function getId()
 	{
+		if (!$this->_id)
+			$this->_id = new MongoId();
+			
 		return $this->_id->{'$id'};
 	}
 }

@@ -1,9 +1,43 @@
 $(function(){	
 	
 	if (!$('#onEditStory').length)
-		return false;
+		return false;	
 	
 	var originId = '';
+	var action;
+	
+	$('#linkTabs a').click(function (e) {
+		e.preventDefault();
+		$(this).tab('show');
+	});
+	
+	$('.paragraph').on('focus', function() {
+		originId = $(this).attr('id');
+	});
+	
+	$('.mainCharStats.addOperation').hover(function(){
+		$(this).css({'border-color':'red'});
+		$(this).css('cursor','pointer');
+	}, function() {
+		$(this).css({'border-color':''});
+		$(this).css('cursor','auto');
+	}).click(function() {
+		if ($('.newValue').val() == '')
+		{
+			alert('The new value can\'t be empty.');
+			return;
+		}
+		var operation = $('.selectOperation').attr('value');
+		var newValue = $('.newValue').val();
+		var prop = $(this).children('.key').text();
+		
+		action = {
+			key:prop,
+			operation:operation,
+			value:newValue			
+		};
+		
+	});
 	
 	$('.addParagraph').live('click', function() {
 		
@@ -21,7 +55,8 @@ $(function(){
 			success: function(data) {
 				if (data.status < 0)
 					$('.paragraph').last().remove();
-				$('.paragraph').last().html($('#newParagraph').val().replace(/(\\n|\n)/g,"<br />" )+'<a href="#addLinkModal" class="btn addLinkModal" style="float:right;" data-toggle="modal">Add link</a>');
+				else
+					$('.paragraph').last().html($('#newParagraph').val().replace(/(\\n|\n)/g,"<br />" )+'<a href="#addLinkModal" class="btn addLinkModal" style="float:right;" data-toggle="modal">Add link</a>');
 			},
 			error:function(a, b, c){
 				console.log(a);
@@ -48,7 +83,7 @@ $(function(){
 			url: BASE_URL + 'index.php/edit/addLink',
 			type: 'POST',
 			dataType: 'json',
-			data: {originid:originId,destid:$(this).attr('id'), sid:$(this).parents('.modal-body').siblings('.modal-footer').children().last().attr('id'), text:$(this).parents('#addLinkModal').children('.modal-body').children(':input#choice').val()},
+			data: {originid:originId,destid:$(this).attr('id'), sid:$(this).parents('.modal-body').siblings('.modal-footer').children().last().attr('id'), text:$(this).parents('#addLinkModal').children('.modal-body').children(':input#choice').val(),action:action},
 			beforeSend: function() {
 				$('#addLinkModal').block({
 					message: 'Creating link...',

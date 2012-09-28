@@ -139,6 +139,7 @@ class Stories extends CI_Model {
 		$paragraph = false;
 		foreach($this->paragraphes as $p)
 		{
+			echo $p['isStart'];
 			if ($p['isStart'] == 'true')
 			{
 				$paragraph = $p;
@@ -165,6 +166,8 @@ class Stories extends CI_Model {
 	
 	function getId()
 	{
+		if (!$this->_id)
+			$this->_id = new MongoId();
 		return $this->_id->{'$id'};
 	}
 	

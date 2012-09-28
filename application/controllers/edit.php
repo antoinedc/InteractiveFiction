@@ -82,6 +82,7 @@ class Edit extends CI_Controller {
 									'paragraphes' => $story->paragraphes,
 									'paragraphesToLink' => $story->paragraphes,
 									'mainCharStats' => array_reverse($statsMain),
+									'propList' => array_reverse($statsMain),
 									'statsOthersChars' => array_reverse($statsOthersChars)
 								);
 		
@@ -139,6 +140,32 @@ class Edit extends CI_Controller {
 			echo json_encode(array('status' => -4));	
 	}
 	
+	public function updateParagraph($sid)
+	{
+		if (!$this->session->userdata('uid'))
+		{
+			echo json_encode(array('status' => -1));
+			return;
+		}
+		
+		$pid = $this->input->post('pid');
+		$text = $this->input->post('text');
+		
+		if (!$sid || empty($text) || empty($pid))
+		{
+			echo json_encode(array('status' => 0));
+			return;
+		}
+		
+		$paragraph = $this->paragraphes->select(array('_sid' => $sid, '_pid' => $pid));
+		$paragraph->text = $text;
+		$res = $paragraph->update();
+		
+		if ($res == 'true') $res = 1;
+		else $res = 0;
+		echo json_encode(array('status' => $res));
+	}
+	
 	/**
 	status codes:
 		1: everything's good !
@@ -151,6 +178,7 @@ class Edit extends CI_Controller {
 		$destId = $this->input->post('destid');
 		$sid = $this->input->post('sid');
 		$text = $this->input->post('text');
+		$action = $this->input->post('action');
 		
 		if (empty($originId) || empty($destId) || empty($sid))
 		{
@@ -163,6 +191,7 @@ class Edit extends CI_Controller {
 		$newLink->destination= $destId;
 		$newLink->sid = $sid;
 		$newLink->text = $text;
+		$newLink->action = $action;
 		$res = $newLink->insert();
 		
 		if (!$res)

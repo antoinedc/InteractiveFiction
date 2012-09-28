@@ -83,13 +83,18 @@ class Generate extends CI_Controller {
 		/**Generate the HTML**/
 		$html_base = $baseDir . 'html/index.html'; 
 		
+		foreach ($story->characters[0] as $key => $value)
+			if ($key != '_id')
+				$stats[] = array('key' => $key, 'value' => $value);
+		
 		$data_layout_html = array(
 			'title' => $story->title,
 			'js_src' => '../js/loader.js',
 			'css_src' => '../css/' . $sid . '.css',
 			'notifications' => '',
 			'paragraph' => $firstParagraph['text'],
-			'links' => $firstParagraph['links']
+			'links' => $firstParagraph['links'],
+			'stats' => array_reverse($stats)
 		);
 		
 		$html_file = $this->parser->parse('generator/layout.html', $data_layout_html, TRUE);
@@ -141,7 +146,7 @@ class Generate extends CI_Controller {
 			foreach ($paragraph['links'] as $link)
 				$graph->addEdge(array($link['origin'] => $link['destination']));
 		
-		$graph->image();	
+		$graph->image('svg');	
 	}
 	
 }

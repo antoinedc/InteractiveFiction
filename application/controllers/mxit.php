@@ -69,8 +69,9 @@ class Mxit extends CI_Controller {
 				
 				$baseLink = base_url() . 'index.php/mxit/read/?code=' . $_GET['code'] . '&sid=' . $story->getId();
 				
-				if ($pid == '')
-					$pid = $story->start;
+				if (!$pid)
+					$paragraph = $story->getFirstParagraph();
+				
 				
 				foreach ($story->paragraphes as $p)
 				{
@@ -86,7 +87,6 @@ class Mxit extends CI_Controller {
 	
 				foreach($paragraph['links'] as $link)
 				{
-					
 					if (!empty($link))
 						echo '<a href="' . $baseLink . ($link['destination'] == $story->start ? '' : '&pid=' . $link['destination']) . '">' . $link['text']. '</a><br />';			
 				}
