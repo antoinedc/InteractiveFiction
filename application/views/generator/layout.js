@@ -21,6 +21,7 @@ $(function() {
 					var notification = '<a href="#" id="continue">Continue the story</a>|<a href="#" id="restart">Start a new one</a>';
 					$('#text').hide();
 					$('#links').hide();
+					$('#charStats').hide();
 					$('#notifications').html(notification);
 					
 					$('a#continue').live('click', function() {
@@ -30,14 +31,24 @@ $(function() {
 							var link = '<a href="#" id="' + n.destination + '">' + n.text + '</a><br />';
 							$('#links').append(link);
 						});
-						
+						$('#table').empty();
+						for (var i in data.session.stats)
+						{
+							if (i != '_id')
+								$('#table').append('<tr><td>' + i + '</td><td>' + data.session.stats[i] + '</td></tr>');
+						}
 						$('#text').show();
 						$('#links').show();
+						$('#charStats').show();
 						$('#notifications').empty();
 					});
 					$('a#restart').live('click', function() {
 						$('#text').show();
 						$('#links').show();
+						$('#charStats').show();
+						$.getJSON(BASE_URL + 'index.php/read/deleteSession/' + sessionId, function(data) {
+							console.log(data);
+						});
 						$('#notifications').empty();
 					});
 				}
@@ -53,6 +64,11 @@ $(function() {
 		$.cookie(sid, sid + '-1-' + uniqId());
 
 	$('#links > a').live('click', function() {
+		if ($(this).attr('id') == firstPid)
+			$.getJSON(BASE_URL + 'index.php/read/deleteSession/' + sessionId, function(data) {
+				console.log(data);
+			});
+			
 		$.ajax({
 			url: BASE_URL + 'index.php/read/story/' + sid + '/' + $(this).attr('id') + '/' + $.cookie(sid),
 			type: 'GET',
@@ -69,6 +85,13 @@ $(function() {
 						var link = '<a href="#" id="' + n.destination + '">' + n.text + '</a><br />';
 						$('#links').append(link);
 					});
+					
+					$('#table').empty();
+					for (var i in data.stats)
+					{
+						if (i != '_id')
+							$('#table').append('<tr><td>' + i + '</td><td>' + data.stats[i] + '</td></tr>');
+					}
 					
 					if (data.isEnd == 'true')
 					{

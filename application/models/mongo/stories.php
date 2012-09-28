@@ -139,7 +139,7 @@ class Stories extends CI_Model {
 		$paragraph = false;
 		foreach($this->paragraphes as $p)
 		{
-			echo $p['isStart'];
+			//echo $p['isStart'];
 			if ($p['isStart'] == 'true')
 			{
 				$paragraph = $p;

@@ -32,11 +32,53 @@ class Read extends CI_Controller {
 			echo json_encode(array('status' => -1));
 			return;
 		}
-		
+		$session = '';
 		if (empty($sessionId) && $this->session->userdata('uid'))
 			$sessionId = $sid . '-0-' . $this->session->userdata('uid');
-			
+		
 		$story = $this->stories->select(array('_id' => $sid));
+
+		$session = $this->sessions->select($sessionId);
+		if (empty($session))
+		{
+			$firstParagraph = $story->getFirstParagraph();
+			$firstPId = $firstParagraph['_id']->{'$id'};
+			$this->bookmark($sid, $firstPId, $sessionId);
+			$session = $this->sessions->select($sessionId);
+			$currentParagraph = $story->getParagraphById($session->pid);
+		}
+		else
+		{
+			$session = $this->sessions->select($sessionId);
+			$currentParagraph = $story->getParagraphById($session->pid);
+		}
+		
+		foreach ($currentParagraph['links'] as $link)
+		{
+			if ($link['destination'] == $pid)
+			{
+				//echo "ok";
+				if (isset($link['action']) && !empty($link['action']))
+				{
+					$operation = $link['action']['operation'];
+					$key = $link['action']['key'];
+					$value = $link['action']['value'];
+					//echo "ok";
+					if ($operation == '0')
+						$session->stats[0][$key] += $value;
+					else if ($operation == '1')
+						$session->stats[0][$key] -= $value;
+					else if ($operation == '2')
+						$session->stats[0][$key] *= $value;
+					else if ($operation == '3')
+						$session->stats[0][$key] /= $value;
+					else
+						return;
+					$session->update();
+				}	
+			}
+		}
+		
 		$paragraph = false;
 		$status = 0;
 		
@@ -51,7 +93,7 @@ class Read extends CI_Controller {
 		
 		if (isset($sessionId))
 			$this->bookmark($sid, $pid, $sessionId);
-		echo json_encode(array_merge($paragraph, array('status' => $status)));
+		echo json_encode(array_merge($paragraph, array('stats' => $session->stats[0]), array('status' => $status)));
 	}
 	
 	function load($sid, $sessionId = '')
@@ -63,7 +105,9 @@ class Read extends CI_Controller {
 		/************/
 		
 		if (empty($sessionId))
+		{
 			$sessionId = $sid . '-0-' . $this->session->userdata('uid');
+		}
 			
 		if ($sessionId)
 		{
@@ -87,7 +131,7 @@ class Read extends CI_Controller {
 						$stats = array();
 						
 						foreach ($session->stats[0] as $key => $value)
-							$stats[] = array('key' => $key, 'value' => $value);
+							$stats = array_merge($stats, array($key => $value));
 							
 						echo json_encode(array(
 							'status' => 1,						
@@ -109,6 +153,13 @@ class Read extends CI_Controller {
 		}
 		else
 			echo json_encode(array('status' => -1));
+	}
+	
+	public function deleteSession($sessionId)
+	{
+		$session = $this->sessions->select($sessionId);
+		$res = $session->delete();
+		echo json_encode(array('status' => $res));
 	}
 	
 	private function bookmark($sid, $pid, $sessionId)

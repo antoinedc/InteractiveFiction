@@ -83,7 +83,7 @@ $(function(){
 			url: BASE_URL + 'index.php/edit/addLink',
 			type: 'POST',
 			dataType: 'json',
-			data: {originid:originId,destid:$(this).attr('id'), sid:$(this).parents('.modal-body').siblings('.modal-footer').children().last().attr('id'), text:$(this).parents('#addLinkModal').children('.modal-body').children(':input#choice').val(),action:action},
+			data: {originid:originId,destid:$(this).attr('id'), sid:$(this).parents('.modal-body').siblings('.modal-footer').children().last().attr('id'), text:$(this).parents('#addLinkModal').children('.modal-body').children('.tab-content').children('#linkBase').children(':input#choice').val(),action:action},
 			beforeSend: function() {
 				$('#addLinkModal').block({
 					message: 'Creating link...',
