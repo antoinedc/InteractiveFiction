@@ -95,6 +95,29 @@ class Edit extends CI_Controller {
 		$this->parser->parse('private/layout.html', $data_layout);
 	}
 	
+	public function getLink($sid, $pid, $lid)
+	{
+		if (!$this->session->userdata('uid') || !$sid || !$pid || !$lid)
+		{
+			echo json_encode(array('status' => -1));
+			return;
+		}
+		
+		$story = $this->stories->select(array('_id' => $sid));
+		$paragraph = $story->getParagraphById($pid);
+		
+		$res = array();
+		
+		foreach($paragraph['links'] as $link)
+			if ($link['_id']->{'$id'} == $lid)
+			{
+				$res = $link;
+				break;
+			}
+			
+		echo json_encode(array('status' => 1, 'link' => $res));
+	}
+	
 	/**
 	status codes:
 		1: everything's good !
@@ -132,8 +155,8 @@ class Edit extends CI_Controller {
 		if ($res)
 		{
 			$story = $this->stories->select(array('_id' => $sid));
-
-			echo json_encode(array('status' => 1));	
+			
+			echo json_encode(array('status' => 1, 'id' => $res));	
 			return;
 		}
 		else
@@ -150,6 +173,8 @@ class Edit extends CI_Controller {
 		
 		$pid = $this->input->post('pid');
 		$text = $this->input->post('text');
+		$isFirst = $this->input->post('isFirst');
+		$isEnd = $this->input->post('isEnd');
 		
 		if (!$sid || empty($text) || empty($pid))
 		{
@@ -159,6 +184,8 @@ class Edit extends CI_Controller {
 		
 		$paragraph = $this->paragraphes->select(array('_sid' => $sid, '_pid' => $pid));
 		$paragraph->text = $text;
+		$paragraph->isStart = $isFirst;
+		$paragraph->isEnd = $isEnd;
 		$res = $paragraph->update();
 		
 		if ($res == 'true') $res = 1;
@@ -179,6 +206,7 @@ class Edit extends CI_Controller {
 		$sid = $this->input->post('sid');
 		$text = $this->input->post('text');
 		$action = $this->input->post('action');
+		$lid = $this->input->post('lid');
 		
 		if (empty($originId) || empty($destId) || empty($sid))
 		{
@@ -186,18 +214,43 @@ class Edit extends CI_Controller {
 			return;
 		}		
 		
-		$newLink = new Links;
-		$newLink->origin = $originId;
-		$newLink->destination= $destId;
-		$newLink->sid = $sid;
-		$newLink->text = $text;
-		$newLink->action = $action;
-		$res = $newLink->insert();
+		if (!$lid)
+		{
+			$newLink = new Links;
+			$newLink->origin = $originId;
+			$newLink->destination = $destId;
+			$newLink->sid = $sid;
+			$newLink->text = $text;
+			$newLink->action = $action;
+			$res = $newLink->insert();
+		}
+		else
+		{
+			$paragraph = $this->paragraphes->select(array('_sid' => $sid, '_pid' => $originId));
+			$i = 0;
+			foreach ($paragraph->links as $link)
+			{
+				if ($link['_id']->{'$id'} == $lid)
+				{
+					$paragraph->links[$i]['origin'] = $originId;
+					$paragraph->links[$i]['destination'] = $destId;
+					$paragraph->links[$i]['sid'] = $sid;
+					$paragraph->links[$i]['text'] = $text;
+					$paragraph->links[$i]['action'] = $action;
+					
+					$paragraph->update();
+					$res = $lid;
+					break;
+				}
+				else
+					$i++;
+			}
+		}
 		
 		if (!$res)
 			echo json_encode(array('status' => -2));
 		else
-			echo json_encode(array('status' => 1));
+			echo json_encode(array('status' => 1, 'lid' => $res));
 	}
 	
 	function addCharProperties($cid = -1)
@@ -224,6 +277,23 @@ class Edit extends CI_Controller {
 		$sid = $this->input->post('sid');
 		$story = $this->stories->select(array('_id' => $sid));
 		echo json_encode(array_merge(array('status'=> 1), $story->getCharacter($cid)));
+	}
+	
+	function getStory($sid)
+	{
+		if (!$this->isOwnerOfTheStory($sid))
+		{
+			echo json_encode(array('status' => -2));
+			return;
+		}
+		
+		if (!$this->session->userdata('uid'))
+		{
+			echo json_encode(array('status' => -1));
+			return;
+		}
+		
+		echo json_encode(array('status' => 1, 'data' => $this->stories->select(array('_id' => $sid))));
 	}
 	
 	private function isOwnerOfTheStory($sid)

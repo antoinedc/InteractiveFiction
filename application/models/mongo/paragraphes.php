@@ -29,37 +29,24 @@ class Paragraphes extends CI_Model {
 	
 	function insert()
 	{
-		$isTextPresent = count($this->mongo_db->where(
-														array('paragraphes' => 
-															array('$elemMatch' =>
-																array('text' => $this->text)
-															)
-														,
-														'_id' => ($this->_id?$this->_id:new MongoId($this->sid))
-														)
-													)->get('stories')
-												);
-		
-		if ($isTextPresent) return false;
-		
-     	$data = array(
-						'_id' => ($this->_id?$this->_id:new MongoId()),
-						'text' => $this->text,
-						'sid' => new MongoId($this->sid),
-						'isStart' => $this->isStart,
-						'isEnd' => $this->isEnd,
-						'links' => $this->links ? $this->links : array()
-				);
+		$data = array(
+			'_id' => ($this->_id?$this->_id:new MongoId()),
+			'text' => $this->text,
+			'sid' => new MongoId($this->sid),
+			'isStart' => $this->isStart,
+			'isEnd' => $this->isEnd,
+			'links' => $this->links ? $this->links : array()
+		);
 		
 		$res = $this->mongo_db->where('_id', new MongoId($this->sid))->push('development.paragraphes', $data)->update('stories');
-		echo $this->sid;
+		
 		if ($this->isStart == 'true')
 			$res2 = $this->mongo_db->where('_id', new MongoId($this->sid))->set(array('development.start' => new MongoId($data['_id'])))->update('stories');
 
 		if (!$res)
 			return false;
 			
-		return $res;
+		return $data['_id'];
 	}
 	
 	function select($filter)

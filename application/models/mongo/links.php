@@ -40,6 +40,7 @@ class Links extends CI_Model {
 			return false;
 			
 		$data = array(
+						'_id' => new MongoId(),
 						'origin'=> $this->origin,
 						'destination' => $this->destination,
 						'text' => $this->text,
@@ -50,7 +51,8 @@ class Links extends CI_Model {
 		$res = $this->mongo_db->where(array('development.paragraphes._id' => new MongoId($this->origin))
 														)->push('development.paragraphes.$.links', $data)->update('stories');
 														
-		return $res;
+		if ($res) return $data['_id']->{'$id'};
+		else return $res;
 	}
 	
 	function select($filter)

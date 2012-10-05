@@ -11,10 +11,6 @@ $(function(){
 		$(this).tab('show');
 	});
 	
-	$('.paragraph').on('focus', function() {
-		originId = $(this).attr('id');
-	});
-	
 	$('.mainCharStats.addOperation').hover(function(){
 		$(this).css({'border-color':'red'});
 		$(this).css('cursor','pointer');
@@ -27,36 +23,27 @@ $(function(){
 			alert('The new value can\'t be empty.');
 			return;
 		}
-		var operation = $('.selectOperation').attr('value');
-		var newValue = $('.newValue').val();
-		var prop = $(this).children('.key').text();
-		
-		action = {
-			key:prop,
-			operation:operation,
-			value:newValue			
-		};
+	
 		
 	});
 	
 	$('.addParagraph').live('click', function() {
 		
 		var sid = $(this).attr('id');
-		
+		var pid = $('#newParagraph').attr('data-pid');
+		var text = CKEDITOR.instances['newParagraph'].getData();
 		$.ajax({
 		
-			url: BASE_URL + 'index.php/edit/addParagraph',
+			url: BASE_URL + 'index.php/edit/updateParagraph/' + sid,
 			type: 'POST',
 			dataType: 'json',
-			data: {sid:sid, content:$('#newParagraph').val(), isFirst:($('#isFirstParagraph').attr('checked')=='checked'?'true':'false'), isEnd:($('#isEnd').attr('checked')=='checked'?'true':'false')},
+			data: {pid:pid,text:text, isFirst:($('#isFirstParagraph').attr('checked')=='checked'?'true':'false'), isEnd:($('#isEnd').attr('checked')=='checked'?'true':'false')},
 			beforeSend: function() {
-				$('.paragraph').last().after('<div class="paragraph span8 well">Loading...</div>');
+				
 			},
 			success: function(data) {
-				if (data.status < 0)
-					$('.paragraph').last().remove();
-				else
-					$('.paragraph').last().html($('#newParagraph').val().replace(/(\\n|\n)/g,"<br />" )+'<a href="#addLinkModal" class="btn addLinkModal" style="float:right;" data-toggle="modal">Add link</a>');
+				if (data.status > 0)
+					$('.w#'+pid+'>.tooltip').html(text);
 			},
 			error:function(a, b, c){
 				console.log(a);
@@ -70,20 +57,52 @@ $(function(){
 		originId = $(this).parents('.paragraph').attr('id');
 	});
 	
-	$('.chooseDest').hover(function(){
-		$(this).css({'border-color':'red'});
-		$(this).css('cursor','pointer');
-	}, function() {
-		$(this).css({'border-color':''});
-		$(this).css('cursor','auto');
-	}).click(function(){
+	$('#addLinkModal').on('show', function() {
+	
+		var sid = $('#addLinkModal').attr('data-sid');
+		var originId = $(this).find('.linkSource').attr('id');
+		var lid = $('#addLinkModal').attr('data-lid');
+		
+		if (lid)
+		{
+			$.getJSON(BASE_URL + 'index.php/edit/getLink/' + sid + '/' + originId + '/' + lid, function(data) {
+				console.log(data);
+				if (data.status > 0)
+				{
+					$('input#choice').attr('value', data.link.text);
+				}
+			});
+		}
+	});
+
+	$('#addLinkModal').find('.modal-footer').find('.save').live('click', function() {
+		
+		if (document.getElementById('choice').value == '')
+		{
+			alert('You have to put a text');
+			return;
+		}
+		
+		var sid = $('#addLinkModal').attr('data-sid');
+		var originId = $('#addLinkModal').find('.linkSource').attr('id');
+		var destId = $('#addLinkModal').find('.linkTarget').attr('id');
+		var lid = $('#addLinkModal').attr('data-lid');
+		var operation = $('.selectOperation').attr('value');
+		var newValue = $('.newValue').val();
+		var prop = $(this).children('.key').text();
+	
+		action = {
+			key:prop,
+			operation:operation,
+			value:newValue			
+		};
 		
 		$.ajax({
-			
+		
 			url: BASE_URL + 'index.php/edit/addLink',
 			type: 'POST',
 			dataType: 'json',
-			data: {originid:originId,destid:$(this).attr('id'), sid:$(this).parents('.modal-body').siblings('.modal-footer').children().last().attr('id'), text:$(this).parents('#addLinkModal').children('.modal-body').children('.tab-content').children('#linkBase').children(':input#choice').val(),action:action},
+			data: {lid:lid, originid:originId,destid:destId, sid:sid, text:$(this).parents('#addLinkModal').find('.modal-body').find(':input#choice').val(),action:action},
 			beforeSend: function() {
 				$('#addLinkModal').block({
 					message: 'Creating link...',
@@ -101,7 +120,24 @@ $(function(){
 			},
 			success: function(data){
 				$('#addLinkModal').unblock();
+				$('#addLinkModal').hide();
+				
 				console.log(data);
+				
+				if (data.status > 0)
+				{
+					if ($('#addLinkModal').attr('data-conn-id'))
+					{
+						jsPlumb.select().each(function(connection) {
+							
+							if (connection.id == $('#addLinkModal').attr('data-conn-id'))
+							{
+								connection.setParameters({lid:data.lid});
+								return;
+							}
+						});
+					}
+				}
 			},
 			error: function(a, b, c) {
 				$('#addLinkModal').unblock();
@@ -111,6 +147,7 @@ $(function(){
 			}		
 		});
 	});
+
 	
 	$('.generateHtml').live('click', function() {
 		

@@ -1,4 +1,4 @@
-<div class="span9" id="onEditStory">	
+<div class="span9" id="onEditStory" data-story-id="{sid}">	
 	<div class="growlUI success" style="display:none">
 		<h2>Story successfully generated !</h2>
     </div>
@@ -6,6 +6,7 @@
 	<div class="growlUI successMxit" style="display:none">
 		<h2>New version live on Mxit now !</h2>
     </div>
+	<!--
 	<h2>Add some paragraphes</h2>
 	<div class="input-prepend">
 		<span class="add-on">Title</span><input class="span9" type="text" id="title" name="title" value="{title}" /><a class="btn">Update</a>
@@ -39,23 +40,46 @@
 		<br />
 	</div>
 	
+	<!--
 	
-	{paragraphes}
 	<div class="paragraph span8 well sidebar-box"  contenteditable="true" id="{_id}">
 		<div class="text">{text}</div>
-		<!--<a href="#addLinkModal" class="btn addLinkModal" style="float:right;" data-toggle="modal">Add link</a>-->
+		<!--<a href="#addLinkModal" class="btn addLinkModal" style="float:right;" data-toggle="modal">Add link</a>
 		<p class="read-more" style="position: absolute;bottom: 0; left: 0;width: 100%;text-align: center;margin: 0; padding: 30px 0; "></p>
 			
 	</div>
-	{/paragraphes}
-
+	
+	-->
+	<div id="buttonWrapper" style="position:absolute;z-index:200;">
+        <input type="button" id="plus" value="+"><br />
+        <input type="button" id="minus" value="-"><br />
+        <input type="button" id="redraw" value="Redraw"><br />
+        <input type="button" id="newNode" value="New paragraph"><br />
+    </div>
+	
+	<div id="plumbing" style="width:1000px;height:700px;overflow:hidden;z-index:1000;border:grey 1px solid;">
+		<div id="canvas" style="position:relative;left:500px;top:350px;" >
+			{paragraphes}
+			<div class="w" style="position:relative" id="{_id}">
+				<div class="tooltip" style="display:none;">
+					{text}
+				</div>
+				<div class="ep">
+				</div>
+			</div>
+			{/paragraphes}
+		</div>
+		<div id="svg" style="display:none;">
+		</div>
+	</div>
+	
 	<div class="modal hide fade" id="addParagraphModal">
 		<div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-			<h3>Add a new paragraph</h3>
+			<h3>Edit a paragraph</h3>
 		</div>
 		<div class="modal-body">
-			<textarea class="span12" rows="19" cols="30" id="newParagraph"></textarea>
+			<textarea class="span12 ckeditor" rows="19" cols="30" id="newParagraph"></textarea>
 			<label class="checkbox">
 				<input name="isFirstParagraph" id="isFirstParagraph" type="checkbox" />
 				First paragraph of the story (will erase the old one)
@@ -70,67 +94,54 @@
 		</div>
     </div>
 	
-	<div class="modal hide fade" id="addLinkModal">
+	<div class="modal hide fade" id="addLinkModal" data-sid="{sid}">
 		<div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-			<h3>Add a new link</h3>
+			<h3>Edit a link</h3>
 		</div>
 		
 		<div class="modal-body">	
-		
-			<ul class="nav nav-tabs" id="linkTabs">
-				<li class="active"><a href="#linkBase">Mandatory properties</a></li>
-				<li><a href="#linkOthers">Other properties</a></li>
-			</ul>
-			
-			<div class="tab-content">
-				<div class="tab-pane active" id="linkBase">
-					Text: <input type="text" id="choice" name="choice" class="span9" /><br />
-					Link to:<br />
-					
-					{paragraphesToLink}
-					<div class="paragraphToLink span8 well chooseDest" id="{_id}">
-						{text}
-					</div>
-					{/paragraphesToLink}
-				</div>
-				<div class="tab-pane" id="linkOthers">
-					<h3>Change a property</h3>
-					<hr />
-					<table>
-						<tr>
-							<th><h4>Operation</h4></th>
-							<th><h4>Value</h4></th>
-						<tr>
-						<tr>
-							<td>
-								<select class="selectOperation">
-									<option value="0">+</option>
-									<option value="1">-</option>
-									<option value="2">/</option>
-									<option value="3">*</option>
-									<option value="4">Text</option>
-								</select>
-							</td>
+			<div id="linkOthers">
+				<h3>Change a property</h3>
+				<hr />
+				<span class="linkSource"></span> => <span class="linkTarget"></span>
+				<table>
+					<tr>
+						<td>Text: <input type="text" id="choice" name="choice" class="span9" /></td>
+					</tr>
+					<tr>
+						<th><h4>Operation</h4></th>
+						<th><h4>Value</h4></th>
+					<tr>
+					<tr>
+						<td>
+							<select class="selectOperation">
+								<option value="0">+</option>
+								<option value="1">-</option>
+								<option value="2">/</option>
+								<option value="3">*</option>
+								<option value="4">Text</option>
+							</select>
+						</td>
 
-							<td>
-								<input type="text" class="newValue"/>
-							</td>
-						</tr>
-					</table>
-					<hr />
-					<h4>Apply to</h4>
-					{propList}
-						<div class="well mainCharStats addOperation">
-							<span class="key">{key}</span> (default value: {value})
-						</div>
-					{/propList}
-				</div>
+						<td>
+							<input type="text" class="newValue"/>
+						</td>
+					</tr>
+				</table>
+				<hr />
+				<h4>Apply to</h4>
+				{propList}
+					<div class="well mainCharStats addOperation">
+						<span class="key">{key}</span> (default value: {value})
+					</div>
+				{/propList}
 			</div>
 		</div>		
 		
 		<div class="modal-footer">
-			<a href="#" class="btn btn-primary addLink" id="{sid}" data-dismiss="modal">Save changes</a>
+			<a href="#" class="btn btn-primary addLink delete" data-dismiss="modal">Delete Link</a>
+			<a href="#" class="btn btn-primary addLink save" data-dismiss="modal">Save changes</a>
 		</div>
 	</div>
 
