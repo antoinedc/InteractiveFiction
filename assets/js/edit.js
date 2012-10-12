@@ -6,31 +6,10 @@ $(function(){
 	var originId = '';
 	var action;
 	
-	$('#linkTabs a').click(function (e) {
-		e.preventDefault();
-		$(this).tab('show');
-	});
-	
-	$('.mainCharStats.addOperation').hover(function(){
-		$(this).css({'border-color':'red'});
-		$(this).css('cursor','pointer');
-	}, function() {
-		$(this).css({'border-color':''});
-		$(this).css('cursor','auto');
-	}).click(function() {
-		if ($('.newValue').val() == '')
-		{
-			alert('The new value can\'t be empty.');
-			return;
-		}
-	
-		
-	});
-	
 	$('.addParagraph').live('click', function() {
 		
 		var sid = $(this).attr('id');
-		var pid = $('#newParagraph').attr('data-pid');
+		var pid = $('#addParagraphModal').attr('data-pid');
 		var text = CKEDITOR.instances['newParagraph'].getData();
 		$.ajax({
 		
@@ -60,16 +39,18 @@ $(function(){
 	$('#addLinkModal').on('show', function() {
 	
 		var sid = $('#addLinkModal').attr('data-sid');
-		var originId = $(this).find('.linkSource').attr('id');
+		var pid = $('#addLinkModal').attr('data-pid');
 		var lid = $('#addLinkModal').attr('data-lid');
 		
 		if (lid)
 		{
-			$.getJSON(BASE_URL + 'index.php/edit/getLink/' + sid + '/' + originId + '/' + lid, function(data) {
+			$.getJSON(BASE_URL + 'index.php/edit/getLink/' + sid + '/' + pid + '/' + lid, function(data) {
 				console.log(data);
 				if (data.status > 0)
 				{
 					$('input#choice').attr('value', data.link.text);
+					$('#isFirstParagraph').attr('checked', false);
+					$('#isEnd').attr('checked', false);
 				}
 			});
 		}

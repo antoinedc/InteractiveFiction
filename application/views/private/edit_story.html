@@ -51,13 +51,27 @@
 	
 	-->
 	<div id="buttonWrapper" style="position:absolute;z-index:200;">
-        <input type="button" id="plus" value="+"><br />
-        <input type="button" id="minus" value="-"><br />
-        <input type="button" id="redraw" value="Redraw"><br />
-        <input type="button" id="newNode" value="New paragraph"><br />
+		<div class="btn-toolbar">
+			<div class="btn-group">
+				<a href="#" id="newNode" class="btn btn-primary">New paragraph</a>
+			</div>
+			<div class="btn-group">
+				<a href="#" id="{sid}" class="btn btn-primary">Publish online</a>
+			</div>
+			<div class="btn-group">
+				<a class="btn dropdown-toggle btn-primary" data-toggle="dropdown" href="#">
+					Edit characters stats
+					<span class="caret"></span>
+				</a>
+				<ul class="dropdown-menu">
+					<li><a href="#editMainCharacterModal" data-toggle="modal" id="editMainCharacter">Edit main character</a></li>
+					<li><a href="#editOthersCharacterModal" data-toggle="modal" id="editOthersCharacters">Edit others characters</a></li>
+				</ul>
+			</div>
+		</div>
     </div>
 	
-	<div id="plumbing" style="width:1000px;height:700px;overflow:hidden;z-index:1000;border:grey 1px solid;">
+	<div id="plumbing" style="width:1000px;height:700px;overflow:hidden;border:grey 1px solid;">
 		<div id="canvas" style="position:relative;left:500px;top:350px;" >
 			{paragraphes}
 			<div class="w" style="position:relative" id="{_id}">
@@ -140,7 +154,7 @@
 		</div>		
 		
 		<div class="modal-footer">
-			<a href="#" class="btn btn-primary addLink delete" data-dismiss="modal">Delete Link</a>
+			<a href="#" class="btn btn-primary deleteLinkButton delete" data-dismiss="modal">Delete Link</a>
 			<a href="#" class="btn btn-primary addLink save" data-dismiss="modal">Save changes</a>
 		</div>
 	</div>

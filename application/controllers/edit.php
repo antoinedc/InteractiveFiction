@@ -279,6 +279,64 @@ class Edit extends CI_Controller {
 		echo json_encode(array_merge(array('status'=> 1), $story->getCharacter($cid)));
 	}
 	
+	function removeLink($sid, $pid, $lid)
+	{
+		if (!$this->session->userdata('uid') || empty($lid) || empty($pid) || empty($sid))
+		{
+			echo json_encode(array('status' => -1));
+			return;
+		}
+		
+		$story = $this->stories->select(array('_id' => $sid));
+		
+		for ($j = 0; $j < count($story->paragraphes); $j++)
+			if ($story->paragraphes[$j]['_id']->{'$id'} == $pid)
+				for ($i = 0; $i < count($story->paragraphes[$j]['links']); $i++)
+					if ($story->paragraphes[$j]['links'][$i]['_id']->{'$id'} == $lid)
+					{
+						unset($story->paragraphes[$j]['links'][$i]);
+						break;
+					}
+					
+		$res = $story->update();
+		echo json_encode(array('status' => 1));
+	}
+	
+	function update()
+	{
+		$new_story = $this->input->post('story');
+		
+		if (!$this->session->userdata('uid') || !$new_story)
+		{
+			echo json_encode(array('status' => -1));
+			return;
+		}
+		
+		$new_story = json_decode($new_story);
+		$new_story = $new_story->{'0'};
+		
+		foreach ($new_story->paragraphes as $paragraph)
+		{
+			$paragraph->_id = new MongoId($paragraph->id);
+			unset($paragraph->id);
+			foreach ($paragraph->links as $link)
+			{
+				$link->_id = new MongoId($link->id);
+				unset($link->id);
+			}
+		}		
+		
+		$sid = $new_story->id;
+		$story = $this->stories->select(array('_id' => $sid));
+		$story->title = $new_story->title;
+		$story->start = $new_story->start;
+		$story->paragraphes = $new_story->paragraphes;
+		$story->characters = $new_story->characters;
+		$res = $story->update();
+		
+		echo json_encode(array('status' => $res));
+	}
+	
 	function getStory($sid)
 	{
 		if (!$this->isOwnerOfTheStory($sid))
@@ -293,7 +351,7 @@ class Edit extends CI_Controller {
 			return;
 		}
 		
-		echo json_encode(array('status' => 1, 'data' => $this->stories->select(array('_id' => $sid))));
+		echo json_encode(array('status' => 1, 'story' => $this->stories->select(array('_id' => $sid))));
 	}
 	
 	private function isOwnerOfTheStory($sid)
