@@ -14,6 +14,8 @@ class Paragraphes extends CI_Model {
 	var $links;
 	var $idref;
 	var $temp_links;
+	var $x;
+	var $y;
 	
 	function __construct()
 	{
@@ -35,7 +37,9 @@ class Paragraphes extends CI_Model {
 			'sid' => new MongoId($this->sid),
 			'isStart' => $this->isStart,
 			'isEnd' => $this->isEnd,
-			'links' => $this->links ? $this->links : array()
+			'links' => $this->links ? $this->links : array(),
+			'x' => $this->x ? $this->x : 50,
+			'y' => $this->y ? $this->y : 50			
 		);
 		
 		$res = $this->mongo_db->where('_id', new MongoId($this->sid))->push('development.paragraphes', $data)->update('stories');
@@ -81,6 +85,8 @@ class Paragraphes extends CI_Model {
 				$this->isStart = $res['isStart'];
 				$this->isEnd = $res['isEnd'];
 				$this->links = $res['links'];
+				$this->x = $res['x'];
+				$this->y = $res['y'];
 				return $this;
 			}
 			else
@@ -98,7 +104,9 @@ class Paragraphes extends CI_Model {
 						'development.paragraphes.$.sid' => $this->sid,
 						'development.paragraphes.$.isStart' => $this->isStart,
 						'development.paragraphes.$.isEnd' => $this->isEnd,
-						'development.paragraphes.$.links' => $this->links
+						'development.paragraphes.$.links' => $this->links,
+						'development.paragraphes.$.x' => $this->x,
+						'development.paragraphes.$.y' => $this->y
 					);
 		
 		$paragraphes = $this->mongo_db->where(array('_id' => new MongoId($this->sid)))->select('development.paragraphes');

@@ -33,15 +33,27 @@ class Stories extends CI_Model {
 		
 		if ($isTitlePresent) return false;
 		
+		$characters = array();
+		$characters[] = array(
+			
+			'_id' => new MongoId(),
+			'main' => "true"
+		);
+			
 		$data = array(	
 						'title' => $this->title ? $this->title : '',
 						'start' => $this->start ? $this->start : -1,
 						'owner' => new MongoId($this->session->userdata('uid')),
 						'paragraphes' => $this->paragraphes ? $this->paragraphes : array(),
-						'characters' => $this->characters ? $this->characters : array()
+						'characters' => $this->characters ? $this->characters : $characters
 					);
-					
-		return $this->mongo_db->select($this->database)->insert($this->collectionName, array('development' => $data, 'production' => array()));
+			
+		$id = $this->mongo_db->select($this->database)->insert($this->collectionName, array('development' => $data, 'production' => array()));
+		
+		if ($data['start'])
+			$this->mongo_db->where('_id', $this->_id)->set('start', $id)->update($this->collectionName);
+		
+		return $id;
 	}
 	
 	function select($filter, $prod = false)
@@ -117,23 +129,51 @@ class Stories extends CI_Model {
 				'characters' => $this->characters
 			)
 		);
-					
+		
 		return $this->mongo_db->where('_id', $this->_id)->update($this->collectionName, $data);
+	}
+	
+	function getMainCharacter()
+	{
+		$characters = $this->getCharacters();
+		$res = false;
+		foreach ($characters as $character)
+			if ($character['main'] == "true")
+				$res = $character;
+		return $res;
 	}
 	
 	function updateCharStats($cid, $data)
 	{
-		$data = array_merge($data, array('_id' => new MongoId()));
 		if ($cid >= 0)
-			return $this->mongo_db->where('_id', $this->_id)->set('development.characters.' . $cid, $data)->update('stories');
+		{
+			$data = array_merge(array('_id' => new MongoId($cid)), $data);
+			if ($this->mongo_db->where(array(
+				'_id' => $this->_id,
+				'development.characters._id' => new MongoId($cid)
+			))->set('development.characters.$', $data)->update('stories'))
+				return $cid;
+			else
+				return false;
+		}
 		else
-			return $this->mongo_db->where('_id', $this->_id)->push('development.characters', $data)->update('stories');
+		{
+			$id = new MongoId();
+			$data = array_merge($data, array('_id' => $id));
+			if ($this->mongo_db->where('_id', $this->_id)->push('development.characters', $data)->update('stories'))
+				return $id;
+			else 
+				return false;
+		}
 	}
 	
-	function getCharacter($cid)
+	function getCharacters($cid = -1)
 	{
 		$characters = $this->mongo_db->where('_id', $this->_id)->select(array('development.characters'))->get('stories');
-		return $characters[0]['development']['characters'][$cid];
+		if ($cid < 0)
+			return $characters[0]['development']['characters'];
+		else
+			return $characters[0]['development']['characters'][$cid];
 	}
 	
 	function getFirstParagraph()

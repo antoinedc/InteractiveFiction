@@ -11,7 +11,7 @@ CKEDITOR.editorConfig = function( config ) {
 	config.extraPlugins = 'savec,addLink';
 	config.toolbar_Basic =
 	[
-		['Bold', 'Italic', '-', 'Save', 'BulletedList', '-', 'Link', 'Unlink','-','AddLink']
+		['Bold', 'Italic', '-', 'BulletedList', '-', 'Link', 'Unlink','-']
 	];
 	config.toolbar = 'Basic';
 };

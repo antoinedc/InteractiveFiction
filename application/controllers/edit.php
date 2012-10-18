@@ -59,22 +59,29 @@ class Edit extends CI_Controller {
 		$temp = array();
 		
 		if (count($story->characters) > 0)
-		{		
-			while (list($key, $val) = each($story->characters[0]))
-				if ($key != '_id')
-					$statsMain[] = array('key' => $key, 'value' => $val);
+		{	
+			$main = $story->getMainCharacter();
+			
+			if ($main)
+			{
+				while (list($key, $val) = each($main))
+					if ($key != '_id' && $key != 'main')
+						$statsMain[] = array('key' => $key, 'value' => $val);
+			}
 				
-			for ($i = 1; $i < count($story->characters); $i++)
+			for ($i = 0; $i < count($story->characters); $i++)
 			{
 				while (list($key, $val) = each($story->characters[$i]))
 				{
 					$temp = array_merge($temp, array($key => $val));
-					$temp['_id'] = $i;
 				}
-				$statsOthersChars[] = $temp;
+				
+				if ($temp['main'] == "false")
+					$statsOthersChars[] = $temp;
 			}
 		}
 		
+		//var_dump($statsOthersChars);
 		$data_edit_story = array(
 									'baseUrl' => base_url(),
 									'title' => $story->title,
@@ -145,6 +152,11 @@ class Edit extends CI_Controller {
 			return;
 		}
 		
+		$story = $this->stories->select(array('_id' => $sid));
+		
+		if (!count($story->paragraphes)) 
+			$isStart = true;
+		
 		$newParagraph = new Paragraphes;
 		$newParagraph->text = nl2br($content);
 		$newParagraph->sid = $sid;
@@ -152,13 +164,8 @@ class Edit extends CI_Controller {
 		$newParagraph->isEnd = $isEnd;
 		$res = $newParagraph->insert();	
 
-		if ($res)
-		{
-			$story = $this->stories->select(array('_id' => $sid));
-			
-			echo json_encode(array('status' => 1, 'id' => $res));	
-			return;
-		}
+		if ($res)		
+			echo json_encode(array('status' => 1, 'id' => $res));
 		else
 			echo json_encode(array('status' => -4));	
 	}
@@ -266,10 +273,17 @@ class Edit extends CI_Controller {
 		
 		$newProperties = array();
 		foreach ($properties as $p)
-			if (!empty($p['key']) && !empty($p['value']))
+			if (!empty($p['key']))
 				$newProperties = array_merge(array($p['key'] => $p['value']), $newProperties);
+		
 		$story = $this->stories->select(array('_id' => $sid));
-		echo $story->updateCharStats($cid, $newProperties);
+		
+		$id = $story->updateCharStats($cid, $newProperties);
+		
+		if ($id)
+			echo json_encode(array('status' => true, 'id' => $id));
+		else
+			echo json_encode(array('status' => false));
 	}
 	
 	function getCharProperties($cid)
