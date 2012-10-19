@@ -121,10 +121,10 @@ $(function() {
 		
 		this.addCharacter = function(main, properties) {
 		
-			var newCharacter = new Character(0);
+			var newCharacter = new Character(-1);
 			newCharacter.main = main;
 			newCharacter.properties = properties,
-			
+			console.log(newCharacter);
 			this.characters.push(newCharacter);
 			return newCharacter;
 		};
@@ -171,8 +171,9 @@ $(function() {
 			var res = false;
 			
 			for (var i = 0; i < this.characters.length; i++)
-				if (this.characters[i].properties.main == "true")
+				if (this.characters[i].main == true || this.characters[i].main == "true")
 					res = this.characters[i];
+					
 			return res;			
 		};
 	};
@@ -234,9 +235,12 @@ $(function() {
 				
 		this.removeLink = function(lid) {
 			
+			var temp = [];
 			for (var j = 0; j < this.links.length; j++)
-				if (this.links[j].id == lid)
-					this.links = this.links.slice(j, j+1);
+				if (this.links[j].id != lid)
+					temp.push(this.links[j]);
+					
+			this.links = temp;
 			
 			return true;
 		};
@@ -323,15 +327,15 @@ $(function() {
 					story.paragraphes.push(newParagraph);
 				});
 			
+			console.log(s.characters);
 			if (s.characters)
 				s.characters.forEach(function(el, i) {
 				
-					var newCharacter = new Character(i);
-					for (var property in el)
-						if (property == '_id')
-							newCharacter.id = el._id.$id;
-						else
-							newCharacter.properties[property] = el[property];
+					var newCharacter = new Character(0);
+					newCharacter.id = el._id.$id;
+					newCharacter.main = el.main;
+					for (var property in el.properties)
+						newCharacter.properties[property] = el.properties[property];
 					
 					story.characters.push(newCharacter);
 				});
@@ -670,16 +674,16 @@ $(function() {
 					if ($(this).children('.key').val() != "")
 						properties[i] = {key:$(this).children('.key').val(), value:$(this).children('.value').val()}
 				});
-				properties.push({key: 'main', value: 'true'});
+				
 				var mainCharacter = story.getMainCharacter();
 				
 				if (mainCharacter)
 				{
 					$.ajax({
-					
+						
 						url: BASE_URL + 'index.php/edit/addCharProperties/' + mainCharacter.id,
 						type: 'POST',
-						data: {properties:properties, sid:$(this).attr('id')},
+						data: {properties:properties, main:true, sid:$(this).attr('id')},
 						dataType: 'json',
 						beforeSend: function() {
 						},
@@ -691,10 +695,13 @@ $(function() {
 								var main = story.getMainCharacter();
 								if (main)
 								{
+									if (main.id == -1)
+										main.id = data.id;
 									main.properties = {};
 									console.log(properties);
 									for (var i = 0; i < properties.length; i++)
 										main.properties[properties[i].key] = properties[i].value;
+									console.log(main);
 								}
 								else
 									alert('An error has occured, please refresh the page and retry.');
@@ -741,14 +748,14 @@ $(function() {
 					if ($(this).children('.key').val() != "")
 						properties[i] = {key:$(this).children('.key').val(), value:$(this).children('.value').val()}
 				});
-				properties.push({key: 'main', value: 'false'});
+				
 				cid = $('.otherCharSelector').attr('value');
 					
 				$.ajax({
 				
 					url: BASE_URL + 'index.php/edit/addCharProperties/' + cid,
 					type: 'POST',
-					data: {properties:properties, sid:$(this).attr('id')},
+					data: {properties:properties, main: false, sid:$(this).attr('id')},
 					dataType: 'json',
 					beforeSend: function() {
 					},
@@ -808,16 +815,13 @@ $(function() {
 				console.log(char);
 				for (var property in char.properties)
 				{
-					if (property != 'main')
-					{
-						var html = '<div class="input-prepend">\
-										Name: <input type="text" value="' + property + '" class="key span4" />\
-										Value: <input type="text" value="' + char.properties[property] + '" class="value span4" />\
-										<a class="btn" href="#" id="addStat"><i class="icon-plus"></i></a>\
-										<a class="btn" href="#" id="rmStat"><i class="icon-minus"></i></a>\
-									</div>';
-						$('.editOtherChar').append(html);
-					}
+					var html = '<div class="input-prepend">\
+									Name: <input type="text" value="' + property + '" class="key span4" />\
+									Value: <input type="text" value="' + char.properties[property] + '" class="value span4" />\
+									<a class="btn" href="#" id="addStat"><i class="icon-plus"></i></a>\
+									<a class="btn" href="#" id="rmStat"><i class="icon-minus"></i></a>\
+								</div>';
+					$('.editOtherChar').append(html);
 				};				
 			});
 			

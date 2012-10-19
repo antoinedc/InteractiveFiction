@@ -33,6 +33,7 @@ class Read extends CI_Controller {
 			return;
 		}
 		$session = '';
+		$endText = '<br /><br />-----------------------------<br />This is the end of the story !<br /><a href="#" class="restart">Restart</a>';
 		if (empty($sessionId) && $this->session->userdata('uid'))
 			$sessionId = $sid . '-0-' . $this->session->userdata('uid');
 		
@@ -58,8 +59,9 @@ class Read extends CI_Controller {
 			if ($link['destination'] == $pid)
 			{
 				//echo "ok";
-				if (isset($link['action']) && !empty($link['action']))
+				if (isset($link['action']) && !empty($link['action']) && isset($link['action']['key']) && isset($link['action']['value']) && !empty($link['action']['key']) && !empty($link['action']['value']))
 				{
+					var_dump($link['action']);
 					$operation = $link['action']['operation'];
 					$key = $link['action']['key'];
 					$value = $link['action']['value'];
@@ -90,7 +92,9 @@ class Read extends CI_Controller {
 				break;
 			}
 		
-		
+	/*	if ($paragraph['isEnd'] == true || $paragraph['isEnd'] == "true")
+			$paragraph['text'] .= $endText;*/
+			
 		if (isset($sessionId))
 			$this->bookmark($sid, $pid, $sessionId);
 		echo json_encode(array_merge($paragraph, array('stats' => $session->stats[0]), array('status' => $status)));
@@ -130,8 +134,9 @@ class Read extends CI_Controller {
 					{
 						$stats = array();
 						
-						foreach ($session->stats[0] as $key => $value)
-							$stats = array_merge($stats, array($key => $value));
+						foreach ($session->stats[0]['properties'] as $key => $value)
+							if ($key != 'main' && $key != 'id')
+								array_push($stats, array($key => $value));
 							
 						echo json_encode(array(
 							'status' => 1,						
@@ -173,6 +178,7 @@ class Read extends CI_Controller {
 			if (empty($session))
 			{
 				//If the reader has just started the story
+				var_dump($story->characters);
 				$newSession = new Sessions;
 				$newSession->sessionid = $sessionId;
 				$newSession->sid = $sid;

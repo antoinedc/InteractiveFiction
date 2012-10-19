@@ -62,26 +62,25 @@ class Edit extends CI_Controller {
 		{	
 			$main = $story->getMainCharacter();
 			
-			if ($main)
+			if (isset($main['properties']))
 			{
-				while (list($key, $val) = each($main))
-					if ($key != '_id' && $key != 'main')
-						$statsMain[] = array('key' => $key, 'value' => $val);
+				while (list($key, $val) = each($main['properties']))
+					$statsMain[] = array('key' => $key, 'value' => $val);
 			}
 				
 			for ($i = 0; $i < count($story->characters); $i++)
 			{
-				while (list($key, $val) = each($story->characters[$i]))
+				while (list($key, $val) = each($story->characters[$i]['properties']))
 				{
 					$temp = array_merge($temp, array($key => $val));
+					$temp = array_merge($temp, array('_id' => $story->characters[$i]['_id']->{'$id'}));
 				}
 				
-				if ($temp['main'] == "false")
+				if ($story->characters[$i]['main'] == 'false' || $story->characters[$i]['main'] == false)
 					$statsOthersChars[] = $temp;
 			}
 		}
 		
-		//var_dump($statsOthersChars);
 		$data_edit_story = array(
 									'baseUrl' => base_url(),
 									'title' => $story->title,
@@ -263,6 +262,7 @@ class Edit extends CI_Controller {
 	function addCharProperties($cid = -1)
 	{
 		$properties = $this->input->post('properties');
+		$main = $this->input->post('main');
 		$sid = $this->input->post('sid');
 		
 		if (empty($sid) || empty($properties))
@@ -278,7 +278,7 @@ class Edit extends CI_Controller {
 		
 		$story = $this->stories->select(array('_id' => $sid));
 		
-		$id = $story->updateCharStats($cid, $newProperties);
+		$id = $story->updateCharStats($cid, array('main' => $main, 'properties' => $newProperties));
 		
 		if ($id)
 			echo json_encode(array('status' => true, 'id' => $id));

@@ -18,7 +18,7 @@ $(function() {
 				console.log(data);
 				if (data.status > 0)
 				{
-					var notification = '<a href="#" id="continue">Continue the story</a>|<a href="#" id="restart">Start a new one</a>';
+					var notification = '<a href="#" id="continue">Continue the story</a>|<a href="#" class="restart">Start a new one</a>';
 					$('#text').hide();
 					$('#links').hide();
 					$('#charStats').hide();
@@ -32,17 +32,18 @@ $(function() {
 							$('#links').append(link);
 						});
 						$('#table').empty();
+						console.log(data.session.stats);
 						for (var i in data.session.stats)
 						{
-							if (i != '_id')
-								$('#table').append('<tr><td>' + i + '</td><td>' + data.session.stats[i] + '</td></tr>');
+							if (i != 'id' && i != 'main')
+								$('#table').append('<tr><td>' + i + '</td><td>' + data.session.stats.properties[i] + '</td></tr>');
 						}
 						$('#text').show();
 						$('#links').show();
 						$('#charStats').show();
 						$('#notifications').empty();
 					});
-					$('a#restart').live('click', function() {
+					$('a.restart').live('click', function() {
 						$('#text').show();
 						$('#links').show();
 						$('#charStats').show();
@@ -87,10 +88,11 @@ $(function() {
 					});
 					
 					$('#table').empty();
-					for (var i in data.stats)
+					console.log(data.properties);
+					for (var i in data.stats.properties)
 					{
-						if (i != '_id')
-							$('#table').append('<tr><td>' + i + '</td><td>' + data.stats[i] + '</td></tr>');
+						if (i != 'id' && i != 'main')
+							$('#table').append('<tr><td>' + i + '</td><td>' + data.stats.properties[i] + '</td></tr>');
 					}
 					
 					if (data.isEnd == 'true')
