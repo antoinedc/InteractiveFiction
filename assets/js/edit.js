@@ -67,7 +67,8 @@ $(function(){
 				$.unblockUI();
 				$.growlUI($('div.growlUI.success').html());
 				console.log(data);
-				$('.paragraph').first().before('<div class="paragraph span8 well">Link to your story: <a target="_blank" href="http://' + data.url + '">' + data.url + '</a></div>');
+				$('#hereIsYourLink').html('<a href="http://' + data.url + '" target="_blank">http://' + data.url + '</a>');
+				$('#publishOnlineModal').modal('show');
 				
 			},
 			error: function(a, b, c) {

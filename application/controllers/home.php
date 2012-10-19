@@ -18,6 +18,7 @@ class Home extends CI_Controller {
 		$this->load->library('mongo_db');
 		
 		$this->load->model('mongo/users');
+		$this->load->model('mongo/changelogs');
 	}
 	
 	public function index()
@@ -26,12 +27,36 @@ class Home extends CI_Controller {
 		
 		$visibility = ($this->session->userdata('email') ? 'private/' : 'public/');
 		
+		$changeLog = $this->input->post('changelog');
+		if (!empty($changeLog))
+		{
+			$newChangelog = new Changelogs;
+			$newChangelog->author = 'Antoine';
+			$newChangelog->date = date('D/M/Y, H:i:s');
+			$newChangelog->text = $changeLog;
+			$newChangelog->insert();
+		}
+		
+		$data_home = array(
+			'changelogs' => array_reverse($this->changelogs->select()),
+			'write' => ''
+		);
+		$write = '';
+		if ($this->session->userdata('email') == 'adechevigne@gmail.com')
+		{
+			$data_home['write'] = '<form method="post">
+					<textarea class="ckeditor" id="changelog" name="changelog"></textarea>
+					<br />
+					<input type="submit" class="btn" value="Envoyer" />
+				</form>';
+		}
+		
 		$data = array(
 						'baseUrl' => base_url(),
 						'location' => $location,
-						'mainContent' => $this->parser->parse($visibility . 'home.html', array('baseUrl' => base_url()), TRUE)
+						'mainContent' => $this->parser->parse($visibility . 'home.html', $data_home, TRUE)
 					);
-					
+		
 		$this->parser->parse($visibility . 'layout.html', $data);
 	}
 	

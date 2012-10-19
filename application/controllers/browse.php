@@ -65,7 +65,7 @@ class Browse extends CI_Controller {
 			$paragraph = $story->getFirstParagraph();
 			
 		if (!$paragraph)
-			redirect(base_url() . 'index.php/browse/story/' . $sid . '/?error=noPid');
+			redirect(base_url() . 'index.php/browse/?error=noPid');
 		
 		if ($pid && $sessionId)
 			$this->bookmark($sid, $pid, $sessionId);

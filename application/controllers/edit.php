@@ -69,15 +69,18 @@ class Edit extends CI_Controller {
 			}
 				
 			for ($i = 0; $i < count($story->characters); $i++)
-			{
-				while (list($key, $val) = each($story->characters[$i]['properties']))
+			{	
+				if (isset($story->characters[$i]['properties']))
 				{
-					$temp = array_merge($temp, array($key => $val));
-					$temp = array_merge($temp, array('_id' => $story->characters[$i]['_id']->{'$id'}));
+					while (list($key, $val) = each($story->characters[$i]['properties']))
+					{
+						$temp = array_merge($temp, array($key => $val));
+						$temp = array_merge($temp, array('_id' => $story->characters[$i]['_id']->{'$id'}));
+					}
+					
+					if ($story->characters[$i]['main'] == 'false' || $story->characters[$i]['main'] == false)
+						$statsOthersChars[] = $temp;
 				}
-				
-				if ($story->characters[$i]['main'] == 'false' || $story->characters[$i]['main'] == false)
-					$statsOthersChars[] = $temp;
 			}
 		}
 		
@@ -338,7 +341,13 @@ class Edit extends CI_Controller {
 				$link->_id = new MongoId($link->id);
 				unset($link->id);
 			}
-		}		
+		}
+		
+		foreach ($new_story->characters as $character)
+		{
+			$character->_id = new MongoId($character->id);
+			unset($character->id);
+		}
 		
 		$sid = $new_story->id;
 		$story = $this->stories->select(array('_id' => $sid));

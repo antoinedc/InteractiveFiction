@@ -8,11 +8,10 @@ CKEDITOR.editorConfig = function( config ) {
 	// config.language = 'fr';
 	// config.uiColor = '#AADC6E';
 	
-	config.extraPlugins = 'savec,addLink';
 	config.toolbar_Basic =
 	[
 		['Bold', 'Italic', '-', 'BulletedList', '-', 'Link', 'Unlink','-']
 	];
-	config.toolbar = 'Basic';
+	config.toolbar = 'Full';
 };
 

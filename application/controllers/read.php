@@ -61,7 +61,7 @@ class Read extends CI_Controller {
 				//echo "ok";
 				if (isset($link['action']) && !empty($link['action']) && isset($link['action']['key']) && isset($link['action']['value']) && !empty($link['action']['key']) && !empty($link['action']['value']))
 				{
-					var_dump($link['action']);
+					//var_dump($link['action']);
 					$operation = $link['action']['operation'];
 					$key = $link['action']['key'];
 					$value = $link['action']['value'];
@@ -136,7 +136,7 @@ class Read extends CI_Controller {
 						
 						foreach ($session->stats[0]['properties'] as $key => $value)
 							if ($key != 'main' && $key != 'id')
-								array_push($stats, array($key => $value));
+								$stats = array_merge($stats, array($key => $value));
 							
 						echo json_encode(array(
 							'status' => 1,						
@@ -163,6 +163,11 @@ class Read extends CI_Controller {
 	public function deleteSession($sessionId)
 	{
 		$session = $this->sessions->select($sessionId);
+		if (!$session)
+		{
+			echo json_encode(array('status' => 0));
+			return;
+		}
 		$res = $session->delete();
 		echo json_encode(array('status' => $res));
 	}
@@ -178,7 +183,7 @@ class Read extends CI_Controller {
 			if (empty($session))
 			{
 				//If the reader has just started the story
-				var_dump($story->characters);
+				//var_dump($story->characters);
 				$newSession = new Sessions;
 				$newSession->sessionid = $sessionId;
 				$newSession->sid = $sid;

@@ -82,10 +82,10 @@ class Generate extends CI_Controller {
 		
 		/**Generate the HTML**/
 		$html_base = $baseDir . 'html/index.html'; 
+		$main = $story->getMainCharacter();
 		
-		foreach ($story->characters[0] as $key => $value)
-			if ($key != '_id')
-				$stats[] = array('key' => $key, 'value' => $value);
+		foreach ($main['properties'] as $key => $value)
+			$stats[] = array('key' => $key, 'value' => $value);
 		
 		$data_layout_html = array(
 			'title' => $story->title,
@@ -94,7 +94,7 @@ class Generate extends CI_Controller {
 			'notifications' => '',
 			'paragraph' => $firstParagraph['text'],
 			'links' => $firstParagraph['links'],
-			'stats' => array_reverse($stats)
+			'stats' => $stats
 		);
 		
 		$html_file = $this->parser->parse('generator/layout.html', $data_layout_html, TRUE);
