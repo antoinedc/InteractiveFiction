@@ -38,6 +38,8 @@ class Home extends CI_Controller {
 		}
 		
 		$data_home = array(
+			
+			'baseUrl' => base_url(),
 			'changelogs' => array_reverse($this->changelogs->select()),
 			'write' => ''
 		);
