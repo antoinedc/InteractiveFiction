@@ -5,6 +5,10 @@ $(function() {
 	{/variables}
 	
 	var sessionId = '';
+	
+	if ($('#charStats').val() == "")
+		$('#charStats').hide();
+		
 	if ($.cookie(sid))
 	{
 		sessionId = $.cookie(sid);
@@ -25,6 +29,7 @@ $(function() {
 					$('#notifications').html(notification);
 					
 					$('a#continue').live('click', function() {
+					
 						$('#text').html(data.session.text);
 						$('#links').empty();
 						$.each(data.session.links, function(i, n) {
@@ -32,24 +37,30 @@ $(function() {
 							$('#links').append(link);
 						});
 						$('#table').empty();
+						
 						for (var i in data.session.stats)
 						{
 							if (i != 'id' && i != 'main')
 								$('#table').append('<tr><td>' + i + '</td><td>' + data.session.stats[i] + '</td></tr>');
 						}
 						
-						if (!data.session.stats.length)
+						$('#charStats').show();
+						if (!data.session.stats.length || $('#charStats').val() == "")
 							$('#charStats').hide();
 							
 						$('#text').show();
 						$('#links').show();
-						$('#charStats').show();
 						$('#notifications').empty();
 					});
+					
 					$('a#restart').live('click', function() {
+					
 						$('#text').show();
 						$('#links').show();
-						$('#charStats').show();
+						
+						if ($('#charStats').val() != "")
+							$('#charStats').show();
+							
 						$.getJSON(BASE_URL + 'index.php/read/deleteSession/' + sessionId, function(data) {
 							console.log(data);
 						});
@@ -98,7 +109,7 @@ $(function() {
 							$('#table').append('<tr><td>' + i + '</td><td>' + data.stats.properties[i] + '</td></tr>');
 					}
 					
-					if (!data.properties)
+					if (!data.properties || $('#charStats').val() == "")
 						$('#charStats').hide();
 						
 					if (data.isEnd == 'true')
