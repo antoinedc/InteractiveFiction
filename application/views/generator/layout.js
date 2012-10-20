@@ -37,6 +37,10 @@ $(function() {
 							if (i != 'id' && i != 'main')
 								$('#table').append('<tr><td>' + i + '</td><td>' + data.session.stats[i] + '</td></tr>');
 						}
+						
+						if (!data.session.stats.length)
+							$('#charStats').hide();
+							
 						$('#text').show();
 						$('#links').show();
 						$('#charStats').show();
@@ -94,6 +98,9 @@ $(function() {
 							$('#table').append('<tr><td>' + i + '</td><td>' + data.stats.properties[i] + '</td></tr>');
 					}
 					
+					if (!data.properties)
+						$('#charStats').hide();
+						
 					if (data.isEnd == 'true')
 					{
 						var endText = '----------------------<br />\

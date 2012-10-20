@@ -367,7 +367,7 @@ class Edit extends CI_Controller {
 			echo json_encode(array('status' => -2));
 			return;
 		}
-		
+	
 		if (!$this->session->userdata('uid'))
 		{
 			echo json_encode(array('status' => -1));

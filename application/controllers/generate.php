@@ -83,6 +83,7 @@ class Generate extends CI_Controller {
 		/**Generate the HTML**/
 		$html_base = $baseDir . 'html/index.html'; 
 		$main = $story->getMainCharacter();
+		$stats = array();
 		
 		foreach ($main['properties'] as $key => $value)
 			$stats[] = array('key' => $key, 'value' => $value);

@@ -116,7 +116,7 @@ class Home extends CI_Controller {
 		
 		$this->session->set_userdata(array(
 												'email' => $email,
-												'uid' => $uid->_id->{'$id'}
+												'uid' => $uid->{'$id'}
 										)
 									);
 		
