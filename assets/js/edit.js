@@ -64,12 +64,19 @@ $(function(){
 				});
 			},
 			success: function(data) {
-				$.unblockUI();
-				$.growlUI($('div.growlUI.success').html());
-				console.log(data);
-				$('#hereIsYourLink').html('<a href="http://' + data.url + '" target="_blank">http://' + data.url + '</a>');
-				$('#publishOnlineModal').modal('show');
-				
+			
+				$.unblockUI();	
+				if (data.status == true)
+				{
+					$.growlUI($('div.growlUI.success').html());
+					console.log(data);
+					$('#hereIsYourLink').html('<a href="http://' + data.url + '" target="_blank">http://' + data.url + '</a>');
+					$('#publishOnlineModal').modal('show');
+				}
+				else if (data.status == -2)
+					alert('You need to create one paragraph at least.');
+				else
+					alert('Unexpected error, please retry.');
 			},
 			error: function(a, b, c) {
 				$.unblockUI();
@@ -103,9 +110,12 @@ $(function(){
 			},
 			success: function(data) {
 				$.unblockUI();
+				
 				if (data.status == 1)
 					$.growlUI($('div.growlUI.successMxit').html());
-				console.log(data);
+				else if (data.status == -2)
+					alert('You need to create one paragraph at least.');
+				
 			},
 			error: function(a, b, c) {
 				$.unblockUI();

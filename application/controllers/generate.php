@@ -30,10 +30,17 @@ class Generate extends CI_Controller {
 			echo json_encode(array('status' => -1));
 			return;
 		}
+		
+		$story = $this->stories->select(array('_id' => $sid));
+		if (!count($story->paragraphes))
+		{
+			echo json_encode(array('status' => -2));
+			return;
+		}
+		
 		$this->stories->goToProd(array('_id' => $sid));
 		$return = array();
 		
-		$story = $this->stories->select(array('_id' => $sid));
 		$firstParagraph = $story->getFirstParagraph();			
 		$bucketName = 'interactivefiction';
 		$s3 = $this->awslib->get_s3();
@@ -85,8 +92,9 @@ class Generate extends CI_Controller {
 		$main = $story->getMainCharacter();
 		$stats = array();
 		
-		foreach ($main['properties'] as $key => $value)
-			$stats[] = array('key' => $key, 'value' => $value);
+		if (isset($main['properties']))
+			foreach ($main['properties'] as $key => $value)
+				$stats[] = array('key' => $key, 'value' => $value);
 		
 		$data_layout_html = array(
 			'title' => $story->title,
@@ -120,13 +128,19 @@ class Generate extends CI_Controller {
 		);
 		
 		echo json_encode(array(
-							'filesStatus' => $return,
+							'status' => $res->status == 200,
 							'url' => $bucketName . '.s3-website-us-east-1.amazonaws.com/' . $html_base
 						));
 	}
 	
 	function mxit($sid)
 	{
+		$story = $this->stories->select(array('_id' => $sid));
+		if (!count($story->paragraphes))
+		{
+			echo json_encode(array('status' => -2));
+			return;
+		}
 		$res = $this->stories->goToProd(array('_id' => $sid));
 		echo json_encode(array('status' => 1));
 	}
