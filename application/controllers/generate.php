@@ -25,112 +25,119 @@ class Generate extends CI_Controller {
 	
 	function html($sid)
 	{
-		if (!$this->session->userdata('email'))
+		try
 		{
-			echo json_encode(array('status' => -1));
-			return;
-		}
+			if (!$this->session->userdata('email'))
+			{
+				echo json_encode(array('status' => -1));
+				return;
+			}
+			
+			$story = $this->stories->select(array('_id' => $sid));
+			if (!count($story->paragraphes))
+			{
+				echo json_encode(array('status' => -2));
+				return;
+			}
+			
+			$this->stories->goToProd(array('_id' => $sid));
+			$return = array();
+			
+			$firstParagraph = $story->getFirstParagraph();			
+			$bucketName = 'interactivefiction';
+			$s3 = $this->awslib->get_s3();
+			
+			$baseDir = 'Stories/' . $sid . '/';
+			
+			/**Generate the javascript**/
+			$js_base = $baseDir . 'js/loader.js';
+			$data_layout_js = array(
+				'variables' => array(
+					array(
+						'key' => 'BASE_URL',
+						'value' => base_url()
+					),
+					array(
+						'key' => 'sid',
+						'value' => $sid
+					),
+					array(
+						'key' => 'firstPid',
+						'value' => $firstParagraph['_id']->{'$id'}
+					)
+				),
+			);
+			
+			$js_file = $this->parser->parse('generator/layout.js', $data_layout_js, TRUE);
 		
-		$story = $this->stories->select(array('_id' => $sid));
-		if (!count($story->paragraphes))
+			$res = $s3->create_object(
+				$bucketName,
+				$js_base,
+				array(
+					'body' => $js_file,
+					'contentType' => 'text/javascript',
+					'meta' => array(
+						'owner' => $this->session->userdata('uid'),
+						'sid' => $sid
+					)
+				)
+			);
+			/***************************/
+			
+			$result[] = array(
+				'file' => $js_file,
+				'status' => $res->status
+			);
+			
+			/**Generate the HTML**/
+			$html_base = $baseDir . 'html/index.html'; 
+			$main = $story->getMainCharacter();
+			$stats = array();
+			
+			if (isset($main['properties']))
+				foreach ($main['properties'] as $key => $value)
+					$stats[] = array('key' => $key, 'value' => $value);
+			
+			$data_layout_html = array(
+				'title' => $story->title,
+				'js_src' => '../js/loader.js',
+				'css_src' => '../css/' . $sid . '.css',
+				'notifications' => '',
+				'paragraph' => $firstParagraph['text'],
+				'links' => $firstParagraph['links'],
+				'stats' => $stats
+			);
+			
+			$html_file = $this->parser->parse('generator/layout.html', $data_layout_html, TRUE);
+			
+			$res = $s3->create_object(
+				$bucketName,
+				$html_base,
+				array(
+					'body' => $html_file,
+					'contentType' => 'text/html',
+					'meta' => array(
+						'owner' => $this->session->userdata('uid'),
+						'sid' => $sid
+					)
+				)
+			);
+			/*********************/
+			
+			$result[] = array(
+				'file' => $html_file,
+				'status' => $res->status
+			);
+			
+			echo json_encode(array(
+								'status' => $res->status == 200,
+								'url' => $bucketName . '.s3-website-us-east-1.amazonaws.com/' . $html_base
+							));
+		} catch( Exception $e)
 		{
-			echo json_encode(array('status' => -2));
-			return;
+			if (get_class($e) == "cURL_Exception")
+				echo json_encode(array('status' => -3));
 		}
-		
-		$this->stories->goToProd(array('_id' => $sid));
-		$return = array();
-		
-		$firstParagraph = $story->getFirstParagraph();			
-		$bucketName = 'interactivefiction';
-		$s3 = $this->awslib->get_s3();
-		
-		$baseDir = 'Stories/' . $sid . '/';
-		
-		/**Generate the javascript**/
-		$js_base = $baseDir . 'js/loader.js';
-		$data_layout_js = array(
-			'variables' => array(
-				array(
-					'key' => 'BASE_URL',
-					'value' => base_url()
-				),
-				array(
-					'key' => 'sid',
-					'value' => $sid
-				),
-				array(
-					'key' => 'firstPid',
-					'value' => $firstParagraph['_id']->{'$id'}
-				)
-			),
-		);
-		
-		$js_file = $this->parser->parse('generator/layout.js', $data_layout_js, TRUE);
-	
-		$res = $s3->create_object(
-			$bucketName,
-			$js_base,
-			array(
-				'body' => $js_file,
-				'contentType' => 'text/javascript',
-				'meta' => array(
-					'owner' => $this->session->userdata('uid'),
-					'sid' => $sid
-				)
-			)
-		);
-		/***************************/
-		
-		$result[] = array(
-			'file' => $js_file,
-			'status' => $res->status
-		);
-		
-		/**Generate the HTML**/
-		$html_base = $baseDir . 'html/index.html'; 
-		$main = $story->getMainCharacter();
-		$stats = array();
-		
-		if (isset($main['properties']))
-			foreach ($main['properties'] as $key => $value)
-				$stats[] = array('key' => $key, 'value' => $value);
-		
-		$data_layout_html = array(
-			'title' => $story->title,
-			'js_src' => '../js/loader.js',
-			'css_src' => '../css/' . $sid . '.css',
-			'notifications' => '',
-			'paragraph' => $firstParagraph['text'],
-			'links' => $firstParagraph['links'],
-			'stats' => $stats
-		);
-		
-		$html_file = $this->parser->parse('generator/layout.html', $data_layout_html, TRUE);
-		
-		$res = $s3->create_object(
-			$bucketName,
-			$html_base,
-			array(
-				'body' => $html_file,
-				'contentType' => 'text/html',
-				'meta' => array(
-					'owner' => $this->session->userdata('uid'),
-					'sid' => $sid
-				)
-			)
-		);
-		/*********************/
-		
-		$result[] = array(
-			'file' => $html_file,
-			'status' => $res->status
-		);
-		
-		echo json_encode(array(
-							'status' => $res->status == 200,
-							'url' => $bucketName . '.s3-website-us-east-1.amazonaws.com/' . $html_base
-						));
 	}
 	
 	function mxit($sid)

@@ -268,13 +268,15 @@ class Edit extends CI_Controller {
 		$main = $this->input->post('main');
 		$sid = $this->input->post('sid');
 		
-		if (empty($sid) || empty($properties))
+		if (empty($sid))
 		{
 			echo json_encode(array('status' => -1));
 			return;
 		}
 		
 		$newProperties = array();
+		if ($properties == "") $properties = array();
+		
 		foreach ($properties as $p)
 			if (!empty($p['key']))
 				$newProperties = array_merge(array($p['key'] => $p['value']), $newProperties);

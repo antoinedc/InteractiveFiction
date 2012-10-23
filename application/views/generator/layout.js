@@ -6,9 +6,17 @@ $(function() {
 	
 	var sessionId = '';
 	
-	if ($('#charStats').val() == "")
+	if ($('#charStats').html() == "")
 		$('#charStats').hide();
-		
+	
+	var isObjectEmpty = function(obj) {
+	
+		for (var el in obj)
+			return false;
+			
+		return true;
+	};
+	
 	if ($.cookie(sid))
 	{
 		sessionId = $.cookie(sid);
@@ -45,7 +53,7 @@ $(function() {
 						}
 						
 						$('#charStats').show();
-						if (!data.session.stats.length || $('#charStats').val() == "")
+						if (isObjectEmpty(data.session.stats) || $('#charStats').html() == "")
 							$('#charStats').hide();
 							
 						$('#text').show();
@@ -58,7 +66,7 @@ $(function() {
 						$('#text').show();
 						$('#links').show();
 						
-						if ($('#charStats').val() != "")
+						if ($('#charStats').html() != "")
 							$('#charStats').show();
 							
 						$.getJSON(BASE_URL + 'index.php/read/deleteSession/' + sessionId, function(data) {
@@ -79,11 +87,7 @@ $(function() {
 		$.cookie(sid, sid + '-1-' + uniqId());
 
 	$('#links > a').live('click', function() {
-		if ($(this).attr('id') == firstPid)
-			$.getJSON(BASE_URL + 'index.php/read/deleteSession/' + sessionId, function(data) {
-				console.log(data);
-			});
-			
+
 		$.ajax({
 			url: BASE_URL + 'index.php/read/story/' + sid + '/' + $(this).attr('id') + '/' + $.cookie(sid),
 			type: 'GET',
@@ -102,14 +106,14 @@ $(function() {
 					});
 					
 					$('#table').empty();
-					console.log(data.properties);
+					
 					for (var i in data.stats.properties)
 					{
 						if (i != 'id' && i != 'main')
 							$('#table').append('<tr><td>' + i + '</td><td>' + data.stats.properties[i] + '</td></tr>');
 					}
 					
-					if (!data.properties || $('#charStats').val() == "")
+					if (!data.stats.properties || $('#charStats').html() == "")
 						$('#charStats').hide();
 						
 					if (data.isEnd == 'true')

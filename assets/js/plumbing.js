@@ -12,6 +12,14 @@ $(function() {
 		return "rgb(" + R + "," + G + "," + B + ")";
 	};
 	
+	var isObjectEmpty = function(obj) {
+	
+		for (var el in obj)
+			return false;
+			
+		return true;
+	};		
+	
 	var selected;
 	var Story = function(id) {
 	
@@ -176,6 +184,18 @@ $(function() {
 					
 			return res;			
 		};
+		
+		this.updateLinksActions = function() {
+		
+			var res = false;
+			var main = this.getMainCharacter();
+			var newAction;
+			
+			for (var i = 0; i < this.paragraphes.length; i++)
+				for (var j = 0; j < this.paragraphes[i].links.length; j++)
+					if (main.properties[this.paragraphes[i].links[j].action.key] === undefined)
+						this.paragraphes[i].links[j].action = [];
+		};
 	};
 	
 	var Paragraph = function(id) {
@@ -206,6 +226,7 @@ $(function() {
 				text: text,
 				action: action
 			};
+			
 			$.post(BASE_URL + 'index.php/edit/addLink/', data, function(data) {
 			
 				if (data.status > 0)
@@ -310,16 +331,14 @@ $(function() {
 							newLink.destination = link.destination;
 							newLink.text = link.text;
 							
-							if (link.actions)
-								link.actions.forEach(function(action, i) {
-								
-									var newAction = new Action;
-									newAction.key = action.key;
-									newAction.operation = action.operation;
-									newAction.value = action.value;
-									
-									newLink.actions.push(newAction);
-								});
+							if (link.action !== undefined)
+							{
+								var newAction = new Action;
+								newAction.key = link.action.key;
+								newAction.operation = link.action.operation;
+								newAction.value = link.action.value;	
+								newLink.action = newAction;
+							}
 							
 							newParagraph.links.push(newLink);
 						});
@@ -531,6 +550,112 @@ $(function() {
 				$('#addParagraphModal').modal();
 			});
 			
+			$('#addLinkModal').on('show', function() {
+				
+				var sid = $('#addLinkModal').attr('data-sid');
+				var pid = $('#addLinkModal').attr('data-pid');
+				var lid = $('#addLinkModal').attr('data-lid');
+				
+				$('.deleteLinkButton').attr('disabled');
+				$('.addLink').attr('disabled');
+								
+				var mainCharacter = story.getMainCharacter();
+				var properties = mainCharacter.properties;
+				
+				if (!isObjectEmpty(properties))
+				{
+					$('#addOperation').empty();
+					for (var property in properties)
+					{
+						var html = '<div class="well property">' +
+										'<span class="property_key ' + property + '">' + property + '</span> (default value: ' + properties[property] + ')\
+									</div>';
+						$('#addOperation').prepend(html);
+					}
+					
+				}
+				else
+				{
+					$('#addOperation').empty();
+					$('#addOperation').html('You need to create variables first, using the menu "Edit character stats" => "Edit main character"');
+				}
+				
+				$('.property').hover(function() {
+					
+					$(this).css({
+						
+						'border': '1px solid red',
+						'cursor': 'pointer'
+					});
+				},
+				function() {
+				
+					$(this).css({
+					
+						'border': '1px solid rgba(0,0,0, 0.05)',
+						'cursor': ''
+					});
+					
+					if ($(this).hasClass('selected'))
+					{
+						$(this).css({
+						
+							'border': '1px solid green',
+							'cursor': ''
+						});
+					}
+				});
+				
+				$('.property').on('click', function() {
+				
+					if ($('#newValue').val() == '')
+					{
+						alert('You have to specify a value.');
+						return;
+					}
+
+					if (!$(this).hasClass('selected'))
+					{
+						
+						$('.property').removeClass('selected');					
+						$('.property').css({
+						
+							'border': '1px solid rgba(0,0,0, 0.05)',
+							'cursor': ''
+						});
+
+						$(this).addClass('selected');
+						$(this).css({
+						
+							'border': '1px solid green',
+							'cursor': ''
+						});
+					}
+					else
+						$(this).removeClass('selected');
+				});
+							
+				if (lid)
+				{
+					$.getJSON(BASE_URL + 'index.php/edit/getLink/' + sid + '/' + pid + '/' + lid, function(data) {
+						
+						console.log(data);
+						if (data.status > 0)
+						{				
+							$('input#choice').attr('value', data.link.text);
+							$('#newValue').val(data.link.action.value);
+							$('.property').removeClass('selected');
+							$('.property_key.' + data.link.action.key).parent().addClass('selected');
+						
+							$('.deleteLinkButton').removeAttr('disabled');
+							$('.addLink').removeAttr('disabled');
+						}
+						else
+							alert('An error has occured, please close this window and try again.');
+					});
+				}
+			});
+			
 			/***Link creation***/
 			$.each(story.paragraphes, function(i, e) {
 			
@@ -594,8 +719,8 @@ $(function() {
 				var paragraph = story.getParagraph(source);
 				var lid = $('#addLinkModal').attr('data-lid');
 				var operation = $('.selectOperation').attr('value');
-				var newValue = $('.newValue').val();
-				var prop = $('#addOperation').children('.key').text();
+				var newValue = $('#newValue').val();
+				var prop = $('#addOperation').children('.selected').children('.property_key').text();
 				
 				if (document.getElementById('choice').value == '') {
 				
@@ -676,6 +801,7 @@ $(function() {
 				});
 				
 				var mainCharacter = story.getMainCharacter();
+				if (!properties.length) properties = "";
 				
 				if (mainCharacter)
 				{
@@ -701,7 +827,10 @@ $(function() {
 									console.log(properties);
 									for (var i = 0; i < properties.length; i++)
 										main.properties[properties[i].key] = properties[i].value;
-									console.log(main);
+									console.log(story);
+									story.updateLinksActions();
+									story.update();
+									console.log(story);
 								}
 								else
 									alert('An error has occured, please refresh the page and retry.');

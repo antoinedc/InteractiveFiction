@@ -5023,3 +5023,7 @@ path {
 ._jsPlumb_connector:hover{
 	cursor: hand, pointer !important;
 }
+
+.property.selected {
+	border:1px solid green;
+}

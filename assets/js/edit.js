@@ -9,33 +9,7 @@ $(function(){
 	$('.addLinkModal').live('click', function() {
 		originId = $(this).parents('.paragraph').attr('id');
 	});
-	
-	$('#addLinkModal').on('show', function() {
-	
-		var sid = $('#addLinkModal').attr('data-sid');
-		var pid = $('#addLinkModal').attr('data-pid');
-		var lid = $('#addLinkModal').attr('data-lid');
-		
-		$('.deleteLinkButton').attr('disabled');
-		$('.addLink').attr('disabled');
-		
-		if (lid)
-		{
-			$.getJSON(BASE_URL + 'index.php/edit/getLink/' + sid + '/' + pid + '/' + lid, function(data) {
-				
-				console.log(data);
-				if (data.status > 0)
-				{
-					$('input#choice').attr('value', data.link.text);
-					$('.deleteLinkButton').removeAttr('disabled');
-					$('.addLink').removeAttr('disabled');
-				}
-				else
-					alert('An error has occured, please close this window and try again.');
-			});
-		}
-	});
-	
+
 	$('#editOthersCharacterModal').on('show', function() {
 	
 		$('.editOtherChar').empty();
@@ -75,6 +49,8 @@ $(function(){
 				}
 				else if (data.status == -2)
 					alert('You need to create one paragraph at least.');
+				else if (data.status == -3)
+					alert('An error occured while contacting the remote service, it maybe caused by a proxy.');
 				else
 					alert('Unexpected error, please retry.');
 			},
@@ -109,8 +85,8 @@ $(function(){
 				});
 			},
 			success: function(data) {
-				$.unblockUI();
 				
+				$.unblockUI();
 				if (data.status == 1)
 					$.growlUI($('div.growlUI.successMxit').html());
 				else if (data.status == -2)
@@ -144,5 +120,6 @@ $(function(){
 		
 		if ($(this).parent().parent().children('.input-prepend').length-1 && $(this).siblings('.key:input').val() != 'name')
 			$(this).parent().remove();
+			
 	});
 });

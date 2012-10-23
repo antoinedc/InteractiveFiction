@@ -58,24 +58,28 @@ class Read extends CI_Controller {
 		{
 			if ($link['destination'] == $pid)
 			{
-				//echo "ok";
 				if (isset($link['action']) && !empty($link['action']) && isset($link['action']['key']) && isset($link['action']['value']) && !empty($link['action']['key']) && !empty($link['action']['value']))
 				{
-					//var_dump($link['action']);
 					$operation = $link['action']['operation'];
 					$key = $link['action']['key'];
 					$value = $link['action']['value'];
-					//echo "ok";
-					if ($operation == '0')
-						$session->stats[0][$key] += $value;
-					else if ($operation == '1')
-						$session->stats[0][$key] -= $value;
-					else if ($operation == '2')
-						$session->stats[0][$key] *= $value;
-					else if ($operation == '3')
-						$session->stats[0][$key] /= $value;
-					else
-						return;
+					
+					for ($i = 0; $i < count($session->stats); $i++)
+					{
+						if ($session->stats[$i]['main'] == true || $session->stats[$i]['main'] == 'true')
+						{	
+							if ($operation == '0')
+								$session->stats[$i]['properties'][$key] += $value;
+							else if ($operation == '1')
+								$session->stats[$i]['properties'][$key] -= $value;
+							else if ($operation == '2')
+								$session->stats[$i]['properties'][$key] *= $value;
+							else if ($operation == '3')
+								$session->stats[$i]['properties'][$key] /= $value;
+							
+							break;
+						}
+					}
 					$session->update();
 				}	
 			}
