@@ -144,12 +144,11 @@
 			1. Double click on paragraphes for edit them (change the text, define if it's the start or the end of the story)<br />
 			2. You can drag them, don't forget the "Save" button for saving the new position<br />
 			3. Click on the red squares and drag to another paragraph for creating a link, edit or remove a link by clicking on it<br />
-			4. The characters stats, and others characters stats, are not usable for now, but you can define some<br />
-			5. You need to have one "start" paragraph only, that's why the first one created is set as "starting paragraph", you can change it by setting another paragraph as first with the corresponding checkbox<br />
-			6. You can have as many ends as you want, even zero, but it's preferable to have one<br />
-			<b>7. The online exportation is not working now</b><br />
-			8. For mxit, download the mxit app on Google Play or iTunes Store and add the contact "interactivefiction" for starting a story<br />
-			9. Questions/Bugs/etc => <a href="mailto:adechevigne@gmail.com" target="_blank">adechevigne@gmail.com</a><br />
+			4. You need to have one "start" paragraph only, that's why the first one created is set as "starting paragraph", you can change it by setting another paragraph as first with the corresponding checkbox<br />
+			5. You can have as many ends as you want, even zero, but it's preferable to have one<br />
+			<b>6. The online exportation is not working now</b><br />
+			7. For mxit, download the mxit app on Google Play or iTunes Store and add the contact "interactivefiction" for starting a story<br />
+			8. Questions/Bugs/etc => <a href="mailto:adechevigne@gmail.com" target="_blank">adechevigne@gmail.com</a><br />
 		</div>
 		<div class="modal-footer">
 			<a href="#" class="btn btn-primary" data-dismiss="modal">Close</a>
@@ -195,6 +194,38 @@
 					<div id="addOperation">
 						You need to create variables first, using the menu "Edit character stats" => "Edit main character"
 					</div>
+			</div>
+			<div id="addCondition">
+			<hr />
+			<h4>This link will be visible if:</h4>
+			<table>
+				<tr>
+					<td>
+						<select class="selectProperty input-small">
+							
+						</select>
+					</td>
+					<td>
+					&nbsp;is&nbsp;
+					</td>
+					<td>
+						<select class="selectCondition input-small" >
+							<option value="0">smaller</option>
+							<option value="1">smaller or equal</option>
+							<option value="2">equal</option>
+							<option value="3">greater or equal</option>
+							<option value="4">greater</option>
+							<option value="5">different</option>
+						</select>
+					</td>
+					<td>
+					&nbsp;than&nbsp;
+					</td>
+					<td>
+						<input type="text" class="conditionValue" />
+					</td>
+				</tr>
+			</table>
 			</div>
 		</div>		
 		

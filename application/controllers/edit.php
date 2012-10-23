@@ -215,6 +215,7 @@ class Edit extends CI_Controller {
 		$sid = $this->input->post('sid');
 		$text = $this->input->post('text');
 		$action = $this->input->post('action');
+		$condition = $this->input->post('condition');
 		$lid = $this->input->post('lid');
 		
 		if (empty($originId) || empty($destId) || empty($sid))
@@ -230,7 +231,8 @@ class Edit extends CI_Controller {
 			$newLink->destination = $destId;
 			$newLink->sid = $sid;
 			$newLink->text = $text;
-			$newLink->action = $action;
+			$newLink->action[] = ($action['key'] ? $action : array());
+			$newLink->condition = ($condition['key'] ? $condition: array());
 			$res = $newLink->insert();
 		}
 		else
@@ -245,7 +247,8 @@ class Edit extends CI_Controller {
 					$paragraph->links[$i]['destination'] = $destId;
 					$paragraph->links[$i]['sid'] = $sid;
 					$paragraph->links[$i]['text'] = $text;
-					$paragraph->links[$i]['action'] = $action;
+					$paragraph->links[$i]['action'][] = $action;
+					$paragraph->links[$i]['condition'] = $condition;
 					
 					$paragraph->update();
 					$res = $lid;

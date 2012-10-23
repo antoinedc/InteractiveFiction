@@ -34,7 +34,8 @@ class Links extends CI_Model {
 													'destination' => $this->destination,
 													'text' => $this->text,
 													'sid' => $this->sid,
-													'action' => $this->action
+													'action' => $this->action,
+													'condition' => $this->condition
 											)
 										)->get('stories')))
 			return false;
@@ -45,6 +46,7 @@ class Links extends CI_Model {
 						'destination' => $this->destination,
 						'text' => $this->text,
 						'sid' => $this->sid,
+						'condition' => $this->condition,
 						'action' => $this->action
 					);
 		
@@ -71,6 +73,7 @@ class Links extends CI_Model {
 				$this->text = $res['text'];
 				$this->sid = $res['sid'];
 				$this->action = $res['action'];
+				$this->condition = $res['condition'];
 				return $this;
 			}
 			else
@@ -87,6 +90,8 @@ class Links extends CI_Model {
 						'origin' => $this->origin,
 						'destination' => $this->destination,
 						'text' => $this->text,
+						'action' => $this->action,
+						'condition' => $this->condition,
 						'sid' => $this->sid
 					);
 		

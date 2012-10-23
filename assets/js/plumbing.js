@@ -209,14 +209,15 @@ $(function() {
 		this.y = 50;
 		this.links = [];
 		
-		this.addLink = function(source, target, text, action, callback) {
+		this.addLink = function(source, target, text, action, condition, callback) {
 		
 			var newLink = new Link(0);
 			newLink.sid = this.sid;
 			newLink.origin = source;
 			newLink.destination = target;
 			newLink.text = text;
-			newLink.action = action;
+			newLink.action.push(action);
+			newLink.condition = condition;
 			
 			var data = {
 			
@@ -275,12 +276,20 @@ $(function() {
 		this.destination = 0;
 		this.text = '';
 		this.action = [];
+		this.condition = null;
 	};
 	
 	var Action = function() {
 		
 		this.key = '';
 		this.operation = -1;
+		this.value = '';
+	};
+	
+	var Condition = function() {
+	
+		this.key = '';
+		this.operator = -1;
 		this.value = '';
 	};
 	
@@ -337,7 +346,7 @@ $(function() {
 								newAction.key = link.action.key;
 								newAction.operation = link.action.operation;
 								newAction.value = link.action.value;	
-								newLink.action = newAction;
+								newLink.action.push(newAction);
 							}
 							
 							newParagraph.links.push(newLink);
@@ -565,12 +574,16 @@ $(function() {
 				if (!isObjectEmpty(properties))
 				{
 					$('#addOperation').empty();
+					$('.selectProperty').empty();
 					for (var property in properties)
 					{
-						var html = '<div class="well property">' +
+						var operation_html = '<div class="well property">' +
 										'<span class="property_key ' + property + '">' + property + '</span> (default value: ' + properties[property] + ')\
 									</div>';
-						$('#addOperation').prepend(html);
+						$('#addOperation').prepend(operation_html);
+						
+						var condition_html = '<option value="' + property + '">' + property + '</option>';
+						$('.selectProperty').append(condition_html);
 					}
 					
 				}
@@ -729,21 +742,30 @@ $(function() {
 				}
 				
 				action = {
+					
 					key:prop,
 					operation:operation,
 					value:newValue			
+				};
+				
+				condition = {
+				
+					key: $('.selectProperty').attr('value'),
+					operator: $('.selectCondition').attr('value'),
+					value: $('.conditionValue').text()
 				};
 				
 				if (lid)
 				{
 					var link = paragraph.getLink(lid);
 					link.text = $('#choice').val();
-					link.action = action;
+					link.action.push(action);
+					link.condition = condition;
 					story.update();
 					$('#addLinkModal').modal('hide');
 				}
 				else
-					paragraph.addLink(source, target, $('#choice').val(), action, function(status, link) {
+					paragraph.addLink(source, target, $('#choice').val(), action, condition, function(status, link) {
 					
 						if (status)
 						{
