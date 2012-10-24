@@ -215,9 +215,14 @@ class Edit extends CI_Controller {
 		curl_setopt($ch, CURLOPT_USERPWD, 'DEMO_KEY' . ':');
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
 		$response = json_decode(curl_exec($ch), TRUE);
-		echo "<pre>";
-		print_r($response);
-		echo "</pre>";
+
+		$count = count($response['data']);
+		$mean = 0;
+		
+		while (list($key, $val) = each($response['data']))
+			$mean = count($val) / $count;
+		
+		echo $mean;
 	}
 	
 	function addLink()
