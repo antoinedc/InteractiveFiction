@@ -161,72 +161,33 @@
 			<h3>Edit a link</h3>
 		</div>
 		
-		<div class="modal-body">	
-			<div id="linkOthers">
+		<div class="modal-body">
+			
+			<div id="text">
+				<h4>Text of the link</h4><br />
 				<table>
 					<tr>
-						<td>Text: <input type="text" id="choice" name="choice" class="input-large" /></td>
-					</tr>
-				</table>
-				<hr />
-				<table>
-					<tr>
-						<th><h4>Property</h4></th>
-						<th><h4>Operation</h4></th>
-						<th><h4>Value</h4></th>
-					<tr>
-					<tr>
-						<td>
-							<select class="selectPropertyOp input-small">
-							</select>
-						</td>
-						<td>
-							<select class="selectOperation">
-								<option value="0">+</option>
-								<option value="1">-</option>
-								<option value="2">/</option>
-								<option value="3">*</option>
-								<option value="4">Text</option>
-							</select>
-						</td>
-
-						<td>
-							<input type="text" id="newValue"/>
-						</td>
+						<td><input type="text" id="choice" name="choice" class="input-large" /></td>
 					</tr>
 				</table>
 			</div>
-			<div id="addCondition">
+			
 			<hr />
-			<h4>This link will be <select class="conditionType input-small"><option value="0">visible</option><option value="1">invisible</option></select> if:</h4>
-			<table>
-				<tr>
-					<td>
-						<select class="selectProperty input-small">
-						</select>
-					</td>
-					<td>
-					&nbsp;is&nbsp;
-					</td>
-					<td>
-						<select class="selectCondition input-small" >
-							<option value="0">smaller</option>
-							<option value="1">smaller or equal</option>
-							<option value="2">equal</option>
-							<option value="3">greater or equal</option>
-							<option value="4">greater</option>
-							<option value="5">different</option>
-						</select>
-					</td>
-					<td>
-					&nbsp;than&nbsp;
-					</td>
-					<td>
-						<input type="text" class="conditionValue" />
-					</td>
-				</tr>
-			</table>
+			<div id="modifiers">
+				<h4>Add a modifier</h4><br />
+				<table>
+				</table>
+				<a class="btn" href="#" id="addOp"><i class="icon-plus"></i></a>
 			</div>
+		
+			<hr />
+			<div id="conditions">
+			<h4>Add a condition</h4>
+				<table>
+				</table>
+				<a class="btn" href="#" id="addCondition"><i class="icon-plus"></i></a>
+			</div>
+			
 		</div>		
 		
 		<div class="modal-footer">

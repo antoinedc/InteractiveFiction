@@ -193,8 +193,15 @@ $(function() {
 			
 			for (var i = 0; i < this.paragraphes.length; i++)
 				for (var j = 0; j < this.paragraphes[i].links.length; j++)
-					if (main.properties[this.paragraphes[i].links[j].action.key] === undefined)
-						this.paragraphes[i].links[j].action = [];
+				{
+					for (var k = 0; k < this.paragraphes[i].links[j].action.length; k++)
+						if (main.properties[this.paragraphes[i].links[j].action[k].key] === undefined)
+							this.paragraphes[i].links[j].action.splice(k, 1);
+				
+					for (var k = 0; k < this.paragraphes[i].links[j].condition.length; k++)
+						if (main.properties[this.paragraphes[i].links[j].condition[k].key] === undefined)
+							this.paragraphes[i].links[j].condition.splice(k, 1);				
+				}
 		};
 	};
 	
@@ -276,7 +283,7 @@ $(function() {
 		this.destination = 0;
 		this.text = '';
 		this.action = [];
-		this.condition = null;
+		this.condition = [];
 	};
 	
 	var Action = function() {
@@ -342,13 +349,29 @@ $(function() {
 							
 							if (link.action !== undefined)
 							{
-								var newAction = new Action;
-								newAction.key = link.action.key;
-								newAction.operation = link.action.operation;
-								newAction.value = link.action.value;	
-								newLink.action.push(newAction);
-							}
-							
+								link.action.forEach(function(action, i) {
+								
+									var newAction = {
+									
+										key: action.key,
+										operation: action.operation,
+										value: action.value
+									};
+									newLink.action.push(newAction);
+								});
+								
+								link.condition.forEach(function(condition, i) {
+								
+									var newCondition = {
+									
+										key: condition.key,
+										operation: condition.operation,
+										state: condition.state,
+										value: condition.value
+									};
+									newLink.condition.push(newCondition);
+								});
+							}					
 							newParagraph.links.push(newLink);
 						});
 					
@@ -474,7 +497,7 @@ $(function() {
 					
 					var modal = $('#addLinkModal');
 					$('#choice').attr('value', '');
-					$('#newValue').attr('value', '');
+					$('.newValue').attr('value', '');
 					modal.attr('data-lid', '');					
 					modal.attr('data-conn-id', conn.connection.id);					
 					modal.attr('data-sourceid', conn.sourceId);
@@ -559,6 +582,111 @@ $(function() {
 				$('#addParagraphModal').modal();
 			});
 			
+			var populate_properties_selector = function(parent, child) {
+			
+				var mainCharacter = story.getMainCharacter();
+				console.log(parent);
+				for (var property in mainCharacter.properties)
+				{
+					var property_html = '<option value="' + property + '">' + property + '</option>';
+					$(parent).find(child).append(property_html);
+				}
+			};
+			
+			$('.rmOp').live('click', function() {
+			
+				$(this).parents('.property_modifier').remove();
+				if (!$('.property_modifier').length)
+					$('#header_modifier_html').remove();
+			});
+			
+			$('#addOp').on('click', function() {
+				
+				var header_modifiers_html =
+						'<tr id="header_modifier_html">\
+							<th><h4>Property</h4></th>\
+							<th><h4>Operation</h4></th>\
+							<th><h4>Value</h4></th>\
+						<tr>';
+						
+				if (!$('#header_modifier_html').length)
+					$('#modifiers > table').append(header_modifiers_html);
+				
+				var modifier_html =
+						'<tr class="property_modifier">\
+							<td>\
+								<select class="selectPropertyOp input-small">\
+								</select>\
+							</td>\
+							<td>\
+								<select class="selectOperation input-small">\
+									<option value="0">+</option>\
+									<option value="1">-</option>\
+									<option value="2">/</option>\
+									<option value="3">*</option>\
+									<option value="4">Text</option>\
+								</select>\
+							</td>\
+							<td>\
+								<input type="text" class="newValue"/>\
+							</td>\
+							<td style="position:absolute;vertical-align:center;">\
+								<a class="btn rmOp" href="#"><i class="icon-minus"></i></a>\
+							</td>\
+						</tr>';
+				$('#modifiers > table').append(modifier_html);
+				populate_properties_selector($(this).siblings('table').find('.property_modifier').last(), '.selectPropertyOp');
+			});
+			
+			$('.rmCondition').live('click', function() {
+			
+				$(this).parents('.link_condition').remove();
+			});
+			
+			$('#addCondition').live('click', function() {
+			
+				var condition_html = 
+						'<tr class="link_condition">\
+							<td>\
+								<select class="conditionType input-small">\
+									<option value="0">Invisible</option>\
+									<option value="1">Visible</option>\
+								</select>\
+							</td>\
+							<td>\
+								&nbsp;if&nbsp;\
+							</td>\
+							<td>\
+								<select class="selectProperty input-small">\
+								</select>\
+							</td>\
+							<td>\
+							&nbsp;is&nbsp;\
+							</td>\
+							<td>\
+								<select class="selectCondition input-small" >\
+									<option value="0">smaller</option>\
+									<option value="1">smaller or equal</option>\
+									<option value="2">equal</option>\
+									<option value="3">greater or equal</option>\
+									<option value="4">greater</option>\
+									<option value="5">different</option>\
+								</select>\
+							</td>\
+							<td>\
+							&nbsp;than&nbsp;\
+							</td>\
+							<td>\
+								<input type="text" class="conditionValue input-small" />\
+							</td>\
+							<td style="position:absolute;vertical-align:center;">\
+								<a class="btn rmCondition" href="#"><i class="icon-minus"></i></a>\
+							</td>\
+						</tr>';
+				$('#conditions > table').append(condition_html);
+				populate_properties_selector($(this).siblings('table').find('.link_condition').last(), '.selectProperty');
+			});
+			
 			$('#addLinkModal').on('show', function() {
 				
 				var sid = $('#addLinkModal').attr('data-sid');
@@ -600,10 +728,28 @@ $(function() {
 						if (data.status > 0)
 						{				
 							$('input#choice').attr('value', data.link.text);
-							$('#newValue').val(data.link.action.value);
-							$('.property').removeClass('selected');
-							$('.property_key.' + data.link.action.key).parent().addClass('selected');
-						
+							var actions = data.link.action;
+							var conditions = data.link.condition;
+							
+							$('#modifiers > table').empty();
+							actions.forEach(function(action, i) {
+								
+								$('#addOp').trigger('click');
+								$('.property_modifier').last().find('.selectPropertyOp').attr('value', action.key);
+								$('.property_modifier').last().find('.selectOperation').attr('value', action.operation);
+								$('.property_modifier').last().find('.newValue').attr('value', action.value);
+							});
+							
+							$('#conditions > table').empty();
+							conditions.forEach(function(condition, i) {
+								
+								$('#addCondition').trigger('click');
+								$('.link_condition').last().find('.conditionType').attr('value', condition.state);
+								$('.link_condition').last().find('.selectProperty').attr('value', condition.key);
+								$('.link_condition').last().find('.selectCondition').attr('value', condition.operation);
+								$('.link_condition').last().find('.conditionValue').attr('value', condition.value);
+							});
+							
 							$('.deleteLinkButton').removeAttr('disabled');
 							$('.addLink').removeAttr('disabled');
 						}
@@ -675,8 +821,6 @@ $(function() {
 				var target = $('#addLinkModal').attr('data-targetid');
 				var paragraph = story.getParagraph(source);
 				var lid = $('#addLinkModal').attr('data-lid');
-				var operation = $('.selectOperation').attr('value');
-				var newValue = $('#newValue').val();
 				var prop = $('#addOperation').children('.selected').children('.property_key').text();
 				
 				if (document.getElementById('choice').value == '') {
@@ -685,26 +829,46 @@ $(function() {
 					return;
 				}
 				
-				action = {
+				var actions = [];
+				var conditions = [];
+				
+				$('.property_modifier').each(function() {
 					
-					key:prop,
-					operation:operation,
-					value:newValue			
-				};
+					var modifier = $(this);
+					var newAction = {
+						
+						key: modifier.find('.selectPropertyOp').attr('value'),
+						operation: modifier.find('.selectOperation').attr('value'),
+						value: modifier.find('.newValue').val()
+					};
+					if (newAction.key != "")
+						actions.push(newAction);
+				});
+
+				$('.link_condition').each(function() {
+					
+					var link_condition = $(this);
+					var newCondition = {
+						
+						state: link_condition.find('.conditionType').attr('value'),
+						key: link_condition.find('.selectProperty').attr('value'),
+						operation: link_condition.find('.selectCondition').attr('value'),
+						value: link_condition.find('.conditionValue').val()
+					};
+					
+					if (newCondition.key != "" && (newCondition.state == 0 || newCondition.state == 1))
+						conditions.push(newCondition);
+				});
 				
-				condition = {
-				
-					key: $('.selectProperty').attr('value'),
-					operator: $('.selectCondition').attr('value'),
-					value: $('.conditionValue').text()
-				};
+				console.log(actions);
+				console.log(conditions);
 				
 				if (lid)
 				{
 					var link = paragraph.getLink(lid);
 					link.text = $('#choice').val();
-					link.action.push(action);
-					link.condition = condition;
+					link.action = actions
+					link.condition = conditions;
 					story.update();
 					$('#addLinkModal').modal('hide');
 				}
@@ -968,7 +1132,7 @@ $(function() {
 							
 							var modal = $('#addLinkModal');
 							$('#choice').attr('value', '');
-							$('#newValue').attr('value', '');
+							$('.newValue').attr('value', '');
 							modal.attr('data-lid', '');								
 							modal.attr('data-conn-id', conn.connection.id);					
 							modal.attr('data-sourceid', conn.sourceId);
