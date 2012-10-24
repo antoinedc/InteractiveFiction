@@ -218,7 +218,7 @@ class Edit extends CI_Controller {
 
 		$sections_count = count($response['data']);
 		$mean = 0;
-		
+		$students_count = 0;
 		while (list($key, $val) = each($response['data']))
 		{
 			$students_count += count($val['data']['students']);
