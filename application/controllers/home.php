@@ -104,10 +104,10 @@ class Home extends CI_Controller {
 			echo json_encode(array('status' => -1));
 			return;
 		}
-		
 		echo json_encode(array(
 			'status' => 1,
-			'email' => $this->session->userdata('email')
+			'email' => $this->session->userdata('email'),
+			'id' => $this->session->userdata('uid')
 		));
 	}
 	

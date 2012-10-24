@@ -208,23 +208,6 @@ class Edit extends CI_Controller {
 		-1: empty fields
 		-2: this link already exists
 	**/
-	
-	function clever()
-	{
-		$ch = curl_init('https://api.getclever.com/v1.1/sections');
-		curl_setopt($ch, CURLOPT_USERPWD, 'DEMO_KEY' . ':');
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
-		$response = json_decode(curl_exec($ch), TRUE);
-
-		$sections_count = count($response['data']);
-		$students_count = 0;
-		
-		while (list($key, $val) = each($response['data']))
-			$students_count += count($val['data']['students']);
-		
-		echo $students_count / $sections_count;
-	}
-	
 	function addLink()
 	{
 		$originId = $this->input->post('originid');
