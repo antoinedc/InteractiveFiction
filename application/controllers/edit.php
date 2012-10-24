@@ -221,12 +221,12 @@ class Edit extends CI_Controller {
 		
 		while (list($key, $val) = each($response['data']))
 		{
-			$students_count = count($val['data']['students']);
+			$students_count += count($val['data']['students']);
 			echo "Section " . $val['data']['name'] . ' : ' . $students_count . ' students.<br />'; 
 			$mean += (float)($students_count / $sections_count);
 		}
 		
-		echo $mean;
+		echo $students_count / $sections_count;
 	}
 	
 	function addLink()
