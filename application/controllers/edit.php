@@ -214,9 +214,10 @@ class Edit extends CI_Controller {
 		$ch = curl_init('https://api.getclever.com/v1.1/sections');
 		curl_setopt($ch, CURLOPT_USERPWD, 'DEMO_KEY' . ':');
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
-		//curl_setopt($ch, CURLOPT_PROXY,'mib.dsp.sun.ac.za:3128');
-		$response = json_decode(curl_exec($ch));
-		var_dump( $response );
+		$response = json_decode(curl_exec($ch), TRUE);
+		echo "<pre>";
+		print_r($response);
+		echo "</pre>";
 	}
 	
 	function addLink()
