@@ -163,17 +163,23 @@
 		
 		<div class="modal-body">	
 			<div id="linkOthers">
-				<h3>Change a property</h3>
+				<table>
+					<tr>
+						<td>Text: <input type="text" id="choice" name="choice" class="input-large" /></td>
+					</tr>
+				</table>
 				<hr />
 				<table>
 					<tr>
-						<td>Text: <input type="text" id="choice" name="choice" class="span9" /></td>
-					</tr>
-					<tr>
+						<th><h4>Property</h4></th>
 						<th><h4>Operation</h4></th>
 						<th><h4>Value</h4></th>
 					<tr>
 					<tr>
+						<td>
+							<select class="selectPropertyOp input-small">
+							</select>
+						</td>
 						<td>
 							<select class="selectOperation">
 								<option value="0">+</option>
@@ -189,20 +195,14 @@
 						</td>
 					</tr>
 				</table>
-				<hr />
-				<h4>Apply to</h4>
-					<div id="addOperation">
-						You need to create variables first, using the menu "Edit character stats" => "Edit main character"
-					</div>
 			</div>
 			<div id="addCondition">
 			<hr />
-			<h4>This link will be visible if:</h4>
+			<h4>This link will be <select class="conditionType input-small"><option value="0">visible</option><option value="1">invisible</option></select> if:</h4>
 			<table>
 				<tr>
 					<td>
 						<select class="selectProperty input-small">
-							
 						</select>
 					</td>
 					<td>

@@ -573,14 +573,13 @@ $(function() {
 				
 				if (!isObjectEmpty(properties))
 				{
-					$('#addOperation').empty();
 					$('.selectProperty').empty();
+					$('.selectPropertyOp').empty();
+					
 					for (var property in properties)
 					{
-						var operation_html = '<div class="well property">' +
-										'<span class="property_key ' + property + '">' + property + '</span> (default value: ' + properties[property] + ')\
-									</div>';
-						$('#addOperation').prepend(operation_html);
+						var operation_html = '<option value="' + property + '">' + property + '</option>';
+						$('.selectPropertyOp').append(operation_html);
 						
 						var condition_html = '<option value="' + property + '">' + property + '</option>';
 						$('.selectProperty').append(condition_html);
@@ -592,61 +591,6 @@ $(function() {
 					$('#addOperation').empty();
 					$('#addOperation').html('You need to create variables first, using the menu "Edit character stats" => "Edit main character"');
 				}
-				
-				$('.property').hover(function() {
-					
-					$(this).css({
-						
-						'border': '1px solid red',
-						'cursor': 'pointer'
-					});
-				},
-				function() {
-				
-					$(this).css({
-					
-						'border': '1px solid rgba(0,0,0, 0.05)',
-						'cursor': ''
-					});
-					
-					if ($(this).hasClass('selected'))
-					{
-						$(this).css({
-						
-							'border': '1px solid green',
-							'cursor': ''
-						});
-					}
-				});
-				
-				$('.property').on('click', function() {
-				
-					if ($('#newValue').val() == '')
-					{
-						alert('You have to specify a value.');
-						return;
-					}
-
-					if (!$(this).hasClass('selected'))
-					{
-						
-						$('.property').removeClass('selected');					
-						$('.property').css({
-						
-							'border': '1px solid rgba(0,0,0, 0.05)',
-							'cursor': ''
-						});
-
-						$(this).addClass('selected');
-						$(this).css({
-						
-							'border': '1px solid green',
-							'cursor': ''
-						});
-					}
-					else
-						$(this).removeClass('selected');
-				});
 							
 				if (lid)
 				{

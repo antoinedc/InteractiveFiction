@@ -97,6 +97,20 @@ class Home extends CI_Controller {
 		redirect('home');
 	}
 	
+	public function getUserInfos()
+	{
+		if (!$this->session->userdata('email'))
+		{
+			echo json_encode(array('status' => -1));
+			return;
+		}
+		
+		echo json_encode(array(
+			'status' => 1,
+			'email' => $this->session->userdata('email')
+		));
+	}
+	
 	public function register()
 	{
 		$email = $this->input->post('email');
