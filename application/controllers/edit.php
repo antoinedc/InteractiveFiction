@@ -216,11 +216,15 @@ class Edit extends CI_Controller {
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
 		$response = json_decode(curl_exec($ch), TRUE);
 
-		$count = count($response['data']);
+		$sections_count = count($response['data']);
 		$mean = 0;
 		
 		while (list($key, $val) = each($response['data']))
-			$mean = count($val) / $count;
+		{
+			$students_count = count($val['data']['students']);
+			echo "Section " . $val['data']['name'] . ' : ' . $students_count . ' students.<br />'; 
+			$mean += $students_count / $sections_count;
+		}
 		
 		echo $mean;
 	}
