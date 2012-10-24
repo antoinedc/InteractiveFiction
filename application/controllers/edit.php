@@ -223,7 +223,7 @@ class Edit extends CI_Controller {
 		{
 			$students_count = count($val['data']['students']);
 			echo "Section " . $val['data']['name'] . ' : ' . $students_count . ' students.<br />'; 
-			$mean += $students_count / $sections_count;
+			$mean += (float)($students_count / $sections_count);
 		}
 		
 		echo $mean;
