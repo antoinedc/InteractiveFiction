@@ -216,15 +216,15 @@ $(function() {
 		this.y = 50;
 		this.links = [];
 		
-		this.addLink = function(source, target, text, action, condition, callback) {
+		this.addLink = function(source, target, text, actions, conditions, callback) {
 		
 			var newLink = new Link(0);
 			newLink.sid = this.sid;
 			newLink.origin = source;
 			newLink.destination = target;
 			newLink.text = text;
-			newLink.action.push(action);
-			newLink.condition = condition;
+			newLink.action = actions;
+			newLink.condition = conditions;
 			
 			var data = {
 			
@@ -232,7 +232,8 @@ $(function() {
 				destid: target,
 				sid: this.sid,
 				text: text,
-				action: action
+				action: actions,
+				condition: conditions
 			};
 			
 			$.post(BASE_URL + 'index.php/edit/addLink/', data, function(data) {
@@ -650,7 +651,7 @@ $(function() {
 							<td>\
 								<select class="conditionType input-small">\
 									<option value="0">Invisible</option>\
-									<option value="1">Visible</option>\
+									<option value="1">Visible only</option>\
 								</select>\
 							</td>\
 							<td>\
@@ -699,26 +700,8 @@ $(function() {
 				var mainCharacter = story.getMainCharacter();
 				var properties = mainCharacter.properties;
 				
-				if (!isObjectEmpty(properties))
-				{
-					$('.selectProperty').empty();
-					$('.selectPropertyOp').empty();
-					
-					for (var property in properties)
-					{
-						var operation_html = '<option value="' + property + '">' + property + '</option>';
-						$('.selectPropertyOp').append(operation_html);
-						
-						var condition_html = '<option value="' + property + '">' + property + '</option>';
-						$('.selectProperty').append(condition_html);
-					}
-					
-				}
-				else
-				{
-					$('#addOperation').empty();
-					$('#addOperation').html('You need to create variables first, using the menu "Edit character stats" => "Edit main character"');
-				}
+				$('#modifiers > table').empty();
+				$('#conditions > table').empty();
 							
 				if (lid)
 				{
@@ -841,6 +824,7 @@ $(function() {
 						operation: modifier.find('.selectOperation').attr('value'),
 						value: modifier.find('.newValue').val()
 					};
+					console
 					if (newAction.key != "")
 						actions.push(newAction);
 				});
@@ -867,13 +851,13 @@ $(function() {
 				{
 					var link = paragraph.getLink(lid);
 					link.text = $('#choice').val();
-					link.action = actions
+					link.action = actions;
 					link.condition = conditions;
 					story.update();
 					$('#addLinkModal').modal('hide');
 				}
 				else
-					paragraph.addLink(source, target, $('#choice').val(), action, condition, function(status, link) {
+					paragraph.addLink(source, target, $('#choice').val(), actions, conditions, function(status, link) {
 					
 						if (status)
 						{

@@ -181,7 +181,6 @@ class Stories extends CI_Model {
 		$paragraph = false;
 		foreach($this->paragraphes as $p)
 		{
-			//echo $p['isStart'];
 			if (new MongoId($p['_id']) == new MongoId($this->start))
 			{
 				$paragraph = $p;

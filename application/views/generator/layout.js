@@ -64,6 +64,12 @@ $(function() {
 					$('a#restart').live('click', function() {
 					
 						$('#text').show();
+						
+						$('#links').empty();
+						$.each(data.session.links, function(i, n) {
+							var link = '<a href="#" id="' + n.destination + '">' + n.text + '</a><br />';
+							$('#links').append(link);
+						});
 						$('#links').show();
 						
 						if ($('#charStats').html() != "")

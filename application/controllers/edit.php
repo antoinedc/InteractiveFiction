@@ -231,8 +231,8 @@ class Edit extends CI_Controller {
 			$newLink->destination = $destId;
 			$newLink->sid = $sid;
 			$newLink->text = $text;
-			$newLink->action[] = ($action['key'] ? $action : array());
-			$newLink->condition = ($condition['key'] ? $condition: array());
+			$newLink->action = (count($action) && $action ? $action : array());
+			$newLink->condition = (count($condition) && $action ? $condition : array());
 			$res = $newLink->insert();
 		}
 		else
@@ -247,7 +247,7 @@ class Edit extends CI_Controller {
 					$paragraph->links[$i]['destination'] = $destId;
 					$paragraph->links[$i]['sid'] = $sid;
 					$paragraph->links[$i]['text'] = $text;
-					$paragraph->links[$i]['action'][] = $action;
+					$paragraph->links[$i]['action'] = $action;
 					$paragraph->links[$i]['condition'] = $condition;
 					
 					$paragraph->update();
@@ -264,7 +264,7 @@ class Edit extends CI_Controller {
 		else
 			echo json_encode(array('status' => 1, 'lid' => $res));
 	}
-	
+
 	function addCharProperties($cid = -1)
 	{
 		$properties = $this->input->post('properties');

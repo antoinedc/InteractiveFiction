@@ -97,7 +97,31 @@ class Generate extends CI_Controller {
 			if (isset($main['properties']))
 				foreach ($main['properties'] as $key => $value)
 					$stats[] = array('key' => $key, 'value' => $value);
-			
+					
+			foreach ($firstParagraph['links'] as $i => $link)
+				foreach ($link['condition'] as $condition)
+				{
+					$key = $condition['key'];
+					if ($condition['operation'] == '0')
+						if ( ($main['properties'][$key] < $condition['value'] && $condition['state'] == '0') || ( (!($main['properties'][$key] < $condition['value'])) && $condition['state'] == '1') )
+							unset($firstParagraph['links'][$i]);
+					if ($condition['operation'] == '1')
+						if ( ($main['properties'][$key] <= $condition['value'] && $condition['state'] == '0') || ( (!($main['properties'][$key] <= $condition['value'])) && $condition['state'] == '1') )
+							unset($firstParagraph['links'][$i]);
+					if ($condition['operation'] == '2')
+						if ( ($main['properties'][$key] == $condition['value'] && $condition['state'] == '0') || ( (!($main['properties'][$key] == $condition['value'])) && $condition['state'] == '1') )
+							unset($firstParagraph['links'][$i]);
+					if ($condition['operation'] == '3')
+						if ( ($main['properties'][$key] >= $condition['value'] && $condition['state'] == '0') || ( (!($main['properties'][$key] >= $condition['value'])) && $condition['state'] == '1') )
+							unset($firstParagraph['links'][$i]);
+					if ($condition['operation'] == '4')
+						if ( ($main['properties'][$key] > $condition['value'] && $condition['state'] == '0') || ( (!($main['properties'][$key] > $condition['value'])) && $condition['state'] == '1') )
+							unset($firstParagraph['links'][$i]);				
+					if ($condition['operation'] == '5')
+						if ( ($main['properties'][$key] != $condition['value'] && $condition['state'] == '0') || ( (!($main['properties'][$key] != $condition['value'])) && $condition['state'] == '1') )
+							unset($firstParagraph['links'][$i]);	
+				}
+				
 			$data_layout_html = array(
 				'title' => $story->title,
 				'js_src' => '../js/loader.js',

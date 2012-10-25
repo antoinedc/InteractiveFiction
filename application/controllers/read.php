@@ -54,33 +54,37 @@ class Read extends CI_Controller {
 			$currentParagraph = $story->getParagraphById($session->pid);
 		}
 		
+		$main_session_index = -1;
+		for ($i = 0; $i < count($session->stats); $i++)
+			if ($session->stats[$i]['main'] == true || $session->stats[$i]['main'] == 'true')
+				$main_session_index = $i;
+		
 		foreach ($currentParagraph['links'] as $link)
 		{
 			if ($link['destination'] == $pid)
 			{
-				if (isset($link['action']) && !empty($link['action']) && isset($link['action']['key']) && isset($link['action']['value']) && !empty($link['action']['key']) && !empty($link['action']['value']))
+				if (count($link['action']))
 				{
-					$operation = $link['action']['operation'];
-					$key = $link['action']['key'];
-					$value = $link['action']['value'];
-					
-					for ($i = 0; $i < count($session->stats); $i++)
+					for ($i = 0; $i < count($link['action']); $i++)
 					{
-						if ($session->stats[$i]['main'] == true || $session->stats[$i]['main'] == 'true')
-						{	
-							if ($operation == '0')
-								$session->stats[$i]['properties'][$key] += $value;
-							else if ($operation == '1')
-								$session->stats[$i]['properties'][$key] -= $value;
-							else if ($operation == '2')
-								$session->stats[$i]['properties'][$key] *= $value;
-							else if ($operation == '3')
-								$session->stats[$i]['properties'][$key] /= $value;
-							
-							break;
-						}
+						$action = $link['action'][$i];
+						
+						$operation = $action['operation'];
+						$key = $action['key'];
+						$value = $action['value'];
+						
+						if ($operation == '0')
+							$session->stats[$main_session_index]['properties'][$key] += $value;
+						else if ($operation == '1')
+							$session->stats[$main_session_index]['properties'][$key] -= $value;
+						else if ($operation == '2')
+							$session->stats[$main_session_index]['properties'][$key] *= $value;
+						else if ($operation == '3')
+							$session->stats[$main_session_index]['properties'][$key] /= $value;
+					
+						$session->update();
 					}
-					$session->update();
+					break;
 				}	
 			}
 		}
@@ -88,7 +92,7 @@ class Read extends CI_Controller {
 		$paragraph = false;
 		$status = 0;
 		
-		foreach($story->paragraphes as $p)
+		foreach ($story->paragraphes as $p)
 			if ($p['_id']->{'$id'} == $pid)
 			{
 				$paragraph = $p;
@@ -98,7 +102,32 @@ class Read extends CI_Controller {
 		
 	/*	if ($paragraph['isEnd'] == true || $paragraph['isEnd'] == "true")
 			$paragraph['text'] .= $endText;*/
-			
+		
+		foreach ($paragraph['links'] as $i => $link)
+			foreach ($link['condition'] as $condition)
+			{
+				$key = $condition['key'];
+				if ($condition['operation'] == '0')
+					if ( ($session->stats[$main_session_index]['properties'][$key] < $condition['value'] && $condition['state'] == '0') || ( (!($session->stats[$main_session_index]['properties'][$key] < $condition['value'])) && $condition['state'] == '1') )
+						unset($paragraph['links'][$i]);
+				if ($condition['operation'] == '1')
+					if ( ($session->stats[$main_session_index]['properties'][$key] <= $condition['value'] && $condition['state'] == '0') || ( (!($session->stats[$main_session_index]['properties'][$key] <= $condition['value'])) && $condition['state'] == '1') )
+						unset($paragraph['links'][$i]);
+				if ($condition['operation'] == '2')
+					if ( ($session->stats[$main_session_index]['properties'][$key] == $condition['value'] && $condition['state'] == '0') || ( (!($session->stats[$main_session_index]['properties'][$key] == $condition['value'])) && $condition['state'] == '1') )
+						unset($paragraph['links'][$i]);
+				if ($condition['operation'] == '3')
+					if ( ($session->stats[$main_session_index]['properties'][$key] >= $condition['value'] && $condition['state'] == '0') || ( (!($session->stats[$main_session_index]['properties'][$key] >= $condition['value'])) && $condition['state'] == '1') )
+						unset($paragraph['links'][$i]);
+				if ($condition['operation'] == '4')
+					if ( ($session->stats[$main_session_index]['properties'][$key] > $condition['value'] && $condition['state'] == '0') || ( (!($session->stats[$main_session_index]['properties'][$key] > $condition['value'])) && $condition['state'] == '1') )
+						unset($paragraph['links'][$i]);				
+				if ($condition['operation'] == '5')
+					if ( ($session->stats[$main_session_index]['properties'][$key] != $condition['value'] && $condition['state'] == '0') || ( (!($session->stats[$main_session_index]['properties'][$key] != $condition['value'])) && $condition['state'] == '1') )
+						unset($paragraph['links'][$i]);	
+			}
+				
+		
 		if (isset($sessionId))
 			$this->bookmark($sid, $pid, $sessionId);
 		echo json_encode(array_merge($paragraph, array('stats' => $session->stats[0]), array('status' => $status)));
@@ -138,9 +167,37 @@ class Read extends CI_Controller {
 					{
 						$stats = array();
 						
-						foreach ($session->stats[0]['properties'] as $key => $value)
-							if ($key != 'main' && $key != 'id')
-								$stats = array_merge($stats, array($key => $value));
+						$main_session_index = -1;
+						for ($i = 0; $i < count($session->stats); $i++)
+							if ($session->stats[$i]['main'] == true || $session->stats[$i]['main'] == 'true')
+								$main_session_index = $i;
+
+						foreach ($session->stats[$main_session_index]['properties'] as $key => $value)
+							$stats = array_merge($stats, array($key => $value));
+
+						foreach ($paragraph['links'] as $i => $link)
+							foreach ($link['condition'] as $condition)
+							{
+								$key = $condition['key'];
+								if ($condition['operation'] == '0')
+									if ( ($session->stats[$main_session_index]['properties'][$key] < $condition['value'] && $condition['state'] == '0') || ( (!($session->stats[$main_session_index]['properties'][$key] < $condition['value'])) && $condition['state'] == '1') )
+										unset($paragraph['links'][$i]);
+								if ($condition['operation'] == '1')
+									if ( ($session->stats[$main_session_index]['properties'][$key] <= $condition['value'] && $condition['state'] == '0') || ( (!($session->stats[$main_session_index]['properties'][$key] <= $condition['value'])) && $condition['state'] == '1') )
+										unset($paragraph['links'][$i]);
+								if ($condition['operation'] == '2')
+									if ( ($session->stats[$main_session_index]['properties'][$key] == $condition['value'] && $condition['state'] == '0') || ( (!($session->stats[$main_session_index]['properties'][$key] == $condition['value'])) && $condition['state'] == '1') )
+										unset($paragraph['links'][$i]);
+								if ($condition['operation'] == '3')
+									if ( ($session->stats[$main_session_index]['properties'][$key] >= $condition['value'] && $condition['state'] == '0') || ( (!($session->stats[$main_session_index]['properties'][$key] >= $condition['value'])) && $condition['state'] == '1') )
+										unset($paragraph['links'][$i]);
+								if ($condition['operation'] == '4')
+									if ( ($session->stats[$main_session_index]['properties'][$key] > $condition['value'] && $condition['state'] == '0') || ( (!($session->stats[$main_session_index]['properties'][$key] > $condition['value'])) && $condition['state'] == '1') )
+										unset($paragraph['links'][$i]);				
+								if ($condition['operation'] == '5')
+									if ( ($session->stats[$main_session_index]['properties'][$key] != $condition['value'] && $condition['state'] == '0') || ( (!($session->stats[$main_session_index]['properties'][$key] != $condition['value'])) && $condition['state'] == '1') )
+										unset($paragraph['links'][$i]);	
+							}
 							
 						echo json_encode(array(
 							'status' => 1,						
