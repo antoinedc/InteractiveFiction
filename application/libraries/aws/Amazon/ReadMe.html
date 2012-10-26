@@ -1,0 +1,197 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        
+        <title>SimpleDB PHP Library</title>
+        <style type="text/css">
+            body, div, p, td, th {
+            font-family : helvetica,sans-serif, arial;
+            font-size : 12px;
+            color : #000000;
+            }
+            
+            .aws-h1, h1{
+            font-family: verdana, arial, helvetica, sans-serif;
+            font-size: 18px;
+            font-weight: bold;
+            color: #000000;
+            }
+            .aws-h2, h2{
+            font-family: verdana, arial, helvetica, sans-serif;
+            font-size: 14px;
+            color: #c60;
+            }
+            .aws-h3, h3{
+            font-family: verdana, arial, helvetica, sans-serif;
+            font-size: 12px;
+            font-weight: bold;
+            color: #333333;
+            }
+            
+            /*table ID selector styles*/
+            #aws-table {
+            border-top: 1px solid #cccccc;
+            border-left: 1px solid #cccccc;
+            width:95%;
+            }
+            
+            #aws-table td{
+            font-size: 12px;
+            padding: 5px 5px 5px 5px;
+            border-bottom: 1px solid #cccccc;
+            border-right: 1px solid #cccccc;
+            vertical-align:top;
+            }
+            
+            #aws-table th {
+            font-size: 12px;
+            padding: 5px 5px 5px 5px;
+            border-bottom: 1px solid #cccccc;
+            border-right: 1px solid #cccccc;
+            vertical-align:top;
+            background-color: #eeeeee;
+            color: #333333;
+            font-size: 12px;
+            font-weight: bold;
+            text-align: left;
+            }
+            
+            /*code, note, and example styles*/
+            pre {
+            font-family: "Courier New", Courier, mono;
+            font-size: 12px;
+            margin-top: 5px;
+            margin-bottom: 5px;
+            color: #000066;
+            padding: 5px;
+            background-color: #eff7ff;
+            border: 1px dashed #333;
+            width:75%;
+            display:block;
+            }
+
+        </style>
+    </head>
+    <body>
+        <h2>About this Library</h2>
+            <ul><li>Based on the 2007-11-07 API version.</li></ul>
+
+        <h2>Prerequisites</h2>
+        
+        <ul>
+            <li>Amazon SimpleDB account (<a href="http://aws.amazon.com/simpledb">http://aws.amazon.com/simpledb</a>).</li>
+            <li>PHP 5.2.1 or newer (<a href="http://www.php.net/">http://www.php.net/</a>)</li>
+        </ul>
+
+        <h2>Reference Documentation</h2>
+        <ul>
+            <li><a href="http://s3.amazonaws.com/awscode/amazon-simpledb/2007-11-07/php5/library/doc/index.html">Online PHP Docs</a></li>
+        </ul>
+
+        <h2>Package Content</h2>
+        
+        <table id="aws-table">
+            
+            <tbody>
+                <tr>
+                    <th>Directory</th>
+                    <th>Overview</th>
+                </tr>
+     
+                <tr>
+                    <td>
+                        src
+                    </td>
+                    <td>
+                        Source distribution of library. 
+                    </td>
+                </tr>
+            </tbody>
+            
+        </table>
+        
+        
+        <h2>Quick Start</h2>
+        
+        Library comes with code samples for each available service API. 
+        To get started with the library, follow these steps:
+        <ol>
+            <li>Extract the <strong>amazon-simpledb-2007-11-07-php5-library.zip</strong> file into a working directory.</li>
+            <li>Edit desired sample. For example: <b><a href="http://s3.amazonaws.com/awscode/amazon-simpledb/2007-11-07/php5/library/doc/__filesource/fsource_Amazon_SimpleDB__SamplesCreateDomainSample.php.html">src/Amazon/SimpleDB/Samples/CreateDomainSample.php</a></b></li>
+            <br/>
+            
+            <br/>
+            <ul>
+                <li>Set AWS Access Key ID and AWS Secret Access Key</li>
+                <pre>
+ $AWS_ACCESS_KEY_ID        = '&lt;Your Access Key ID&gt;';
+ $AWS_SECRET_ACCESS_KEY    = '&lt;Your Secret Access Key&gt;';
+                </pre>
+            </ul>
+            <br/>
+            <br/>
+            <ul>
+                <li>Set request parameters. For example, find following pre-generated snippet:</li>
+                <pre>
+ require_once ('Amazon/SimpleDB/Model/CreateDomain.php'); 
+ // @TODO: set action. Action can be passed as Amazon_SimpleDB_Model_CreateDomain 
+ // object or array of parameters
+ // invokeCreateDomain($service, $action);
+                </pre>
+            </ul>
+            <br/>
+            <br/>
+            <ul>
+                <li>And set DomainName parameter:</li>
+                
+                <pre>
+ require_once ('Amazon/SimpleDB/Model/CreateDomain.php'); 
+ $action = new Amazon_SimpleDB_Model_CreateDomain();
+ invokeCreateDomain($service, $action->withDomainName('MyDomain'));
+                </pre>
+                
+            </ul>
+            <br/>
+            
+            <li>Run CreateDomain sample:</li>
+            <pre>
+   php src/Amazon/SimpleDB/Samples/CreateDomainSample.php
+            </pre>
+           
+            <li>You should see the output 
+            similar to the following:</li>
+            <br/>
+            <br/>
+            <pre>
+    CreateDomainResponse
+        ResponseMetadata
+            RequestId
+                95cdcb68-f46c-400b-8265-8c2de2a5c475
+            </pre>
+	<br/>
+        <li>Experiment with samples. When ready, install library to your php include path and use it <p/></li>
+        </ol>
+		
+        <h2>Notes</h2>
+		
+You can use alternative array-based interface with the library. For example, instead of:
+	<p/>
+            <pre>
+    $action = new Amazon_SimpleDB_Model_CreateDomain();
+    $action->setDomainName('MyDomain');
+    $response = $service->createDomain($action);
+            </pre>
+            
+            You can write:
+            <pre>
+    $response = $service->createDomain(array('DomainName' => 'MyDomain'));
+            </pre>
+           
+            <p/>
+        <strong>Happy coding!</strong>
+        <h2>Comments, Questions or Feedback</h2>
+        
+        If you have any comments, questions or feedback on the library, please visit the <a href="http://developer.amazonwebservices.com/connect/forum.jspa?forumID=38">Amazon SimpleDB discussion forums</a>.
+
+    </body>
+</html>

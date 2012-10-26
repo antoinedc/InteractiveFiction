@@ -1,0 +1,141 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+<title>pawsSDB::deleteAttributes</title>
+
+<link rel="stylesheet" href="aux_files/paws_docs.css" type="text/css" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head>
+<body>
+<div class="section" lang="en">
+	<div class="titlepage">
+		<h1 class="topictitle">pawsSDB::deleteAttributes($itemName, $attributes)</h1>
+	</div>
+
+	<div class="section" lang="en">
+		<div class="titlepage">
+			<h2 class="title" style="clear: both;">Description</h2>
+		</div>
+		<p>Deletes one or more attributes associated with the 
+		item. If all attributes of an item are deleted, the item 
+		is deleted.</p>
+		<p> If <code><var>$attributes</var></code> is <code>NULL</code>, then entire <code><var>$itemName</var></code> item is deleted.      <code><var>$attributes</var></code> is an associative array, and if the value part <em><strong>is not</strong></em> <code>NULL</code>, then       the attribute name with provided values will be deleted. If the value part      <em><strong>is</strong></em> <code>NULL</code>, then the named attribute and all its values will be deleted. (See <a href="paws_putAttributes.html" title="putAttributes" target="main"><code>putAttributes</code></a> for description of associative attributes array.)</p>
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+			<table summary="Note" border="0">
+			<tbody>
+				<tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="aux_files/note.png"></td>
+					<th align="left">Note</th></tr>
+				<tr><td align="left" valign="top">
+						<p class="simpara">Because Amazon SimpleDB makes multiple copies of your data and uses an <em>eventual consistency</em> update model, a<a href="paws_getAllAttributes.html">getAllAttributes</a> or <a href="paws_query.html">query</a> request (read) immediately after a <code>putAttributes</code> or <a href="paws_deleteAttributes.html">deleteAttributes</a> operation (write) might not return the updated data.</p>
+			  </td></tr>
+			</tbody>
+			</table>
+		</div>
+	</div>
+
+		<div class="section" lang="en">
+			<div class="titlepage">
+				<h2 class="title" style="clear: both;">Parameters</h2>
+			</div>
+			<div class="informaltable">
+				<table border="0" cellspacing="0"><colgroup><col><col><col></colgroup>
+					<thead><tr><th>Name</th><th>Description</th><th>Required?</th></tr></thead>
+				    <tbody>
+						<tr>
+							<td><em class="parameter"><code>$itemName</code></em></td>
+							<td><p class="simpara"> The name of the item.</p>
+								<p class="simpara">Type: String</p></td>
+							<td>Yes</td>
+						</tr>
+                        <tr>
+							<td><em class="parameter"><code>$attributes</code></em></td>
+							<td><p class="simpara">An associative array of attributes.</p>
+							  <p class="simpara">Type: Associative array</p>
+                                <p class="simpara">Default: <code>NULL</code>, which deletes entire item <code><var>$itemName</var></code>.</p></td>
+							<td>No</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<div class="section" lang="en">
+			<div class="titlepage">
+			<h2 class="title" style="clear: both;">Return Value</h2>
+		</div>
+			<p>True or false. Call <code>getErrorCode</code> on false.</p>
+		<div class="titlepage">
+			<h2 class="title" style="clear: both;">Special Errors</h2>
+		</div>
+		<div class="informaltable">
+			<table border="0" cellspacing="0"><colgroup><col><col></colgroup>
+			<thead><tr><th>Error</th><th>Description</th></tr></thead>
+			<tbody>
+				
+			</tbody><tr><td>
+	            <code class="code">InvalidParameterValue</code>
+	          </td><td>
+				Value (" + value + ") for parameter Name is invalid. Value exceeds maximum length of 1024.</td></tr><tr><td>
+	            <code class="code">InvalidParameterValue</code>
+	          </td><td>
+				Value (" + value + ") for parameter Value is invalid. Value exceeds maximum length of 1024.</td></tr><tr><td>
+	            <code class="code">InvalidParameterValue</code>
+	          </td><td>
+				Value (" + value + ") for parameter Item is invalid. Value exceeds max length of 1024.</td></tr><tr><td>
+	            <code class="code">MissingParameter</code>
+	          </td><td>
+				The request must contain the parameter <em class="parameter"><code>DomainName</code></em>.</td></tr><tr><td>
+	            <code class="code">MissingParameter</code>
+	          </td><td>
+				The request must contain the parameter <em class="parameter"><code>ItemName</code></em>.</td></tr><tr><td>
+	            <code class="code">NoSuchDomain</code>
+	          </td><td>
+				The specified domain does not exist.</td></tr></tbody>
+			</table>
+		</div>
+		<div class="section" lang="en">
+			<div class="titlepage">
+				<h2 class="title" style="clear: both;">Examples</h2>
+			</div>
+		<div class="section" lang="en">
+			<div class="titlepage"><h3 class="title">Sample Code</h3>
+		</div>
+		<pre class="programlisting">
+    /**
+     *	simple example of paws function 
+     */
+     ...
+     include('pawsSDB.php');
+     $mySDB = new pawsSDB();
+     $mySDB->setDomain('NameList');
+     ...
+     
+     $mySDB->deleteAttributes('item99');	// delete 'item99'
+     
+     $attr = array('Color'=>'red');
+     $mySDB->deleteAttributes('item100',$attr); // delete value 'red' from attribute 'Color' of 'item100'
+
+     $attr = array('Fish'=>NULL);
+     $mySDB->deleteAttributes('item90',$attr);  // delete 'Fish' attribute of 'item90'
+     ...
+     
+		</pre>
+	
+		
+<div class="section" lang="en">
+	<div class="titlepage">
+		<h2 class="title" style="clear: both;">Related Functions</h2>
+	</div>
+	<div class="itemizedlist">
+	  <ul type="disc"><li>
+<a href="paws_getAllAttributes.html" target="main"><code>getAllAttributes</code></a></li>
+<li>
+<a href="paws_getAttributeValues.html" target="main"><code>getAttributeValues</code></a></li>
+<li>
+<a href="paws_putAttributes.html" target="main"><code>putAttributes</code></a></li>
+<li>
+<a href="paws_replaceAttributes.html" target="main"><code>replaceAttributes</code></a></li>
+</ul>
+	</div>
+</div>
+<p style="text-align:center; font-size:9px">Copyright &copy; 2008 Bruce E. Wampler</p>
+</div></body></html>

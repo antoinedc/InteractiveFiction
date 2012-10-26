@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+<title>pawsSDB::setDomain</title>
+
+<link rel="stylesheet" href="aux_files/paws_docs.css" type="text/css" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"></head>
+<body>
+<div class="section" lang="en">
+	<div class="titlepage">
+		<h1 class="topictitle">pawsSDB::setDomain($domainName)</h1>
+	</div>
+
+	<div class="section" lang="en">
+		<div class="titlepage">
+			<h2 class="title" style="clear: both;">Description</h2>
+		</div>
+		<p>All operations that get, put, or query data in AWS SimpleDB operate on a specific domain name. It is most likely that you will perform several operations on a single domain at a time. Rather than requiring every single data manipulation call to require a domain name parameter, the domain name is instead saved in the pawsSDB class instance using the <code>setDomain</code> function to change the name as needed.</p>
+		<p>Most of the time, this will be exactly what you want to do. Typically, you can keep a single instance of the pawSDB object and use <code>setDomain</code> to change the domain being used. </p>
+	  <p>Sometimes, however, you may want to work with several domains simultaneously. In that case, you can create separate instances of pawsSDB objects to use on individual domains. Either way, using this approach provides the most flexibility while simplifying your code.</p>
+	  <p>Note that neither calling <code>setDomain</code> nor creating a new pawsSDB instance cause transactions with SimpleDB, so you don't need to worry about using either approach causing  performance issues.</p>
+</div>
+
+		<div class="section" lang="en">
+			<div class="titlepage"></div>
+		</div>
+        
+        		<div class="section" lang="en">
+			<div class="titlepage">
+				<h2 class="title" style="clear: both;">Parameters</h2>
+			</div>
+			<div class="informaltable">
+				<table border="0" cellspacing="0"><colgroup><col><col><col></colgroup>
+					<thead><tr><th>Name</th><th>Description</th><th>Required?</th></tr></thead>
+				    <tbody>
+						<tr><td><em class="parameter"><code>$domainName</code></em></td>
+							<td><p class="simpara"> The name of the domain to set.</p>
+								<p class="simpara">Type: String</p></td>
+							<td>Yes</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<div class="titlepage"></div>
+			<div class="titlepage">
+				<h2 class="title" style="clear: both;">Examples</h2>
+			</div>
+		<div class="section" lang="en">
+			<div class="titlepage"><h3 class="title">Sample Code</h3>
+		</div>
+		<pre class="programlisting">
+    /**
+     *	simple example of paws function 
+     */
+     ...
+     include('pawsSDB.php');
+     $mySDB = new pawsSDB();
+     
+     $mySDB->setDomain('domainOne');
+     $mySDB->deleteAttributes('item00');
+     
+     ... more operations on 'domainOne'
+     
+     $mySDB->setDomain('domainTwo');
+     $mySDB->deleteAttributes('colorchoice');
+   
+     ... more operations on 'domainTwo'
+     
+		</pre>
+	
+		
+<div class="section" lang="en">
+	<div class="titlepage">
+		<h2 class="title" style="clear: both;">Related Functions</h2>
+	</div>
+	<div class="itemizedlist">
+		<ul type="disc">
+<li>
+<a href="paws_deleteAttributes.html" target="main"><code>deleteAttributes</code></a></li>
+<li>
+<a href="paws_getAllAttributes.html" target="main"><code>getAllAttributes</code></a></li>
+<li>
+<a href="paws_getAttributeValues.html" target="main"><code>getAttributeValues</code></a></li>
+<li>
+<a href="paws_putAttributes.html" target="main"><code>putAttributes</code></a></li>
+<li>
+<a href="paws_replaceAttributes.html" target="main"><code>replaceAttributes</code></a></li>
+<li>
+<a href="paws_query.html" target="main"><code>query</code></a></li>
+<li>
+<a href="paws_getNextQueryItemName.html" target="main"><code>getNextQueryItemName</code></a></li>
+
+		</ul>
+	</div>
+</div>
+<p style="text-align:center; font-size:9px">Copyright &copy; 2008 Bruce E. Wampler</p>
+</div></body></html>

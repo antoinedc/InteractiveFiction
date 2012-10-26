@@ -1,0 +1,218 @@
+body {
+	background-color: #DAF0FD;
+	margin-left: 0px;
+	margin-top: 0px;
+	margin-right: 0px;
+	margin-bottom: 0px;
+	background-image: url(../images/bg.gif);
+	font-family: Arial;
+	font-size: 12px;
+	line-height:16px;  	
+}
+
+.amChartsButtonSelected
+{
+   background-color:#CC0000;
+   border-style:solid;
+   border-color:#CC0000;
+   border-width:1px;
+   color:#FFFFFF;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  margin: 1px;   
+}
+
+.amChartsButton
+{
+   background-color:#EEEEEE;
+   border-style:solid;
+   border-color:#CCCCCC;
+   border-width:1px;
+   color:#000000;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  margin: 1px;  
+}
+
+.amChartsCompareList
+{
+   border-style:solid;
+   border-color:#CCCCCC;
+   border-width:1px;
+}
+
+.drop { behavior: url(lib/iepngfix.htc) }
+
+
+a:link{
+	color:#0055CC;
+}
+a:visited{
+		color:#990099;
+}
+a:hover{
+		color:#CC0000;
+}
+
+.topmenu:link{
+	color:#FFFFFF;
+	text-decoration: none;	
+	padding-right: 15px;
+	padding-left: 15px;
+	font-size: 13px;
+  font-weight: bold;	
+}
+.topmenu:visited{
+	color:#FFFFFF;
+	text-decoration: none;	
+	padding-right: 15px;
+	padding-left: 15px;
+	font-size: 13px;
+  font-weight: bold;	
+}
+.topmenu:hover{
+	color:#FFFFFF;
+	text-decoration: underline;	
+	padding-right: 15px;
+	padding-left: 15px;
+	font-size: 13px;
+  font-weight: bold;		
+}
+.topmenu:active{
+	color:#FFFFFF;
+	text-decoration: none;	
+	padding-right: 15px;
+	padding-left: 15px;
+	font-size: 13px;
+  font-weight: bold;	
+}
+.menu:link{
+	color:#002B6D;
+	text-decoration: none;	
+	padding-right: 15px;
+	font-size: 12px;	
+}
+.menu:visited{
+	color:#002B6D;
+	text-decoration: none;	
+	padding-right: 15px;
+	font-size: 12px;	
+}
+.menu:hover{
+	color:#D84B3C;
+	text-decoration: none;
+	font-size: 12px;
+	padding-right: 15px;	
+}
+.menu:active{
+	color:#002B6D;
+	text-decoration: none;
+	font-size: 12px;
+	padding-right: 15px;	
+}
+
+
+.menu2:link{
+	color:#0055CC;
+	text-decoration: none;
+}
+.menu2:visited{
+		color:#0055CC;
+		text-decoration: none;
+}
+.menu2:active{
+    text-decoration: none;
+		color:#0055CC;
+}
+.menu2:hover{
+    text-decoration: none;
+		color:#CC0000;
+}
+
+.theader2{
+padding-top:5px;
+padding-bottom:5px;
+}
+
+
+
+h1 {
+	font-size: 16px;
+  color:#B23729;
+  padding-top:30px;   	
+}
+
+.red {
+  color:#B23729;	
+}
+
+.header2 {
+  font-weight: bold;
+	font-size: 15px;
+  color:#B23729;  
+}
+
+h2{
+  font-size: 15px;
+  color:#B23729;
+}
+
+li{
+  line-height:20px;	
+}
+
+.big{
+font-size:16px;
+}
+
+.theader{
+  font-weight:Bold;
+  background-color:#F2F8FB;
+  padding:5px;
+}
+.tcell{
+  padding:5px;
+}
+
+
+.active{
+  color:#B23729;
+}
+
+.date{
+  color:#999999;
+  font-size:10px;
+}
+.license{  
+  padding: 0px 30px 30px 30px;
+}
+
+.buyTable { }
+
+.buyBlock { background: url(../images/buy_bg.gif) repeat-y left; }
+.buyGroup { margin: 0px 0px 0px 0px; }
+.buyGroup h2 { margin: 0px 0px 10px 0px; padding: 0px; cursor: hand; cursor: pointer; height: 16px; }
+.buyGroup h2 img { float: left; margin: 1px 10px 0px 0px; }
+.buySubgroups { padding: 0px 0px 10px 20px; clear: both; }
+
+.buyGroup .col1 { width: 185px; padding: 3px 5px; }
+.buyGroup .col2 { width: 64px; padding: 3px 5px; }
+.buyGroup .col3 { padding: 3px 5px; }
+.buyGroup .col4 { width: 64px; padding: 3px 5px; }
+
+.sampleHeader {
+  clear: both;
+  color: #B23729;
+  background: url(../images/dots_h.gif) repeat-x bottom;
+  padding: 0 0 5px 0;
+  margin: 20px 0 5px 0;
+  font-weight: bold;
+	font-size: 15px; }
+.sampleBlock { float: left; overflow: hidden; width: 280px; margin: 0 0 20px 0; }
+.sample { overflow: hidden; }
+.sample img { margin: -2px 0 0 0; width: 12px; height: 22px; float: left; border: 0; }
+.prevSample { font-size: 14px; font-weight: bold; float: left; text-decoration: none; }
+.nextSample { font-size: 14px; font-weight: bold; float: right; text-decoration: none; }
+.sampleNav { overflow: hidden; padding: 5px 0 10px 0; background-color: #FFFFF; text-align: center; }
+.sampleNav a { cursor: pointer; cursor: hand; }
+.sourceCode { background-color: #fafafa; margin: 0 10px; padding: 20px; overflow: auto; max-height: 500px; width: 783px; }

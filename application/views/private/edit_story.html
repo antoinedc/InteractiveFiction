@@ -1,0 +1,253 @@
+<div class="span9" id="onEditStory" data-story-id="{sid}">	
+	<div class="growlUI success" style="display:none">
+		<h2>Story successfully generated !</h2>
+    </div>
+	
+	<div class="growlUI successMxit" style="display:none">
+		<h2>New version live on Mxit now !</h2>
+    </div>
+	<!--
+	<h2>Add some paragraphes</h2>
+	<div class="input-prepend">
+		<span class="add-on">Title</span><input class="span9" type="text" id="title" name="title" value="{title}" /><a class="btn">Update</a>
+	</div>
+	
+	<div class="btn-toolbar">
+		<div class="btn-group">
+			<a href="#addParagraphModal" class="btn btn-primary" data-toggle="modal">Add a new paragraph</a>
+		</div>
+		<div class="btn-group">
+			<a class="btn dropdown-toggle btn-primary" data-toggle="dropdown" href="#">
+				Generate the story
+				<span class="caret"></span>
+			</a>
+			<ul class="dropdown-menu">
+				<li><a href="#" id="{sid}" class="generateHtml">Publish online</a></li>
+				<li><a href="#" id="{sid}" class="generateMxit">Publish on Mxit</a></li>
+			</ul>
+		</div>
+		<div class="btn-group">
+			<a class="btn dropdown-toggle btn-primary" data-toggle="dropdown" href="#">
+				Edit characters stats
+				<span class="caret"></span>
+			</a>
+			<ul class="dropdown-menu">
+				<li><a href="#editMainCharacterModal" data-toggle="modal" id="editMainCharacter">Edit main character</a></li>
+				<li><a href="#editOthersCharacterModal" data-toggle="modal" id="editOthersCharacters">Edit others characters</a></li>
+			</ul>
+		</div>
+		<br />
+		<br />
+	</div>
+	
+	<!--
+	
+	<div class="paragraph span8 well sidebar-box"  contenteditable="true" id="{_id}">
+		<div class="text">{text}</div>
+		<!--<a href="#addLinkModal" class="btn addLinkModal" style="float:right;" data-toggle="modal">Add link</a>
+		<p class="read-more" style="position: absolute;bottom: 0; left: 0;width: 100%;text-align: center;margin: 0; padding: 30px 0; "></p>
+			
+	</div>
+	
+	-->
+	<div id="buttonWrapper" style="position:absolute;z-index:200;">
+		<div class="btn-toolbar">
+			<div class="btn-group">
+				<a href="#" id="newNode" class="btn btn-primary" style="margin-left:10px;">New paragraph</a>
+			</div>
+			<div class="btn-group">
+				<a class="btn dropdown-toggle btn-primary" data-toggle="dropdown" href="#">
+					Edit characters stats
+					<span class="caret"></span>
+				</a>
+				<ul class="dropdown-menu">
+					<li><a href="#editMainCharacterModal" data-toggle="modal" id="editMainCharacter">Edit main character</a></li>
+					<li><a href="#editOthersCharacterModal" data-toggle="modal" id="editOthersCharacters">Edit others characters</a></li>
+				</ul>
+			</div>
+			<div class="btn-group">
+				<a href="#" id="save" class="btn btn-primary">Save</a>
+			</div>
+			<div class="btn-group">
+				<a class="btn dropdown-toggle btn-primary" data-toggle="dropdown" href="#">
+					Generate the story
+					<span class="caret"></span>
+				</a>
+				<ul class="dropdown-menu">
+					<li><a href="#" id="{sid}" class="generateHtml">Publish online</a></li>
+					<li><a href="#" id="{sid}" class="generateMxit">Publish on Mxit</a></li>
+				</ul>
+			</div>
+			<div class="btn-group">
+				<a href="#helpModal" data-toggle="modal" id="help" class="btn btn-primary">Help</a>
+			</div>
+		</div>
+    </div>
+	
+	<div id="plumbing" style="width:1000px;height:700px;overflow:hidden;border:grey 1px solid;">
+		<div id="canvas" style="position:relative;left:500px;top:350px;" >
+			{paragraphes}
+			<div class="w" style="position:relative" id="{_id}">
+				<div class="tooltip" style="display:none;">
+					{text}
+				</div>
+				<div class="ep">
+				</div>
+			</div>
+			{/paragraphes}
+		</div>
+		<div id="svg" style="display:none;">
+		</div>
+	</div>
+
+	<div class="modal hide fade" style="width:800px;" id="publishOnlineModal">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			<h3>Your link</h3>
+		</div>
+		<div class="modal-body">
+			<div id="hereIsYourLink">
+			</div>
+		</div>
+		<div class="modal-footer">
+			<a href="#" class="btn btn-primary"data-dismiss="modal">Close</a>
+		</div>
+    </div>
+	
+	<div class="modal hide fade" id="addParagraphModal">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			<h3>Edit a paragraph</h3>
+		</div>
+		<div class="modal-body">
+			<textarea class="span12 ckeditor" rows="19" cols="30" id="newParagraph"></textarea>
+			<label class="checkbox">
+				<input name="isFirstParagraph" id="isFirstParagraph" type="checkbox" />
+				First paragraph of the story (will erase the old one)
+			</label>
+			<label class="checkbox">
+				<input name="isEnd" id="isEnd" type="checkbox" />
+				This paragraph is an end of the story
+			</label>
+		</div>
+		<div class="modal-footer">
+			<a href="#" class="btn btn-primary addParagraph" id="{sid}" data-dismiss="modal">Save changes</a>
+		</div>
+    </div>
+	
+	<div class="modal hide fade" id="helpModal">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			<h3>Help</h3>
+		</div>
+		<div class="modal-body">
+			1. Double click on paragraphes for edit them (change the text, define if it's the start or the end of the story)<br />
+			2. You can drag them, don't forget the "Save" button for saving the new position<br />
+			3. Click on the red squares and drag to another paragraph for creating a link, edit or remove a link by clicking on it<br />
+			4. You need to have one "start" paragraph only, that's why the first one created is set as "starting paragraph", you can change it by setting another paragraph as first with the corresponding checkbox<br />
+			5. You can have as many ends as you want, even zero, but it's preferable to have one<br />
+			<b>6. The online exportation is not working now</b><br />
+			7. For mxit, download the mxit app on Google Play or iTunes Store and add the contact "interactivefiction" for starting a story<br />
+			8. Questions/Bugs/etc => <a href="mailto:adechevigne@gmail.com" target="_blank">adechevigne@gmail.com</a><br />
+		</div>
+		<div class="modal-footer">
+			<a href="#" class="btn btn-primary" data-dismiss="modal">Close</a>
+		</div>
+    </div>
+	
+	<div class="modal hide fade" id="addLinkModal" data-sid="{sid}">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			<h3>Edit a link</h3>
+		</div>
+		
+		<div class="modal-body">
+			
+			<div id="text">
+				<h4>Text of the link</h4><br />
+				<table>
+					<tr>
+						<td><input type="text" id="choice" name="choice" class="input-large" /></td>
+					</tr>
+				</table>
+			</div>
+			
+			<hr />
+			<div id="modifiers">
+				<h4>Add a modifier</h4><br />
+				<table>
+				</table>
+				<a class="btn" href="#" id="addOp"><i class="icon-plus"></i></a>
+			</div>
+		
+			<hr />
+			<div id="conditions">
+			<h4>Add a condition</h4>
+				<table>
+				</table>
+				<a class="btn" href="#" id="addCondition"><i class="icon-plus"></i></a>
+			</div>
+			
+		</div>		
+		
+		<div class="modal-footer">
+			<a href="#" class="btn btn-primary deleteLinkButton delete" data-dismiss="modal">Delete Link</a>
+			<a href="#" class="btn btn-primary addLink save">Save changes</a>
+		</div>
+	</div>
+
+	<div class="modal hide fade" id="editMainCharacterModal">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			<h3>Edit main character stats</h3>
+		</div>
+		<div class="modal-body">
+			<div class="currentStats">
+				<div class="mainCharStat">
+					{mainCharStats}
+						<div class="input-prepend charStat">
+							Name: <input type="text" class="key span4" value="{key}" />
+							Value: <input type="text" class="value span4" value="{value}" />
+							<a class="btn" href="#" id="addStat"><i class="icon-plus"></i></a>
+							<a class="btn" href="#" id="rmStat"><i class="icon-minus"></i></a>
+						</div>
+					{/mainCharStats}
+					<div class="input-prepend charStat">
+						Name: <input type="text" class="key span4" />
+						Value: <input type="text" class="value span4" />
+						<a class="btn" href="#" id="addStat"><i class="icon-plus"></i></a>
+						<a class="btn" href="#" id="rmStat"><i class="icon-minus"></i></a>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="modal-footer">
+			<a href="#" class="btn btn-primary updateMainCharStats" id="{sid}" data-dismiss="modal">Save changes</a>
+			<a href="#" class="btn btn-primary cancelMainCharStats" id="{sid}" data-dismiss="modal">Cancel</a>
+		</div>
+    </div>
+	
+	<div class="modal hide fade" id="editOthersCharacterModal">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			<h3>Edit other characters stats</h3>
+		</div>
+		<div class="modal-body">
+			<div class="selectChar">
+				<select class="otherCharSelector">
+					<option value="-1">Select a char</option>
+					{statsOthersChars}
+						<option value="{_id}">{name}</option>
+					{/statsOthersChars}
+				</select>
+			</div>	
+			or <input type="button" id="addNewChar" class="btn" value="Add a new character" />
+			<div class="editOtherChar">
+			</div>
+		</div>
+		<div class="modal-footer">
+			<a href="#" class="btn btn-primary validateAddNewChars" id="{sid}" data-dismiss="modal">Save changes</a>
+			<a href="#" class="btn btn-primary cancelEditOtherChars" id="{sid}" data-dismiss="modal">Cancel</a>
+		</div>
+    </div>
+</div>

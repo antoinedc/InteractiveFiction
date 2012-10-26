@@ -1,0 +1,31 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+<title>paws Introduction</title>
+
+<link rel="stylesheet" href="aux_files/paws_docs.css" type="text/css" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head>
+<body>
+<div class="section" lang="en">
+	<div class="titlepage">
+		<h1 class="topictitle">paws: A High Level PHP Library for Amazon Web Services</h1>
+	</div>
+
+	<div class="section" lang="en">
+		<div class="titlepage">
+			<h2 class="title" style="clear: both;">Programming Tips</h2>
+		</div>
+<p>This section contains some tips on how to do common things with SimpleDB and pawsSDB. For now,the tips are here in random order, each with its own heading.
+<h3>Use the itemName as your key</h3>
+<p>In traditional data bases, it is common to have one field as the key field which is then used as the main way to access data in the table. (Often the keys are in some sorted order, which isn't currently an option is SimpleDB, but in reality, the order is often irrelevant, just like associative arrays in PHP.) In SimpleDB, you can used the key as the itemName. For example, if you had a data base with unique user names, you can use the username as the itemName to create items directly, and don't need an attribute to hold the username. SimpleDB is optimized to access by itemName, and it will be more efficient to use the itemName as the key rather than performing a query on an attribute name. (But you must have at least one attribute value associated with the item - SimpleDB doesn't allow empty items.)
+<h3>How to delete an entire item</h3>
+<p>You can delete an entire item by using <code>deleteAttributes</code> with the itemName only: <code>$mySDB-&gt;deleteAttributes($itemName);</code>. (Perhaps pawSDB should have <code>deleteItem</code> as a convenience function? Feedback appreciated.)</p>
+<h3>How to check if an item exists</h3>
+<p>You can see if a item with a specific name (e.g., key, see above) exists using <code>getAllAttributes</code> or <code>getAttributeValues</code>. If you know an item will always have an attribute with a specific name, then using <code>getAttributeValues</code> will be slightly more efficient: &nbsp;<code> if ($mySDB-&gt;getAttributeValues('user97','userlevel') != NULL) { // item user97 exists... }</code>. Remember that if you just created or deleted the item, this test may not return the correct results right away because of eventual consistency.</p>
+<h3>&nbsp;</h3>
+</div>
+	</div>
+
+
+</div></body></html>

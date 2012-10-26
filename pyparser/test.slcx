@@ -1,0 +1,92 @@
+*label { Start }
+*line_break
+At last you have a bit of peace and quiet. The chatter of the other explorers
+fade into the distance as you hike into the warm forest up the slopes of
+the island's only mountain. You're following the flow of a babbling little
+stream.
+*line_break
+This is the first time that you're on your own in a long time. After many weeks
+at sea, your expedition set foot on this small, uncharted island this morning.
+You decided to do a little bit of exploration of your own, while the rest of
+the team sets up camp.
+*line_break
+As you look back through the trees, you can see the furled sails of the Zuiderkruis,
+the sloop that brought you to this distant place. The sunny port of Cape Town,
+your home town from where you left on this expedition, seems very far away.
+*line_break
+*page_break
+*line_break
+You suddenly hear a deep rumbling, and the ground trembles underneath your
+feet. Birds noisily fly up from the trees around you.
+*line_break
+What will you do?
+*line_break
+*choice
+{
+    # Go back to the camp.
+    {
+        *label { The Camp }
+        The camp site is not too far from the beach, next to the stream
+        that you were following up the mountain. When you left (barely an
+        hour ago!) the crew of the Zuiderkruis was hard at work setting up
+        a base from which the island could be explored. Now, however, no-one
+        is in sight. An ominous silence hangs over the deserted camp. Smoke
+        from a cooking fire draws a twisted plume into the sky.
+        *line_break
+        You can see the Zuiderkruis a short distance into the open sea, but
+        the rowing boats you could use to get back to the ship, are nowhere
+        to be seen. Further down the beach you see something that has washed
+        ashore &mdash; perhaps it's one of the rowing boats; maybe only flotsam.
+        *line_break
+        What will you do?
+        *line_break
+        *choice
+        {
+            # Try to swim across to the Zuiderkruis.
+            {
+                You swim as hard as you can, but the current pulls you hard away
+                from the ship. You may be able to reach the ship, but your
+                arms are already burning from the effort?
+                *line_break
+                What will you do?
+                *line_break
+                *choice
+                {
+                    # Continue swimming
+                    {
+                        The current feels as if it is getting stronger, but you
+                        push ahead nonetheless. Suddenly, you feel the sharp burn
+                        of a cramp in your right leg! You try to keep afloat, but
+                        your are just too tired. It's almost a relief when you
+                        feel the cool water close over your head.
+                        *finish
+                    }
+                    # Turn around
+                    {
+                        It takes almost all the energy you have left to turn around
+                        and swim back. Just before reaching the shore, you feel the
+                        sharp burn of a cramp in your right leg! Fortunately, you manage
+                        to keep calm and ride the waves back onto the shore.
+                        *line_break
+                        *goto { The Camp }
+                    }
+                }
+            }
+            # Investigate the object that has washed ashore.
+            {
+                *error { TBC }
+            }
+            # Take the path back up the mountain, to scout the area from a higher view.
+            {
+                *error { TBC }
+                *line_break
+            }
+        }
+    }
+    # Keep on hiking up the mountain.
+    {
+        The volcano erupts!
+        *finish
+        *line_break
+    }
+}

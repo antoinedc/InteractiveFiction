@@ -1,0 +1,180 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+<title>pawsSDB::putAttributes</title>
+
+<link rel="stylesheet" href="aux_files/paws_docs.css" type="text/css" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head>
+<body>
+<div class="section" lang="en">
+	<div class="titlepage">
+		<h1 class="topictitle">pawsSDB::putAttributes($itemName, $attributes, $replace)</h1>
+	</div>
+
+	<div class="section" lang="en">
+		<div class="titlepage">
+			<h2 class="title" style="clear: both;">Description</h2>
+		</div>
+		<p>The <code class="function">putAttributes</code> operation creates or replaces 
+		attributes in an item in the currently set domain (see<a href="paws_setDomain.html" title="setDomain">setDomain()</a>).</p>
+		<p>  Attributes are in an associative array with name/value pairs: <code>$attr = array('name1' = 'val1', 'name2' =&gt; 'val2', 'name3' =&gt; array('vala', 'valb'));</code></p>
+		<p>Note that any attribute can have more than one value. A design decision was made to have the<code> pawsSDB</code> library use PHP associative arrays to hold attributes. The index to the array is the name of the attribute, while the value of the array element is the value or values of the attribute. If there only a single value (which is likely to be the most common case), then the value is stored. If there are multiple values per attribute name, then the values are stored as a simple array: you can use the <code>is_array()</code> PHP function to test to see if the value is a single value or an array of multiple values. This design seems to be a very natural way to access AWS database attributes for PHP programs. You don't need to worry about all the  <code><var>Attribute.X.Name</var></code> and <code><var>Attribute.X.Value</var></code> stuff referred to in the AWS documentation.</p>
+		<p>
+	      <code>putAttributes</code> does not need to be called with all attributes of an item, just the ones you need to add or update.</p>
+	  <p>If an attribute with the same name already exists for the item, then the attribute will be modified to have multiple values. Thus, you can set multiple values for a given attribute either by calling <code>putAttributes</code> with an original attribute with multiple values, or call<code> putAttributes</code> multiple times with the same attribute name but different values.</p>
+	  <p>If putAttributes is called with the <var><code>$replace</code> </var>parameter not specified or with it set to false, then the attributes are added to the item. The function<a href="paws_replaceAttributes.html" title="replaceAttributes">replaceAttributes</a>has been provided as a convenience for a replace operation.</p>
+	  <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+        <table summary="Note" border="0">
+          <tbody>
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="aux_files/note.png" /></td>
+              <th align="left">Notes</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top"><p class="simpara"><code>putAttributes</code> does not specifically deal with issues of the format or length of the values stored. 
+              If you need to have integer values normalized for query operations, than that is up to you. The utility functions needed for this sort of conversion are supplied as part of this library.</p>
+              <p class="simpara">Using <code class="function">putAttributes</code> to replace attribute values that 
+		do not exist will <span class="emphasis"><em>not</em></span> result in an error response.</p>
+              <p class="simpara">According to AWS, puts with replace are signficantly slower than new insert puts.</p>
+              <p class="simpara">Because Amazon SimpleDB makes multiple copies of your data and uses an <em>eventual consistency</em> update model, a<a href="paws_getAllAttributes.html">getAllAttributes</a> or <a href="paws_query.html">query</a> request (read) immediately after a <code>putAttributes</code> or <a href="paws_deleteAttributes.html">deleteAttributes</a> operation (write) might not return the updated data.</p>
+                    <p>The following limitations are enforced for this operation:
+      <ul type="disc"><li>100 attributes per each call</li>
+      <li>56 total attribute name-value pairs per item</li>
+	  <li>250 million attributes per domain</li>
+	  <li>10 GB of total user data storage per domain</li>
+		</ul></td>
+            </tr>
+          </tbody>
+        </table>
+        
+      </div>
+ 
+
+	</div>
+	<div class="section" lang="en">
+			<div class="titlepage">
+				<h2 class="title" style="clear: both;">Parameters</h2>
+			</div>
+			<div class="informaltable">
+				<table border="0" cellspacing="0"><colgroup><col><col><col></colgroup>
+					<thead><tr><th>Name</th><th>Description</th><th>Required?</th></tr></thead>
+				    <tbody>
+						<tr>
+							<td><em class="parameter"><code>$itemName</code></em></td>
+							<td><p class="simpara">The name of the item. </p>
+						  <p xmlns="" class="simpara"> Type: String. </p></td>
+							<td>Yes</td>
+						</tr>
+                        <tr>
+							<td><em class="parameter"><code>$attributes</code></em></td>
+							<td><p class="simpara">An associative array with attribute name/value pairs. </p>
+						      <p xmlns="" class="simpara"> Type: Associative array. </p></td>
+							<td>Yes</td>
+						</tr>
+                        <tr>
+							<td><em class="parameter"><code>$replace</code></em></td>
+							<td><p class="simpara">Set true if replace values for a given attribute name.</p>
+							  <p class="simpara">Default value: false.</p>
+							  <p xmlns="" class="simpara"> Type: String. </p></td>
+							<td>No</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<div class="section" lang="en">
+			<div class="titlepage">
+			<h2 class="title" style="clear: both;">Return Value</h2>
+		</div>
+			<p>True or false. Call <code>getErrorCode</code> on false.</p>
+		<div class="titlepage">
+			<h2 class="title" style="clear: both;">Special Errors</h2>
+		</div>
+		<div class="informaltable">
+			<table border="0" cellspacing="0"><colgroup><col><col></colgroup>
+			<thead><tr><th>Error</th><th>Description</th></tr></thead>
+			<tbody>
+				<tr><td>
+	            <code class="code">InvalidParameterValue</code>
+	          </td><td>
+				Value (" + value + ") for parameter Name is invalid. Value exceeds maximum length of 1024.</td></tr><tr><td>
+	            <code class="code">InvalidParameterValue</code>
+	          </td><td>
+				Value (" + value + ") for parameter Value is invalid. Value exceeds maximum length of 1024.</td></tr><tr><td>
+	            <code class="code">InvalidParameterValue</code>
+	          </td><td>
+				Value (" + value + ") for parameter Item is invalid. Value exceeds max length of 1024.</td></tr><tr><td>
+	            <code class="code">InvalidParameterValue</code>
+	          </td><td>
+				Value (" + value + ") for parameter Replace is invalid. The Replace flag should be either true or false.</td></tr><tr><td>
+	            <code class="code">MissingParameter</code>
+	          </td><td>
+				The request must contain the parameter <em class="parameter"><code>DomainName</code></em>.</td></tr><tr><td>
+	            <code class="code">MissingParameter</code>
+	          </td><td>
+				The request must contain the parameter <em class="parameter"><code>ItemName</code></em>.</td></tr><tr><td>
+	            <code class="code">MissingParameter</code>
+	          </td><td>
+				<code class="code">Attribute.Value</code> missing for <code class="code">Attribute.Name='&lt;attribute name&gt;'</code>.</td></tr><tr><td>
+	            <code class="code">MissingParameter</code>
+	          </td><td>
+				<code class="code">Attribute.Name</code> missing for <code class="code">Attribute.Value='&lt;attribute value&gt;'</code>.</td></tr><tr><td>
+	            <code class="code">NoSuchDomain</code>
+	          </td><td>
+				The specified domain does not exist.</td></tr><tr><td>
+	            <code class="code">NumberItemAttributesExceeded</code>
+	          </td><td>
+				Too many attributes in this item. </td></tr><tr><td>
+	            <code class="code">NumberDomainAttributesExceeded</code>
+	          </td><td>
+				Too many attributes in this domain. </td></tr><tr><td>
+	            <code class="code">NumberDomainBytesExceeded</code>
+	          </td><td>
+				Too many bytes in this domain. </td></tr>
+			</tbody>
+			</table>
+		</div>
+		<div class="section" lang="en">
+			<div class="titlepage">
+				<h2 class="title" style="clear: both;">Examples</h2>
+			</div>
+		<div class="section" lang="en">
+			<div class="titlepage"><h3 class="title">Sample Code</h3>
+		</div>
+		<pre class="programlisting">
+    /**
+     *	simple example of paws function 
+     */
+     ...
+     include('pawsSDB.php');
+     $mySDB = new pawsSDB();
+     $mySDB->setDomain('aDomainName');    // Need to set domain name before data operations
+     ...
+     $attr = array('name1' = 'val1', 'name2' => 'val2', 'name3' => array('vala', 'valb'));
+     
+     // put attributes to 'item00' in domain 'aDomainName'
+     if (!$mySDB->putAttributes('item00',$attr)) {
+         handle_error();
+     }
+     ...
+     
+		</pre>
+	
+		
+<div class="section" lang="en">
+	<div class="titlepage">
+		<h2 class="title" style="clear: both;">Related Functions</h2>
+	</div>
+	<div class="itemizedlist">
+		<ul type="disc">
+			<li>
+			  <a href="paws_deleteAttributes.html"><code>deleteAttributes</code></a>			</li>
+		  <li>
+			  <a href="paws_getAllAttributes.html"><code>getAllAttributes</code></a></li>
+	      <li><a href="paws_getAttributeValues.html" title="getAttributeValues"><code>getAttributeValues</code></a></li>
+	  </ul>
+	</div>
+</div>
+<p style="text-align:center; font-size:9px">Copyright &copy; 2008 Bruce E. Wampler</p>
+</div></body></html>

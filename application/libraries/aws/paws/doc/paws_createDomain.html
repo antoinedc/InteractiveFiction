@@ -1,0 +1,116 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+<title>pawsSDB::createDomain</title>
+
+<link rel="stylesheet" href="aux_files/paws_docs.css" type="text/css" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"></head>
+<body>
+<div class="section" lang="en">
+	<div class="titlepage">
+		<h1 class="topictitle">pawsSDB::createDomain($domainName)</h1>
+	</div>
+
+	<div class="section" lang="en">
+		<div class="titlepage">
+			<h2 class="title" style="clear: both;">Description</h2>
+		</div>
+		<p>The <code>createDomain</code> function creates 
+			a new domain. The domain name must be unique among 
+			he domains associated with the Access Key ID used by the <code>pawsSDB</code> object. 
+			The <code>createDomain</code> execution might take 10 or more 
+			seconds to complete.
+		</p>
+		<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+			<table summary="Note" border="0">
+			<tbody>
+				<tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="aux_files/note.png"></td>
+					<th align="left">Note</th></tr>
+				<tr><td align="left" valign="top">
+						<p class="simpara"><code>createDomain</code> is an idempotent operation; 
+						running it multiple times using the same domain name will <span class="emphasis"><em>not</em></span> result in an error response.</p>
+						<p class="simpara">The new domain may not be immediately available for writing after it has been created.</p>
+				  <p class="simpara">You can create up to 100 domains per account.</p></td></tr>
+			</tbody>
+			</table>
+		</div>
+	</div>
+
+		<div class="section" lang="en">
+			<div class="titlepage">
+				<h2 class="title" style="clear: both;">Parameters</h2>
+			</div>
+			<div class="informaltable">
+				<table border="0" cellspacing="0"><colgroup><col><col><col></colgroup>
+					<thead><tr><th>Name</th><th>Description</th><th>Required?</th></tr></thead>
+				    <tbody>
+						<tr><td><em class="parameter"><code>$domainName</code></em></td>
+							<td><p class="simpara"> The name of the domain to create.</p>
+								<p class="simpara">Type: String</p></td>
+							<td>Yes</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<div class="section" lang="en">
+			<div class="titlepage">
+			<h2 class="title" style="clear: both;">Return Value</h2>
+		</div>
+			<p>True or false. Call <code>getErrorCode</code> on false.</p>
+		<div class="titlepage">
+			<h2 class="title" style="clear: both;">Special Errors</h2>
+		</div>
+		<div class="informaltable">
+			<table border="0" cellspacing="0"><colgroup><col><col></colgroup>
+			<thead><tr><th>Error</th><th>Description</th></tr></thead>
+			<tbody>
+				<tr><td><code>InvalidParameterValue</code></td>
+					<td>Value (" + value + ") for parameter DomainName is invalid.</td>
+				</tr>
+				<tr>
+			  <td><code>DomainNameNotSet</code></td>
+			  <td>The request must contain the parameter <em class="parameter"><code>DomainName</code></em>.</td></tr>
+				<tr><td><code>NumberDomainsExceeded</code></td>
+					<td>Number of domains limit exceeded.</td>
+				</tr>
+			</tbody>
+			</table>
+		</div>
+		<div class="section" lang="en">
+			<div class="titlepage">
+				<h2 class="title" style="clear: both;">Examples</h2>
+			</div>
+		<div class="section" lang="en">
+			<div class="titlepage"><h3 class="title">Sample Code</h3>
+		</div>
+<pre class="programlisting">
+    /**
+     *	simple example of createDomain
+     */
+     ...
+     include('pawsSDB.php');
+     $mySDB = new pawsSDB();
+     ...
+     
+     if (!$mySDB->createDomain('newDomainName')) {
+         echo("&lt;p>Create failed, error code: "); echo($mySDB->getErrorCode()); echo("&lt;p>");
+         handle_error();
+     }
+	 ...
+</pre>
+	
+		
+<div class="section" lang="en">
+	<div class="titlepage">
+		<h2 class="title" style="clear: both;">Related Functions</h2>
+	</div>
+	<div class="itemizedlist">
+		<ul type="disc">
+			<li><p><a href="paws_deleteDomain.html">deleteDomain</a></p></li>
+			<li><p><a href="paws_listDomains.html">listDomains</a></p></li>
+		</ul>
+	</div>
+</div>
+<p style="text-align:center; font-size:9px">Copyright &copy; 2008 Bruce E. Wampler</p>
+</div></body></html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+<title>paws Introduction</title>
+
+<link rel="stylesheet" href="aux_files/paws_docs.css" type="text/css" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head>
+<body>
+<div class="section" lang="en">
+	<div class="titlepage">
+		<h1 class="topictitle">paws: A High Level PHP Library for Amazon Web Services</h1>
+	</div>
+
+	<div class="section" lang="en">
+		<div class="titlepage">
+			<h2 class="title" style="clear: both;">&nbsp;</h2>
+		</div>
+        
+<h1>AWS SimpleDB</h1>
+<p>Amazon Web Services SimpleDB is well documented on the AWS website. See the <a href="http://developer.amazonwebservices.com/connect/kbcategory.jspa?categoryID=141" title="SimpleDB Resources page" target="_blank">SimpleDB Resources</a> page for a list of available documentation. The &quot;main&quot; <a href="http://developer.amazonwebservices.com/connect/entry.jspa?externalID=1107&categoryID=146" title="technical reference">technical reference</a> can be downloaded as a PDF file.
+<p>However, this section of the paws manual will contain some quick reference material that can be useful when developing a SimpleDB design.
+
+<h2>Size Limits</h2>
+<p>SimpleDB has several limits on sizes, some of which are supposed to get bigger after Beta.
+<br />
+<ul>
+ <li>10GB of storage per domain</li><br />
+  <li>100 domains per customer account  </li><br />
+  <li>Attributes per Item: 256<br /></li>
+  <br />
+    <li>Size per Item: 512KB </li>
+  <br />
+  <li>256  total attribute name-value pairs per item</li><br />
+  <li>Attribute names and attribute values can be up to 1024 bytes in length each</li><br />
+  <li> max attributes per domain: 250,000,000</li>
+  <br />
+  <li>max number of attributes per PutAttributes call: 100</li><br />
+  <li>max items you can get returned in a query response: 250<br />
+  (This is hidden by pawsSDB - it will automatically issue queries<br />
+    as needed until all matches have been made.
+    )</li>
+  <br />
+  <li>max seconds your query can run: 5</li><br />
+  <li>max attribute names per query predicate: 1</li><br />
+  <li>max operators per predicate: 5</li><br />
+  <li>max predicates per query: 5</li><br />
+  <li>approx max get request size in bytes from ec2: 16k</li><br />
+  <li>approx max get request size from elsewhere: 4k  <br />
+    <br />
+  </li>
+  <li>Worst case &quot;eventual consistency&quot; - not guaranteed, usually &quot;a few seconds&quot;</li>
+</ul>
+</p>
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+  <table summary="Note" border="0">
+    <tbody>
+      <tr>
+        <td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="aux_files/note.png" /></td>
+        <th align="left">Note</th>
+      </tr>
+      <tr>
+        <td align="left" valign="top"><p class="simpara">Amazon SimpleDB itself does not enforce a limit on maximum URL length.</p>
+            <p>However, certain network appliances such as proxies and load balancers<br />
+              may enforce certain limits. Depending on the path between your<br />
+              application and the Amazon SimpleDB endpoint, these devices may interfere with<br />
+              very long URLs. Some of these limits are based on number of packets<br />
+              containing the URL instead of its total length in bytes. This means that<br />
+              congested networks, fragmentable packets, or small source packets may<br />
+              adversely affect request with long URLs.</p>
+            <p>Sizes up to 4096 (4k) bytes should be safe from most locations. From<br />
+              EC2, sizes up to 16384 (16k) bytes will likely work.</p>
+            <p>This guidance is based upon best practices and empirical evidence and<br />
+              is not guaranteed to work in all circumstances. If your application<br />
+              demands larger message sizes than a few kilobytes, we recommend using<br />
+              the SOAP interface or REST with HTTP POST which are not subject to such limits.</p>
+            <p> SimpleDB Forum <a href="http://developer.amazonwebservices.com/connect/thread.jspa?threadID=22208&tstart=0" target="_blank">Article</a></p></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<p>
+<p>&nbsp;</p>
+</div>
+	</div>
+
+
+</div></body></html>

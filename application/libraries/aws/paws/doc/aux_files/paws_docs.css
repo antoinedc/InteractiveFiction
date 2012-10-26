@@ -1,0 +1,456 @@
+/* --------------------------------------------- */
+/*  AWS Developer Content Styles                 */
+/* --------------------------------------------- */
+
+body, div, p, td, th {
+    font-family: helvetica, sans-serif, arial;
+    font-size: 12px;
+    color: #000000;
+}
+
+h1 {
+    font-family: verdana, arial, helvetica, sans-serif;
+    font-size: 18px;
+    font-weight: bold;
+    color: #000000;
+}
+
+h2 {
+    font-family: verdana, arial, helvetica, sans-serif;
+    font-size: 14px;
+    color: #c60;
+}
+
+h3 {
+    font-family: verdana, arial, helvetica, sans-serif;
+    font-size: 12px;
+    font-weight: bold;
+    color: #333333;
+}
+
+/*code, note, and example styles*/
+pre {
+    font-family: "Courier New", Courier, mono;
+    font-size: 12px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    padding: 5px;
+    background-color: #eff7ff;
+    border: 1px dashed #333;
+    overflow: auto;
+    max-height: 500px;
+    margin-right: 20px;		
+}
+
+code {
+    font-family: "Courier New", Courier, mono;
+    font-size: 12px;
+}
+
+/** Admonitions **/
+.aws-note {
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-top-style: solid;
+    border-right-style: none;
+    border-bottom-style: solid;
+    border-left-style: none;
+    border-top-color: #CCCCCC;
+    border-right-color: #CCCCCC;
+    border-bottom-color: #CCCCCC;
+    border-left-color: #CCCCCC;
+    padding: 10px;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+/*table ID selector styles*/
+#aws-table {
+    border-top: 1px solid #cccccc;
+    border-left: 1px solid #cccccc;
+    margin-right: 20px;
+}
+
+#aws-table td {
+    font-size: 12px;
+    padding: 5px 5px 5px 5px;
+    border-bottom: 1px solid #cccccc;
+    border-right: 1px solid #cccccc;
+    vertical-align: top;
+}
+
+#aws-table th {
+    font-size: 12px;
+    padding: 5px 5px 5px 5px;
+    border-bottom: 1px solid #cccccc;
+    border-right: 1px solid #cccccc;
+    vertical-align: top;
+    background-color: #eeeeee;
+    color: #333333;
+    font-size: 12px;
+    font-weight: bold;
+    text-align: left;
+}
+
+/* Remove borders from linked images */
+a  { text-decoration: none; padding: 3px; }
+
+/* format href links */                                                                                /*  new 9/27/07 */
+a:link {text-decoration: none;}
+a:visited {text-decoration: none;}
+a:active {text-decoration: none;}
+a:link:hover {text-decoration: underline; color: #ff0000;} 
+a:visited:hover {text-decoration: underline; color: #ff0000;} 
+
+
+img {
+border-style: hidden;
+border-width :0px 0px 0px 0px;
+border-color : #ffffff;
+}
+
+/*code, note, and example styles*/
+
+code {
+   	font-family: "Courier New", Courier, mono;
+	font-size: 12px;
+    font-weight: bold;
+}
+
+
+.programlisting{
+	font-family: "Courier New", Courier, mono;
+	font-size: 12px;
+	margin-top: 5px;
+	margin-bottom: 5px;
+	color: #000066;
+	padding: 5px 3px 5px 5px;                       /* 10/25/07 changed top and bottom padding back to 5px; browser sniffer removes IE  problem */
+	background-color: #eff7ff;
+	border: 1px dashed #333;
+	width: 99%;
+}
+
+
+.question{
+	font-weight: bold;
+}
+
+.replaceable {
+	color: #FF0000;
+}
+
+.segmentedlist{
+	padding-bottom: 15px;
+}
+
+.seg p{
+	margin-bottom: 0em;
+}
+
+.topcom{                                                                                                       /* New 2/5/08    */
+   font-weight: bold;
+}
+
+.topictitle {
+	padding-bottom: 5px;
+	border-bottom: 1px solid rgb(204, 204, 204);
+}
+
+.userinput {
+	color: #040;
+	font-weight: normal;
+}
+
+/* Admonition styles */
+
+div.caution{
+	padding: 0.5em;
+}
+
+div.important{
+	padding: 0.5em;
+}
+
+div.note{
+	padding: 0.5em;
+}
+
+div.tip{
+	padding: 0.5em;
+}
+
+/* ZonBook table ID selector styles*/
+
+div.informaltable{
+	padding: 0.5em;
+}
+
+.informaltable table{
+  border-top: .25px solid #cccccc;
+  border-left: .25px solid #cccccc;
+  border-bottom: .25px solid #cccccc;
+  border-right: .25px solid #cccccc; 
+  border-spacing: 0px;
+}
+
+.informaltable td{
+  font-size: 12px;
+  padding: 5px 5px 5px 5px;
+  border-top: .25px solid #cccccc;
+  border-left: .25px solid #cccccc;
+  border-bottom: .25px solid #cccccc;
+  border-right: .25px solid #cccccc;
+  vertical-align:top;
+}
+
+.informaltable th{
+  font-size: 12px;
+  padding: 5px 5px 5px 5px;
+  border-right: .25px solid #cccccc;
+  border-left: .25px solid #cccccc;
+  border-top: .25px solid #cccccc; 
+  border-bottom: .25px solid #cccccc;  
+  vertical-align:top;
+  background-color: #eeeeee;
+  color: #333333;
+  font-size: 12px;
+  font-weight: bold;
+  text-align: left;
+}
+
+td p:first-child {
+  margin-top: 0px;                                                               
+}
+
+td p:last-child {
+  margin-bottom: 0px;
+}
+
+td ul:first-child {
+  margin-top: 0px;                                                                               /*  new 8/22/07 */
+}
+
+td ol:first-child {
+  margin-top: 0px;                                                                               /*  new 8/22/07 */
+}
+
+
+/* Borderless table                                                                                 new 12/31/07  */
+.simplesect table{
+  border-top: 0px;
+  border-left: 0px;
+  border-bottom: 0px;
+  border-right: 0px;
+  border-spacing: 0px;
+}
+
+.simplesect td{
+  font-size: 12px;
+  padding: 0px 0px 0px 5px;
+  border-top: 0px;
+  border-left: 0px;
+  border-bottom: 0px;
+  border-right: 0px;
+  border-spacing: 0px;
+  vertical-align:top;
+}
+
+.tip th{
+  font-size: 12px;
+  padding: 5px 5px 5px 5px;
+  border-top: 0px;
+  border-left: 0px;
+  border-bottom: 0px;
+  border-right: 0px;
+  border-spacing: 0px;
+  vertical-align:top;
+  background-color: #fff;
+  font-size: 12px;
+  font-weight: bold;
+  text-align: left;
+}
+
+
+/* Formal Table Settings */
+
+div.table-contents{
+	padding: 0.5em;
+}
+
+.table-contents table{
+  border-top: 1px solid #cccccc;
+  border-left: 1px solid #cccccc;
+  border-bottom: 0px;
+  border-right: 0px;
+  border-spacing: 0px;
+}
+
+.table-contents td{
+  font-size: 12px;
+  padding: 5px 5px 5px 5px; 
+  border-bottom: 1px solid #cccccc;
+  border-right: 1px solid #cccccc;
+  border-left: 0px;
+  border-top: 0px;
+  vertical-align:top;
+}
+
+.table-contents th{
+  font-size: 12px;
+  padding: 5px 5px 5px 5px;
+  border-bottom: 1px solid #cccccc;
+  border-right: 1px solid #cccccc;
+  border-left: 0px;
+  border-top: 0px;
+  vertical-align:top;
+  background-color: #eeeeee;
+  color: #333333;
+  font-size: 12px;
+  font-weight: bold;
+  text-align: left;
+}
+
+.simpara{
+  margin-top: -.4em;                                                                               /*  10/25/07 changed back to -.4 brower sniffer  accommodates screwy IE  */
+}
+
+/*  Admonition Tables                                                                                 new 9/19/07
+     ATTENTION!      These must be placed last in the style sheet so that they can override all preceding table formattings */
+
+.caution table{
+  border-top: 0px;
+  border-left: 0px;
+  border-bottom: 0px;
+  border-right: 0px;
+  border-spacing: 0px;
+}
+
+.caution td{
+  font-size: 12px;
+  padding: 0px 0px 0px 5px;
+  border-top: 0px;
+  border-left: 0px;
+  border-bottom: 0px;
+  border-right: 0px;
+  border-spacing: 0px;
+  vertical-align:top;
+}
+
+.caution th{
+  font-size: 12px;
+  padding: 5px 5px 5px 5px;
+  border-top: 0px;
+  border-left: 0px;
+  border-bottom: 0px;
+  border-right: 0px;
+  border-spacing: 0px;
+  vertical-align:top;
+  background-color: #fff;
+  font-size: 12px;
+  font-weight: bold;
+  text-align: left;
+}
+
+.important table{
+  border-top: 0px;
+  border-left: 0px;
+  border-bottom: 0px;
+  border-right: 0px;
+  border-spacing: 0px;
+}
+
+.important td{
+  font-size: 12px;
+  padding: 0px 0px 0px 5px;  
+  border-top: 0px;
+  border-left: 0px;
+  border-bottom: 0px;
+  border-right: 0px;
+  border-spacing: 0px;
+  vertical-align:top;
+}
+
+.important th{
+  font-size: 12px;
+  padding: 5px 5px 5px 5px;
+  border-top: 0px;
+  border-left: 0px;
+  border-bottom: 0px;
+  border-right: 0px;
+  border-spacing: 0px;
+  vertical-align:top;
+  background-color: #fff;
+  font-size: 12px;
+  font-weight: bold;
+  text-align: left;
+}
+
+.note table{
+  border-top: 0px;
+  border-left: 0px;
+  border-bottom: 0px;
+  border-right: 0px;
+  border-spacing: 0px;
+}
+
+.note td{
+  font-size: 12px;
+  padding: 0px 0px 0px 5px;
+  border-top: 0px;
+  border-left: 0px;
+  border-bottom: 0px;
+  border-right: 0px;
+  border-spacing: 0px;
+  vertical-align:top;
+}
+
+.note th{
+  font-size: 12px;
+  padding: 5px 5px 5px 5px;
+  border-top: 0px;
+  border-left: 0px;
+  border-bottom: 0px;
+  border-right: 0px;
+  border-spacing: 0px;
+  vertical-align:top;
+  background-color: #fff;
+  font-size: 12px;
+  font-weight: bold;
+  text-align: left;
+}
+
+.tip table{
+  border-top: 0px;
+  border-left: 0px;
+  border-bottom: 0px;
+  border-right: 0px;
+  border-spacing: 0px;
+}
+
+.tip td{
+  font-size: 12px;
+  padding: 0px 0px 0px 5px;
+  border-top: 0px;
+  border-left: 0px;
+  border-bottom: 0px;
+  border-right: 0px;
+  border-spacing: 0px;
+  vertical-align:top;
+}
+
+.tip th{
+  font-size: 12px;
+  padding: 5px 5px 5px 5px;
+  border-top: 0px;
+  border-left: 0px;
+  border-bottom: 0px;
+  border-right: 0px;
+  border-spacing: 0px;
+  vertical-align:top;
+  background-color: #fff;
+  font-size: 12px;
+  font-weight: bold;
+  text-align: left;
+}

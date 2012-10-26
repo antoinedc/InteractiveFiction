@@ -1,0 +1,143 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+<title>pawsSDB::getAllAttributes</title>
+
+<link rel="stylesheet" href="aux_files/paws_docs.css" type="text/css" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head>
+<body>
+<div class="section" lang="en">
+	<div class="titlepage">
+		<h1 class="topictitle">pawsSDB::getAllAttributes($itemName)</h1>
+	</div>
+
+	<div class="section" lang="en">
+		<div class="titlepage">
+			<h2 class="title" style="clear: both;">Description</h2>
+		</div>
+		<p> Get all attributes of an item, return as associative array or<code> NULL</code>. (This is a alternate convenience function for <code>getAttributes('itemName')</code> to get all attributes.)</p>
+	  <p> The associative array will have form <code>array('name' =&gt; 'value')</code> for single values,       or <code>array('name' =&gt; array('value0', 'value1', 'etc'))</code> for multiple valued attribute.       Use <code>is_array()</code> to determine if multiple values returned for one name. (See <a href="paws_putAttributes.html" title="putAttributes" target="main"><code>putAttributes</code></a> for more on attribute associative arrays.)</p>
+		<p> If the <code><var>$itemName</var></code> item does not exist, the operation does not fail but returns       an empty list (Error Code = &quot;NoAttributes&quot;). This is a result of SDB<strong><em> eventual consistency</em></strong>.      	The order the attributes are returned seems to have no relationship to anything:      	not the order they were created in, not sorted, just some random order, although      it seems to be the same order each time.</p>
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+			<table summary="Note" border="0">
+			<tbody>
+				<tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="aux_files/note.png"></td>
+					<th align="left">Note</th></tr>
+				<tr><td align="left" valign="top">
+						<p class="simpara">Because Amazon SimpleDB makes multiple copies of your data and uses an <em>eventual consistency</em> update model, a<a href="paws_getAllAttributes.html">getAllAttributes</a> or <a href="paws_query.html">query</a> request (read) immediately after a <code>putAttributes</code> or <a href="paws_deleteAttributes.html">deleteAttributes</a> operation (write) might not return the updated data.</p>
+						<p class="simpara">If
+the item does not exist on the replica that was accessed for this
+operation, an empty set is returned. The system does not return an
+error as it cannot guarantee the item does not exist on other replicas.</p></td></tr>
+			</tbody>
+			</table>
+		</div>
+	</div>
+
+		<div class="section" lang="en">
+			<div class="titlepage">
+				<h2 class="title" style="clear: both;">Parameters</h2>
+			</div>
+			<div class="informaltable">
+				<table border="0" cellspacing="0"><colgroup><col><col><col></colgroup>
+					<thead><tr><th>Name</th><th>Description</th><th>Required?</th></tr></thead>
+				    <tbody>
+						<tr>
+						  <td><em class="parameter"><code>$itemName</code></em></td>
+							<td><p class="simpara"> The name of the item.</p>
+								<p class="simpara">Type: String</p></td>
+							<td>Yes</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<div class="section" lang="en">
+			<div class="titlepage">
+			<h2 class="title" style="clear: both;">Return Value</h2>
+		</div>
+			<p>Associative array of attribues, or <code>NULL</code>. Can call <code>getErrorCode</code> on <code>NULL</code>.</p>
+<div class="titlepage">
+			<h2 class="title" style="clear: both;">Special Errors</h2>
+		</div>
+		<div class="informaltable">
+			<table border="0" cellspacing="0"><colgroup><col><col></colgroup>
+			<thead><tr><th>Error</th><th>Description</th></tr></thead>
+			<tbody>
+				<tr><td>
+	            <code class="code">InvalidParameterValue</code>
+	          </td><td>
+			  Value (" + value + ") for parameter Name is invalid. Value exceeds maximum length of 1024.</td></tr><tr><td>
+	            <code class="code">InvalidParameterValue</code>
+	          </td><td>
+				Value (" + value + ") for parameter Item is invalid. Value exceeds max length of 1024.</td></tr><tr><td>
+	            <code class="code">MissingParameter</code>
+	          </td><td>
+				The request must contain the parameter <em class="parameter"><code>DomainName</code></em>.</td></tr><tr><td>
+	            <code class="code">MissingParameter</code>
+	          </td><td>
+				The request must contain the parameter <em class="parameter"><code>ItemName</code></em>.</td></tr><tr><td>
+	            <code class="code">NoSuchDomain</code>
+	          </td><td>
+				The specified domain does not exist.</td></tr>
+			</tbody>
+			</table>
+		</div>
+		<div class="section" lang="en">
+			<div class="titlepage">
+				<h2 class="title" style="clear: both;">Examples</h2>
+			</div>
+		<div class="section" lang="en">
+			<div class="titlepage"><h3 class="title">Sample Code</h3>
+		</div>
+		<pre class="programlisting">
+    /**
+     *	simple example of paws function 
+     */
+     ...
+     include('pawsSDB.php');
+     $mySDB = new pawsSDB();
+     $mySDB->setDomain('aDomainName');
+     ...
+     
+    $attrs = $mySDB->getAllAttributes('item42');
+    if ($attrs == null) {
+        echo(""&lt;p>getAllAttributes failed, error code: "); echo($mySDB->getErrorCode()); echo("&lt;p>");
+    } else {
+    	echo("&lt;ul>";
+        foreach ($attrs as $name => $value) {
+            if (!is_array($value)) {			// distinguish single value from multiple value
+                echo("&lt;li>$name = $value&lt;/li>\n"); 
+            } else {
+                foreach ($value as $val) {
+                    echo("&lt;li>$name = $val&lt;/li>\n");
+                }
+            }<a href="paws_menu.html"></a>
+        }
+        echo("&lt;/ul>\n");
+    }
+     
+		</pre>
+	<div class="section" lang="en">
+	<div class="titlepage">
+		<h2 class="title" style="clear: both;">Related Functions</h2>
+	</div>
+	<div class="itemizedlist">
+		<ul type="disc">
+<li>
+<a href="paws_deleteAttributes.html" target="main"><code>deleteAttributes</code></a></li>
+<li>
+<a href="paws_getAttributeValues.html" target="main"><code>getAttributeValues</code></a></li>
+<li>
+<a href="paws_getAttributes.html" target="main"><code>getAttributes</code></a></li>
+<li>
+<a href="paws_putAttributes.html" target="main"><code>putAttributes</code></a></li>
+<li>
+<a href="paws_replaceAttributes.html" target="main"><code>replaceAttributes</code></a></li>
+</ul>
+	</div>
+</div>
+
+<p style="text-align:center; font-size:9px">Copyright &copy; 2008 Bruce E. Wampler</p>
+</div></body></html>
