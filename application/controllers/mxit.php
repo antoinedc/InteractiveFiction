@@ -38,7 +38,6 @@ class Mxit extends CI_Controller {
 				
 				$stories = $this->stories->selectAll();
 				
-				
 				echo "<ul>";
 				foreach ($stories as $story)
 				{
@@ -65,6 +64,9 @@ class Mxit extends CI_Controller {
 				$sid = $_GET['sid'];
 				
 				$pid = $this->input->get('pid');
+				
+				$headers = apache_request_headers();
+				
 				$story = $this->stories->select(array('_id' => $sid), true);
 				
 				$baseLink = base_url() . 'index.php/mxit/read/?code=' . $_GET['code'] . '&sid=' . $story->getId();
@@ -100,6 +102,28 @@ class Mxit extends CI_Controller {
 		} catch (Exception $e) {
 			echo $e->getMessage();
 		}
+	}
+	
+	function display_stats($sessionId)
+	{
+		$session = $this->sessions->select($sessionId);
+		$main_session_index = -1;
+		
+		for ($i = 0; $i < count($session->stats); $i++)
+			if ($session->stats[$i]['main'] == true || $session->stats[$i]['main'] == 'true')
+				$main_session_index = $i;
+		
+		$stats = array();
+		while (list($key, $val) = each($session->stats[$main_session_index]['properties']))
+			$stats[] = array('key' => $key, 'value' => $val);	
+		
+		echo '<table>';
+		echo '<tr><th>Name</th>/<th>Value</th></tr>';
+		foreach ($stats as $el)
+		{
+			echo '<tr><td>' . $el['key'] . '</td><td>' . $el['value'] . '</td></tr>';
+		}
+		echo '</table>';
 	}
 	
 	private function bookmark($sid, $pid, $sessionId)

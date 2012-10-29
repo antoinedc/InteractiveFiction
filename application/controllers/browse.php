@@ -27,7 +27,8 @@ class Browse extends CI_Controller {
 		$stories = $this->stories->selectAll();
 		$s = array();
 		foreach ($stories as $story)
-			$s[] = array_merge($story['development'], array('_id' => $story['_id']->{'$id'}));
+			if (!empty($story['production']))
+				$s[] = array_merge($story['development'], array('_id' => $story['_id']->{'$id'}));
 		
 		$s = array_reverse($s);
 		
