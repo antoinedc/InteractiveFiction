@@ -572,10 +572,10 @@ $(function() {
 				$('#isEnd').attr('checked', false);
 				$('#isFirstParagraph').attr({
 				
-					'checked': story.start == e.currentTarget.id
+					'checked': story.start.$id == e.currentTarget.id
 				});
 				
-				if (story.start == e.currentTarget.id)
+				if (story.start.$id == e.currentTarget.id)
 					$('#isFirstParagraph').attr('disabled', 'disabled');
 				console.log(paragraph.isEnd);
 				$('#isEnd').attr('checked', (paragraph.isEnd == "true" || paragraph.isEnd == true));
