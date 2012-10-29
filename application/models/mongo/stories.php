@@ -121,16 +121,14 @@ class Stories extends CI_Model {
 	function update()
 	{
 		$data = array(
-			'development' => array(
-				'title' => $this->title ? $this->title : '',
-				'start' => $this->start ? $this->start : '',
-				'owner' => $this->owner,
-				'paragraphes' => $this->paragraphes ? $this->paragraphes : array(),
-				'characters' => $this->characters
-			)
+			'title' => $this->title ? $this->title : '',
+			'start' => $this->start ? $this->start : '',
+			'owner' => $this->owner,
+			'paragraphes' => $this->paragraphes ? $this->paragraphes : array(),
+			'characters' => $this->characters
 		);
 		
-		return $this->mongo_db->where('_id', $this->_id)->update($this->collectionName, $data);
+		return $this->mongo_db->where('_id', $this->_id)->set('development', $data)->update($this->collectionName);
 	}
 	
 	function getMainCharacter()
