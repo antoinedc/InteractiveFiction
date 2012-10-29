@@ -18,7 +18,6 @@ class Browse extends CI_Controller {
 		$this->load->library('parser');
 		
 		$this->load->model('mongo/stories');
-		$this->load->model('mongo/links');
 		$this->load->model('mongo/sessions');
 	}
 	
@@ -45,7 +44,7 @@ class Browse extends CI_Controller {
 		$this->parser->parse('private/layout.html', $data_layout);
 	}
 	
-	function story($sid, $pid = 0, $lid = 0)
+	function story($sid, $pid = 0)
 	{
 		if (!$this->session->userdata('uid'))
 			redirect('home?error=notLogged');
@@ -56,104 +55,20 @@ class Browse extends CI_Controller {
 		
 		$story = $this->stories->select(array('_id' => $sid), TRUE);
 		
-		$mainCharacter = $story->getMainCharacter();
-		
 		$session = $this->sessions->select($sessionId);
-		if ($session && !$lid && !$pid)
-		{
-			$pid = $session->pid;
+		if ($session && !$pid)
+			$pid = $session->pid;	
+			
+		if ($pid)
 			$paragraph = $story->getParagraphById($pid);
-		}
-		else if (!$session && !$lid && !$pid)
-		{
-			$paragraph = $story->getFirstParagraph();
-			$pid = $paragraph['_id']->{'$id'};
-			$this->bookmark($sid, $pid, $sessionId);
-		}
-		else if ($session && $pid && $lid)
-		{
-			$paragraph = $story->getParagraphById($pid);
-			$linkToGo = false;
-			foreach ($paragraph['links'] as $el)
-			{
-				if ($el['_id']->{'$id'} == $lid)
-				{
-					$linkToGo = $el;
-					$this->bookmark($sid, $linkToGo['destination'], $sessionId);
-					break;
-				}
-			}
-			
-			$main_session_index = -1;
-			for ($i = 0; $i < count($session->stats); $i++)
-				if ($session->stats[$i]['main'] == true || $session->stats[$i]['main'] == 'true')
-					$main_session_index = $i;
-			
-			foreach ($paragraph['links'] as $link)
-			{
-				if ($link['destination'] == $linkToGo['destination'])
-				{
-					if (count($link['action']))
-					{
-						for ($i = 0; $i < count($link['action']); $i++)
-						{
-							$action = $link['action'][$i];
-							
-							$operation = $action['operation'];
-							$key = $action['key'];
-							$value = $action['value'];
-							
-							if ($operation == '0')
-								$session->stats[$main_session_index]['properties'][$key] += $value;
-							else if ($operation == '1')
-								$session->stats[$main_session_index]['properties'][$key] -= $value;
-							else if ($operation == '2')
-								$session->stats[$main_session_index]['properties'][$key] *= $value;
-							else if ($operation == '3')
-								$session->stats[$main_session_index]['properties'][$key] /= $value;
-						
-							$session->update();
-						}
-						break;
-					}	
-				}
-			}
-			
-			$paragraph = $story->getParagraphById($linkToGo['destination']);
-		}
 		else
+			$paragraph = $story->getFirstParagraph();
+			
+		if (!$paragraph)
 			redirect(base_url() . 'index.php/browse/?error=noPid');
 		
-		$session = $this->sessions->select($sessionId);
-		$main_session_index = -1;
-			for ($i = 0; $i < count($session->stats); $i++)
-				if ($session->stats[$i]['main'] == true || $session->stats[$i]['main'] == 'true')
-					$main_session_index = $i;
-					
-		foreach ($paragraph['links'] as $i => $link)
-			foreach ($link['condition'] as $condition)
-			{
-				$key = $condition['key'];
-				if ($condition['operation'] == '0')
-					if ( ($session->stats[$main_session_index]['properties'][$key] < $condition['value'] && $condition['state'] == '0') || ( (!($session->stats[$main_session_index]['properties'][$key] < $condition['value'])) && $condition['state'] == '1') )
-						unset($paragraph['links'][$i]);
-				if ($condition['operation'] == '1')
-					if ( ($session->stats[$main_session_index]['properties'][$key] <= $condition['value'] && $condition['state'] == '0') || ( (!($session->stats[$main_session_index]['properties'][$key] <= $condition['value'])) && $condition['state'] == '1') )
-						unset($paragraph['links'][$i]);
-				if ($condition['operation'] == '2')
-					if ( ($session->stats[$main_session_index]['properties'][$key] == $condition['value'] && $condition['state'] == '0') || ( (!($session->stats[$main_session_index]['properties'][$key] == $condition['value'])) && $condition['state'] == '1') )
-						unset($paragraph['links'][$i]);
-				if ($condition['operation'] == '3')
-					if ( ($session->stats[$main_session_index]['properties'][$key] >= $condition['value'] && $condition['state'] == '0') || ( (!($session->stats[$main_session_index]['properties'][$key] >= $condition['value'])) && $condition['state'] == '1') )
-						unset($paragraph['links'][$i]);
-				if ($condition['operation'] == '4')
-					if ( ($session->stats[$main_session_index]['properties'][$key] > $condition['value'] && $condition['state'] == '0') || ( (!($session->stats[$main_session_index]['properties'][$key] > $condition['value'])) && $condition['state'] == '1') )
-						unset($paragraph['links'][$i]);				
-				if ($condition['operation'] == '5')
-					if ( ($session->stats[$main_session_index]['properties'][$key] != $condition['value'] && $condition['state'] == '0') || ( (!($session->stats[$main_session_index]['properties'][$key] != $condition['value'])) && $condition['state'] == '1') )
-						unset($paragraph['links'][$i]);	
-			}
-
+		if ($pid && $sessionId)
+			$this->bookmark($sid, $pid, $sessionId);
 			
 		$endHtml = '<br /><br />----------------------<br />
 					End of the story<br />
@@ -167,21 +82,9 @@ class Browse extends CI_Controller {
 			$restartHtml = '<br /><br />----------------------<br />
 							<a href="' . base_url() . 'index.php/browse/restart/'. $sid . '">Restart the story</a>';
 		
-		$session = $this->sessions->select($sessionId);
-		$main_session_index = -1;
-		
-		for ($i = 0; $i < count($session->stats); $i++)
-			if ($session->stats[$i]['main'] == true || $session->stats[$i]['main'] == 'true')
-				$main_session_index = $i;
-				
-		$stats = array();
-		while (list($key, $val) = each($session->stats[$main_session_index]['properties']))
-			$stats[] = array('key' => $key, 'value' => $val);	
-			
 		$data_story = array(
 			'notifications' => '',
 			'title' => $story->title,
-			'stats' => $stats,
 			'baseUrl' => base_url(),
 			'paragraph' => $paragraph['text'],
 			'sid' => $sid,

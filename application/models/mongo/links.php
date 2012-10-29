@@ -57,23 +57,17 @@ class Links extends CI_Model {
 		else return $res;
 	}
 	
-	function select($filter, $prod = false)
+	function select($filter)
 	{
 		//selectById
 		if (isset($filter['_id']) && $filter['_id'] != '')
 		{
 			$filter['_id'] = new MongoId($filter['_id']);
-			
-			$version = ($prod?'production':'development');
-			
-			$res = $this->mongo_db->select(array($version))->where('_id', $filter['_id'])->get('stories');
-			var_dump($res);
+			$res = $this->mongo_db->where('_id', $filter['_id'])->get($this->collection);
 			if (count($res))
 			{
-				
 				$res = $res[0];
 				$this->_id = $res['_id'];
-				$res = $res[0][$version];
 				$this->origin = $res['origin'];
 				$this->destination = $res['destination'];
 				$this->text = $res['text'];

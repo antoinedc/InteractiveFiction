@@ -6,40 +6,18 @@
 	{notifications}
 	</div>
 	
-	<div id="story">
-		
-		<div id="stats">
-			<hr />
-			Your stats: 
-			<table border="1">
-				<tr>
-					<th>Name</th>
-					<th>Value</th>
-				</tr>
-				{stats}
-				<tr>
-					<td>{key}</td>
-					<td>{value}</td>
-				</tr>
-				{/stats}
-			</table>
-			<hr />
+	<div id="paragraph">
+		<div id="text">
+		{paragraph}
 		</div>
-		
-		<div id="paragraph">
-			<div id="text">
-			{paragraph}
-			</div>
-			<div id="links">
-			{links}
-				<a href="{baseUrl}index.php/browse/story/{sid}/{origin}/{_id}">{text}</a><br />
-			{/links}
-			</div>
-			<div id="restart">
-			{restart}
-			</div>
+		<div id="links">
+		{links}
+			<a href="{baseUrl}index.php/browse/story/{sid}/{destination}" >{text}</a><br />
+		{/links}
 		</div>
-	
+		<div id="restart">
+		{restart}
+		</div>
 	</div>
 	
 </div>
