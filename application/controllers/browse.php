@@ -57,6 +57,9 @@ class Browse extends CI_Controller {
 		
 		$story = $this->stories->select(array('_id' => $sid), TRUE);
 		
+		if (!$story->paragraphes)
+			redirect('browse?error=notExported');
+		
 		$mainCharacter = $story->getMainCharacter();
 		
 		$session = $this->sessions->select($sessionId);
