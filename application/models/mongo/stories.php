@@ -13,6 +13,7 @@ class Stories extends CI_Model {
 	var $owner;
 	var $paragraphes;
 	var $characters;	
+	var $exportable;
 	
 	function __construct()
 	{
@@ -48,7 +49,7 @@ class Stories extends CI_Model {
 						'characters' => $this->characters ? $this->characters : $characters
 					);
 			
-		$id = $this->mongo_db->select($this->database)->insert($this->collectionName, array('development' => $data, 'production' => array()));
+		$id = $this->mongo_db->select($this->database)->insert($this->collectionName, array('exportable' => ($this->exportable ? $this->exportable : true), 'development' => $data, 'production' => array()));
 		
 		if ($data['start'])
 			$this->mongo_db->where('_id', $this->_id)->set('start', $id)->update($this->collectionName);
@@ -63,11 +64,12 @@ class Stories extends CI_Model {
 		{
 			$filter['_id'] = new MongoId($filter['_id']);
 			$version = ($prod?'production':'development');
-			$res = $this->mongo_db->select(array($version))->where('_id', $filter['_id'])->get($this->collectionName);
+			$res = $this->mongo_db->select()->where('_id', $filter['_id'])->get($this->collectionName);
 			
 			if (count($res))
 			{
 				$this->_id = $res[0]['_id'];
+				$this->exportable = $res[0]['exportable'];
 				$res = $res[0][$version];
 				$this->title = $res['title'];
 				$this->start = $res['start'];
@@ -88,6 +90,7 @@ class Stories extends CI_Model {
 			if (count($res))
 			{
 				$this->_id = $res[0]['_id'];
+				$this->exportable = $res[0]['exportable'];
 				$res = $res[0]['development'];
 				$this->title = $res['title'];
 				$this->start = $res['start'];
@@ -107,7 +110,7 @@ class Stories extends CI_Model {
 	
 	function selectAll()
 	{
-		return $this->mongo_db->get($this->collectionName);	
+		return $this->mongo_db->where(array('exportable' => true))->get($this->collectionName);	
 	}
 	
 	function goToProd($filter)
@@ -123,6 +126,7 @@ class Stories extends CI_Model {
 		$data = array(
 			'title' => $this->title ? $this->title : '',
 			'start' => $this->start ? $this->start : '',
+			'exportable' => $this->exportable,
 			'owner' => $this->owner,
 			'paragraphes' => $this->paragraphes ? $this->paragraphes : array(),
 			'characters' => $this->characters
