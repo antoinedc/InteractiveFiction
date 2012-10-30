@@ -49,7 +49,7 @@ class Stories extends CI_Model {
 						'characters' => $this->characters ? $this->characters : $characters
 					);
 			
-		$id = $this->mongo_db->select($this->database)->insert($this->collectionName, array('exportable' => ($this->exportable ? $this->exportable : true), 'development' => $data, 'production' => array()));
+		$id = $this->mongo_db->select($this->database)->insert($this->collectionName, array('exportable' => ($this->exportable === false ? false : true), 'development' => $data, 'production' => array()));
 		
 		if ($data['start'])
 			$this->mongo_db->where('_id', $this->_id)->set('start', $id)->update($this->collectionName);
