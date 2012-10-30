@@ -18,6 +18,7 @@ class Home extends CI_Controller {
 		$this->load->library('mongo_db');
 		
 		$this->load->model('mongo/users');
+		$this->load->model('mongo/stories');
 		$this->load->model('mongo/changelogs');
 	}
 	
@@ -133,6 +134,12 @@ class Home extends CI_Controller {
 												'uid' => $uid->{'$id'}
 										)
 									);
+									
+		//Add the sample story
+		$sample = $this->story->select(array('_id' => '508fe8fad72ee9da2d000002'));
+		$new_story = $sample;
+		$new_story->owner = $uid;
+		$new_story->insert();
 		
 		redirect('home');
 	}

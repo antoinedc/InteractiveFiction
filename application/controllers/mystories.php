@@ -27,7 +27,7 @@ class Mystories extends CI_Controller {
 		$s = array();
 		
 		foreach ($stories as $story)
-			if ($story['development']['owner']->{'$id'} == $this->session->userdata('uid') || $story['development']['title'] === 'Castaway | Sample story')
+			if ($story['development']['owner']->{'$id'})
 				$s[] = array_merge($story['development'], array('_id' => $story['_id']->{'$id'}));
 		
 		$s = array_reverse($s);
