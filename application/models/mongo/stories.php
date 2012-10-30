@@ -10,7 +10,7 @@ class Stories extends CI_Model {
 	private $_id;
 	var $title;
 	var $start;
-	private $owner;
+	var $owner;
 	var $paragraphes;
 	var $characters;	
 	
