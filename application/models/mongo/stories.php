@@ -67,10 +67,12 @@ class Stories extends CI_Model {
 			$res = $this->mongo_db->select()->where('_id', $filter['_id'])->get($this->collectionName);
 			
 			if (count($res))
-			{
+			{ 	
 				$this->_id = $res[0]['_id'];
 				$this->exportable = $res[0]['exportable'];
+				
 				$res = $res[0][$version];
+				if (!$res) return false;
 				$this->title = $res['title'];
 				$this->start = $res['start'];
 				$this->owner = $res['owner'];

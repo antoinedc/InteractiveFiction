@@ -57,8 +57,12 @@ class Browse extends CI_Controller {
 		
 		$story = $this->stories->select(array('_id' => $sid), TRUE);
 		
-		if (!$story->paragraphes)
-			redirect('browse?error=notExported');
+		if (!$story)
+		{
+			$story = $this->stories->select(array('_id' => $sid));
+			if ($story->owner->{'$id'} != $this->session->userdata('uid'))
+				redirect('browse?error=notExported');
+		}
 		
 		$mainCharacter = $story->getMainCharacter();
 		
@@ -133,30 +137,31 @@ class Browse extends CI_Controller {
 			for ($i = 0; $i < count($session->stats); $i++)
 				if ($session->stats[$i]['main'] == true || $session->stats[$i]['main'] == 'true')
 					$main_session_index = $i;
-					
-		foreach ($paragraph['links'] as $i => $link)
-			foreach ($link['condition'] as $condition)
-			{
-				$key = $condition['key'];
-				if ($condition['operation'] == '0')
-					if ( ($session->stats[$main_session_index]['properties'][$key] < $condition['value'] && $condition['state'] == '0') || ( (!($session->stats[$main_session_index]['properties'][$key] < $condition['value'])) && $condition['state'] == '1') )
-						unset($paragraph['links'][$i]);
-				if ($condition['operation'] == '1')
-					if ( ($session->stats[$main_session_index]['properties'][$key] <= $condition['value'] && $condition['state'] == '0') || ( (!($session->stats[$main_session_index]['properties'][$key] <= $condition['value'])) && $condition['state'] == '1') )
-						unset($paragraph['links'][$i]);
-				if ($condition['operation'] == '2')
-					if ( ($session->stats[$main_session_index]['properties'][$key] == $condition['value'] && $condition['state'] == '0') || ( (!($session->stats[$main_session_index]['properties'][$key] == $condition['value'])) && $condition['state'] == '1') )
-						unset($paragraph['links'][$i]);
-				if ($condition['operation'] == '3')
-					if ( ($session->stats[$main_session_index]['properties'][$key] >= $condition['value'] && $condition['state'] == '0') || ( (!($session->stats[$main_session_index]['properties'][$key] >= $condition['value'])) && $condition['state'] == '1') )
-						unset($paragraph['links'][$i]);
-				if ($condition['operation'] == '4')
-					if ( ($session->stats[$main_session_index]['properties'][$key] > $condition['value'] && $condition['state'] == '0') || ( (!($session->stats[$main_session_index]['properties'][$key] > $condition['value'])) && $condition['state'] == '1') )
-						unset($paragraph['links'][$i]);				
-				if ($condition['operation'] == '5')
-					if ( ($session->stats[$main_session_index]['properties'][$key] != $condition['value'] && $condition['state'] == '0') || ( (!($session->stats[$main_session_index]['properties'][$key] != $condition['value'])) && $condition['state'] == '1') )
-						unset($paragraph['links'][$i]);	
-			}
+		
+		if ($paragraph)
+			foreach ($paragraph['links'] as $i => $link)
+				foreach ($link['condition'] as $condition)
+				{
+					$key = $condition['key'];
+					if ($condition['operation'] == '0')
+						if ( ($session->stats[$main_session_index]['properties'][$key] < $condition['value'] && $condition['state'] == '0') || ( (!($session->stats[$main_session_index]['properties'][$key] < $condition['value'])) && $condition['state'] == '1') )
+							unset($paragraph['links'][$i]);
+					if ($condition['operation'] == '1')
+						if ( ($session->stats[$main_session_index]['properties'][$key] <= $condition['value'] && $condition['state'] == '0') || ( (!($session->stats[$main_session_index]['properties'][$key] <= $condition['value'])) && $condition['state'] == '1') )
+							unset($paragraph['links'][$i]);
+					if ($condition['operation'] == '2')
+						if ( ($session->stats[$main_session_index]['properties'][$key] == $condition['value'] && $condition['state'] == '0') || ( (!($session->stats[$main_session_index]['properties'][$key] == $condition['value'])) && $condition['state'] == '1') )
+							unset($paragraph['links'][$i]);
+					if ($condition['operation'] == '3')
+						if ( ($session->stats[$main_session_index]['properties'][$key] >= $condition['value'] && $condition['state'] == '0') || ( (!($session->stats[$main_session_index]['properties'][$key] >= $condition['value'])) && $condition['state'] == '1') )
+							unset($paragraph['links'][$i]);
+					if ($condition['operation'] == '4')
+						if ( ($session->stats[$main_session_index]['properties'][$key] > $condition['value'] && $condition['state'] == '0') || ( (!($session->stats[$main_session_index]['properties'][$key] > $condition['value'])) && $condition['state'] == '1') )
+							unset($paragraph['links'][$i]);				
+					if ($condition['operation'] == '5')
+						if ( ($session->stats[$main_session_index]['properties'][$key] != $condition['value'] && $condition['state'] == '0') || ( (!($session->stats[$main_session_index]['properties'][$key] != $condition['value'])) && $condition['state'] == '1') )
+							unset($paragraph['links'][$i]);	
+				}
 
 			
 		$endHtml = '<br /><br />----------------------<br />
@@ -179,9 +184,10 @@ class Browse extends CI_Controller {
 				$main_session_index = $i;
 				
 		$stats = array();
-		while (list($key, $val) = each($session->stats[$main_session_index]['properties']))
-			$stats[] = array('key' => $key, 'value' => $val);	
-			
+		if ($main_session_index > -1 && isset($session->stats[$main_session_index]['properties']))
+			while (list($key, $val) = each($session->stats[$main_session_index]['properties']))
+				$stats[] = array('key' => $key, 'value' => $val);	
+		
 		$data_story = array(
 			'notifications' => '',
 			'title' => $story->title,
@@ -209,6 +215,12 @@ class Browse extends CI_Controller {
 			//If the reader is logged
 			$session = $this->sessions->select($sessionId);
 			$story = $this->stories->select(array('_id' => $sid), true);
+			if (!$story)
+			{
+				$story = $this->stories->select(array('_id' => $sid));
+				if ($story->owner->{'$id'} != $this->session->userdata('uid'))
+					redirect('browse?error=notExported');
+			}
 			
 			if (empty($session))
 			{
@@ -217,7 +229,7 @@ class Browse extends CI_Controller {
 				$newSession->sessionid = $sessionId;
 				$newSession->sid = $sid;
 				$newSession->pid = $pid;
-				$newSession->stats = $story->characters;
+				$newSession->stats = $story->characters ? $story->characters : array();
 				$newSession->insert();
 			}
 			else
