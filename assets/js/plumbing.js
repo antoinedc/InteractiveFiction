@@ -1081,8 +1081,9 @@ $(function() {
 				var isStart = (story.paragraphes.length?false:true);
 				var isEnd = false;
 				var content = 'A new paragraph !';
+				var title = '';
 				
-				story.addParagraph(isStart, isEnd, content, [], function(status, paragraph) {
+				story.addParagraph(isStart, isEnd, title, content, [], function(status, paragraph) {
 					
 					if (!status)
 					{
