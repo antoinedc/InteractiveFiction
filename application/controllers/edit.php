@@ -84,12 +84,10 @@ class Edit extends CI_Controller {
 			}
 		}
 		
-		foreach ($story->paragraphes as $paragraph)
-		{
-			if (!isset($paragraph['title']))
-				$paragraph['title'] = '';
-		}
-		
+		for ($i = 0; $i < count($story->paragraphes); $i++)
+			if (!isset($story->paragraphes[$i]['title']))
+				$story->paragraphes[$i]['title'] = '';
+			
 		$data_edit_story = array(
 									'baseUrl' => base_url(),
 									'srory_title' => $story->title,
