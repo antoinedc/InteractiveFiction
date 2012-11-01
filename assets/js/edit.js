@@ -3,7 +3,7 @@ $(function(){
 	if (!$('#onEditStory').length)
 		return false;	
 		
-	$(".w").tooltip({html: true});
+//	$(".w").tooltip({html: true});
 	
 	var originId = '';
 	var action;
