@@ -12,6 +12,7 @@ class Paragraphes extends CI_Model {
 	var $isStart;
 	var $isEnd;
 	var $links;
+	var $title;
 	var $idref;
 	var $temp_links;
 	var $x;
@@ -34,6 +35,7 @@ class Paragraphes extends CI_Model {
 		$data = array(
 			'_id' => ($this->_id?$this->_id:new MongoId()),
 			'text' => $this->text,
+			'title' => $this->title,
 			'sid' => new MongoId($this->sid),
 			'isStart' => $this->isStart,
 			'isEnd' => $this->isEnd,
@@ -81,6 +83,7 @@ class Paragraphes extends CI_Model {
 			{
 				$this->_id = $res['_id'];
 				$this->text = (isset($res['text'])?$res['text']:'');
+				$this->title = (isset($res['title'])?$res['title']:'');
 				$this->sid = $res['sid'];
 				$this->isStart = $res['isStart'];
 				$this->isEnd = $res['isEnd'];
@@ -101,6 +104,7 @@ class Paragraphes extends CI_Model {
 	{
 		$data = array(
 						'development.paragraphes.$.text' => $this->text,
+						'development.paragraphes.$.title' => $this->title,
 						'development.paragraphes.$.sid' => $this->sid,
 						'development.paragraphes.$.isStart' => $this->isStart,
 						'development.paragraphes.$.isEnd' => $this->isEnd,

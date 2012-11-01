@@ -86,7 +86,7 @@ class Edit extends CI_Controller {
 		
 		$data_edit_story = array(
 									'baseUrl' => base_url(),
-									'title' => $story->title,
+									'srory_title' => $story->title,
 									'sid' => $sid,
 									'paragraphes' => $story->paragraphes,
 									'paragraphesToLink' => $story->paragraphes,

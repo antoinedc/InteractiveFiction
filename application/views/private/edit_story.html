@@ -9,7 +9,7 @@
 	<!--
 	<h2>Add some paragraphes</h2>
 	<div class="input-prepend">
-		<span class="add-on">Title</span><input class="span9" type="text" id="title" name="title" value="{title}" /><a class="btn">Update</a>
+		<span class="add-on">Title</span><input class="span9" type="text" id="title" name="title" value="{story_title}" /><a class="btn">Update</a>
 	</div>
 	
 	<div class="btn-toolbar">
@@ -87,9 +87,9 @@
 	<div id="plumbing" style="width:1000px;height:700px;overflow:hidden;border:grey 1px solid;">
 		<div id="canvas" style="position:relative;left:500px;top:350px;" >
 			{paragraphes}
-			<div class="w" style="position:relative" id="{_id}">
-				<div class="tooltip" style="display:none;">
-					{text}
+			<div title="{text}" class="w" style="position:relative" id="{_id}">
+				<div class="title" style="font-size:0.8em;">
+				{title}
 				</div>
 				<div class="ep">
 				</div>

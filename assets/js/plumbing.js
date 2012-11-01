@@ -96,12 +96,13 @@ $(function() {
 				}
 		};
 		
-		this.addParagraph = function(isStart, isEnd, text, links, callback) {
+		this.addParagraph = function(isStart, isEnd, title, text, links, callback) {
 		
 			var newParagraph = new Paragraph(0);
 			newParagraph.sid = this.id;
 			newParagraph.isEnd = isEnd;
 			newParagraph.isStart = isStart;
+			newParagraph.title = title;
 			newParagraph.text = text;
 			newParagraph.links = links;
 			
@@ -211,6 +212,7 @@ $(function() {
 		this.sid = 0;
 		this.isEnd = false;
 		this.isStart = false;
+		this.title = '';
 		this.text = '';
 		this.x = 50;
 		this.y = 50;
@@ -335,6 +337,7 @@ $(function() {
 					newParagraph.sid = story.id;
 					newParagraph.isEnd = el.isEnd;
 					newParagraph.isStart = el.isStart;
+					newParagraph.title = el.title === undefined ? '' : el.title;
 					newParagraph.text = el.text;
 					newParagraph.x = el.x;
 					newParagraph.y = el.y;
@@ -560,11 +563,14 @@ $(function() {
 			
 			$('.w').on('dblclick', function(e) {
 				
-				CKEDITOR.instances['newParagraph'].setData($(this).children('.tooltip').text());
+				console.log($(this).attr('title'));
+				CKEDITOR.instances['newParagraph'].setData($(this).attr('data-original-title'));
 				$('#addParagraphModal').css('visibility','visible');
 				
 				$('#addParagraphModal').attr('data-pid', e.currentTarget.id);
 				var paragraph = story.getParagraph(e.currentTarget.id);
+				
+				$('#paragraph-title').val(paragraph.title);
 				
 				if (story.paragraphes.length > 1 && $('.w').length > 1)
 					$('#isFirstParagraph').removeAttr('disabled');
@@ -793,6 +799,8 @@ $(function() {
 				if ($('#isFirstParagraph').attr('checked'))
 					story.setStart(pid);
 				paragraph.text = CKEDITOR.instances['newParagraph'].getData();
+				paragraph.title = $('#paragraph-title').val();
+				console.log(paragraph.title);
 				$('.w#'+pid+'>.tooltip').html(paragraph.text);
 				paragraph.isEnd = $('#isEnd').is(':checked');
 				story.update();
@@ -1162,7 +1170,7 @@ $(function() {
 					
 					$('.w').on('dblclick', function(e) {
 						
-						CKEDITOR.instances['newParagraph'].setData($(this).children('.tooltip').text());
+						CKEDITOR.instances['newParagraph'].setData($(this).attr('data-original-title'));
 						$('#addParagraphModal').css('visibility','visible');
 						
 						$('#addParagraphModal').attr('data-pid', e.currentTarget.id);
@@ -1170,7 +1178,10 @@ $(function() {
 						var paragraph = story.getParagraph(e.currentTarget.id);
 						console.log(paragraph);
 						console.log(story);
+				
+						$('#paragraph-title').val(paragraph.title);
 						
+				
 						if (story.paragraphes.length > 1 && $('.w').length > 1)
 							$('#isFirstParagraph').removeAttr('disabled');
 							
