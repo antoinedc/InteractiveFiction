@@ -85,8 +85,12 @@ class Edit extends CI_Controller {
 		}
 		
 		for ($i = 0; $i < count($story->paragraphes); $i++)
+		{
+			$story->paragraphes[$i]['text'] = htmlspecialchars($story->paragraphes[$i]['text']);
+			$story->paragraphes[$i]['title'] = htmlspecialchars($story->paragraphes[$i]['title']);
 			if (!isset($story->paragraphes[$i]['title']))
 				$story->paragraphes[$i]['title'] = '';
+		}
 			
 		$data_edit_story = array(
 									'baseUrl' => base_url(),
