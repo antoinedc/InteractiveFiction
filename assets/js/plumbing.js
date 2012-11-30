@@ -480,6 +480,193 @@ $(function() {
 				});
 			});
 			
+			var createNode = function(paragraph, conn) {
+				
+				if (conn === undefined)
+				{
+					var html = $('<div title="' + paragraph.text + '" class="w" style="position:relative;" id="' + paragraph.id + '">\
+									<div class="title" style="font-size:0.8em;">'
+										+ paragraph.title +
+									'</div>\
+									<div class="ep">\
+									</div>\
+								</div>');
+				}
+				else
+				{
+					var html = $(conn.connection.target[0].outerHTML);
+					console.log(conn.connection);
+					html.attr('id', paragraph.id);
+					html.addClass('w');
+					var content = '<div class="tooltip" style="display:none;">'
+										+ paragraph.text +
+									'</div>\
+									<div class="ep">\
+									</div>';
+					html.append(content);
+				}
+				console.log(html);
+				$('#canvas').append(html);
+
+				jsPlumb.draggable(jsPlumb.getSelector(".w"));
+				$('#'+paragraph.id+'>.ep').each(function(i, e) {
+		
+					var p = $(e).parent();
+					jsPlumb.makeSource($(e), {
+					
+						parent: p,
+						anchor: "Continuous",
+						connector: [ "StateMachine", { curviness:20 } ],
+						connectorStyle:{ strokeStyle:nextColour(), lineWidth:2 }
+					});
+				});
+		
+				jsPlumb.makeTarget(jsPlumb.getSelector("#"+paragraph.id), {
+				
+					dropOptions:{ hoverClass:"dragHover" },
+					anchor: "Continuous"	,
+					beforeDrop: function(conn) {
+						console.log(conn);
+						if (conn.targetId == 'plumbing' && !$('.dragHover').length)
+						{
+							var isStart = (story.paragraphes.length?false:true);
+							var isEnd = false;
+							var content = 'A new paragraph !';
+							var title = '';
+						
+							story.addParagraph(isStart, isEnd, title, content, [], function(status, paragraph) {
+							
+								if (!status)
+								{
+									alert('Something went wrong, please retry.');
+									return;
+								}
+								
+								if (isStart)
+									story.start = paragraph.id;
+									
+								story.paragraphes.push(paragraph);
+								story.update(function() {
+								
+									createNode(paragraph, conn);
+									var modal = $('#addLinkModal');
+									$('#choice').attr('value', '');
+									$('.newValue').attr('value', '');
+									modal.attr('data-lid', '');								
+									modal.attr('data-conn-id', conn.connection.id);					
+									modal.attr('data-sourceid', conn.sourceId);
+									modal.attr('data-targetid', paragraph.id);
+									
+									$('#addLinkModal').modal('show');
+								});
+							});
+						}
+						else
+						{
+							var modal = $('#addLinkModal');
+							$('#choice').attr('value', '');
+							$('.newValue').attr('value', '');
+							modal.attr('data-lid', '');								
+							modal.attr('data-conn-id', conn.connection.id);					
+							modal.attr('data-sourceid', conn.sourceId);
+							modal.attr('data-targetid', conn.targetId);
+							
+							$('#addLinkModal').modal('show');
+						}
+						return false;
+					}
+				});
+				
+				$('.w').on('click', function() {
+			
+					$('.w').css({
+						'border':'1px solid #346789'
+					});
+					
+					$(this).css({
+						'border': 'red 1px solid'
+					});
+					
+					selected = $(this).attr('id');
+					
+					$(document).keyup(function(e) {
+					
+						if (e.keyCode == 46)
+						{
+							if (!selected)
+								return;
+								
+							var pid = selected;
+							story.removeParagraph(pid);
+							story.update(function(status) {
+							
+								if (status)
+								{
+									jsPlumb.detachAllConnections(pid);
+									$('.w#' + pid).remove();
+								}
+							});
+						}
+					});
+				});
+				
+				$('.w').on('dblclick', function(e) {
+					
+					CKEDITOR.instances['newParagraph'].setData($(this).attr('data-original-title'));
+					$('#addParagraphModal').css('visibility','visible');
+					
+					$('#addParagraphModal').attr('data-pid', e.currentTarget.id);
+					
+					var paragraph = story.getParagraph(e.currentTarget.id);
+					console.log(paragraph);
+					console.log(story);
+			
+					$('#paragraph-title').val(paragraph.title);
+					
+			
+					if (story.paragraphes.length > 1 && $('.w').length > 1)
+						$('#isFirstParagraph').removeAttr('disabled');
+						
+					$('#isEnd').attr('checked', false);
+					$('#isFirstParagraph').attr({
+					
+						'checked': story.start == e.currentTarget.id || story.paragraphes.length == 1
+					});
+					
+					$('#isEnd').attr('checked', paragraph.isEnd);
+					
+					if (story.start == e.currentTarget.id)
+						$('#isFirstParagraph').attr('disabled', 'disabled');
+					
+					$('#addParagraphModal').modal();
+				});			
+			};
+			
+			jsPlumb.makeTarget($("#plumbing"), {
+				
+				beforeDrop: function(conn) {
+				
+					var modal = $('#addLinkModal');
+					$('#choice').attr('value', '');
+					$('.newValue').attr('value', '');
+					modal.attr('data-lid', '');					
+					modal.attr('data-conn-id', conn.connection.id);					
+					modal.attr('data-sourceid', conn.sourceId);
+					
+					var isStart = (story.paragraphes.length?false:true);
+					var isEnd = false;
+					var title = '';
+					var content = 'A new paragraph !';
+					
+					story.addParagraph(isStart, isEnd, title, content, []);				
+					story.update();
+					
+					//$('#addLinkModal').modal('show');
+					
+					return false;
+				}
+			});
+			
 			$('.ep').each(function(i, e) {
 				
 				p = $(e).parent();
@@ -493,7 +680,12 @@ $(function() {
 				});
 			});
 			
-			jsPlumb.makeTarget(jsPlumb.getSelector(".w"), {
+			for (var i = 0; i < story.paragraphes.length; i++)
+			{
+				createNode(story.paragraphes[i]);
+			}
+			
+			/*jsPlumb.makeTarget(jsPlumb.getSelector(".w"), {
 				
 				dropOptions:{ hoverClass:"dragHover" },
 				anchor:"Continuous"	,
@@ -507,7 +699,35 @@ $(function() {
 					modal.attr('data-sourceid', conn.sourceId);
 					modal.attr('data-targetid', conn.targetId);
 					
-					$('#addLinkModal').modal('show');
+					if (conn.targetId == "plumbing")
+					{
+						var isStart = (story.paragraphes.length?false:true);
+						var isEnd = false;
+						var title = '';
+						var content = 'A new paragraph !';
+						
+						story.addParagraph(isStart, isEnd, title, content, [], function(status, paragraph) { 
+	
+							if (!status)
+							{
+								alert('Something went wrong, please retry.');
+								return;
+							}
+							
+							if (isStart)
+								story.start = paragraph.id;
+								
+							story.paragraphes.push(paragraph);
+							story.update(function() {
+							
+								createNode(paragraph);
+								modal.attr('data-targetid', paragraph.id);
+								$('#addLinkModal').modal('show');
+							});
+						});			
+					}
+					else
+						$('#addLinkModal').modal('show');
 					
 					return false;
 				}			
@@ -516,15 +736,16 @@ $(function() {
 			jsPlumb.bind("jsPlumbConnection", function(conn) {
 					
 				conn.connection.setPaintStyle({strokeStyle:nextColour()});
+				console.log(conn);
 				conn.connection.bind('click', function(conn) {
 					
-					/**TODO: improve the way we pass these ids**/
+					/**TODO: improve the way we pass these ids**
 					var modal = $('#addLinkModal');
 					modal.attr('data-lid', conn.getParameter('lid'));
 					modal.attr('data-pid', conn.sourceId);
 					modal.attr('data-sourceid', conn.sourceId);
 					modal.attr('data-targetid', conn.targetId);
-					modal.modal('show');
+					modal.modal('show');		
 				});
 			});
 			
@@ -587,7 +808,7 @@ $(function() {
 				$('#isEnd').attr('checked', (paragraph.isEnd == "true" || paragraph.isEnd == true));
 				
 				$('#addParagraphModal').modal();
-			});
+			});*/
 			
 			var populate_properties_selector = function(parent, child) {
 			
@@ -832,7 +1053,7 @@ $(function() {
 						operation: modifier.find('.selectOperation').attr('value'),
 						value: modifier.find('.newValue').val()
 					};
-					console
+					
 					if (newAction.key != "")
 						actions.push(newAction);
 				});
@@ -857,6 +1078,7 @@ $(function() {
 				
 				if (lid)
 				{
+					console.log('lid'+lid);
 					var link = paragraph.getLink(lid);
 					link.text = $('#choice').val();
 					link.action = actions;
@@ -866,7 +1088,8 @@ $(function() {
 				}
 				else
 					paragraph.addLink(source, target, $('#choice').val(), actions, conditions, function(status, link) {
-					
+						
+						console.log(source, target);
 						if (status)
 						{
 							paragraph.links.push(link);
@@ -1076,7 +1299,7 @@ $(function() {
 				};				
 			});
 			
-			$('#newNode').live('click', function() {
+			$('#newNode').bind('click', function() {
 			
 				var isStart = (story.paragraphes.length?false:true);
 				var isEnd = false;
@@ -1093,113 +1316,12 @@ $(function() {
 					
 					if (isStart)
 						story.start = paragraph.id;
-						
 					story.paragraphes.push(paragraph);
-					var html = '<div class="w" style="position:relative;left:50px;bottom:50px;" id="' + paragraph.id + '">\
-									<div class="tooltip" style="display:none;">'
-										+ paragraph.text +
-									'</div>\
-									<div class="ep">\
-									</div>\
-								</div>';
-					$('#canvas').append(html);
-
-					jsPlumb.draggable(jsPlumb.getSelector(".w"));
-					$('#'+paragraph.id+'>.ep').each(function(i, e) {
-			
-						var p = $(e).parent();
-						jsPlumb.makeSource($(e), {
-						
-							parent: p,
-							anchor: "Continuous",
-							connector: [ "StateMachine", { curviness:20 } ],
-							connectorStyle:{ strokeStyle:nextColour(), lineWidth:2 }
-						});
-					});
-			
-					jsPlumb.makeTarget(jsPlumb.getSelector("#"+paragraph.id), {
-					
-						dropOptions:{ hoverClass:"dragHover" },
-						anchor:"Continuous"	,
-						beforeDrop: function(conn) {
-							
-							var modal = $('#addLinkModal');
-							$('#choice').attr('value', '');
-							$('.newValue').attr('value', '');
-							modal.attr('data-lid', '');								
-							modal.attr('data-conn-id', conn.connection.id);					
-							modal.attr('data-sourceid', conn.sourceId);
-							modal.attr('data-targetid', conn.targetId);
-							
-							$('#addLinkModal').modal('show');
-							return false;
-						}
-					});
-					
-					$('.w').on('click', function() {
-				
-						$('.w').css({
-							'border':'1px solid #346789'
-						});
-						
-						$(this).css({
-							'border': 'red 1px solid'
-						});
-						
-						selected = $(this).attr('id');
-						
-						$(document).keyup(function(e) {
-						
-							if (e.keyCode == 46)
-							{
-								if (!selected)
-									return;
-									
-								var pid = selected;
-								story.removeParagraph(pid);
-								story.update(function(status) {
-								
-									if (status)
-									{
-										jsPlumb.detachAllConnections(pid);
-										$('.w#' + pid).remove();
-									}
-								});
-							}
-						});
-					});
-					
-					$('.w').on('dblclick', function(e) {
-						
-						CKEDITOR.instances['newParagraph'].setData($(this).attr('data-original-title'));
-						$('#addParagraphModal').css('visibility','visible');
-						
-						$('#addParagraphModal').attr('data-pid', e.currentTarget.id);
-						
-						var paragraph = story.getParagraph(e.currentTarget.id);
-						console.log(paragraph);
-						console.log(story);
-				
-						$('#paragraph-title').val(paragraph.title);
-						
-				
-						if (story.paragraphes.length > 1 && $('.w').length > 1)
-							$('#isFirstParagraph').removeAttr('disabled');
-							
-						$('#isEnd').attr('checked', false);
-						$('#isFirstParagraph').attr({
-						
-							'checked': story.start == e.currentTarget.id || story.paragraphes.length == 1
-						});
-						
-						$('#isEnd').attr('checked', paragraph.isEnd);
-						
-						if (story.start == e.currentTarget.id)
-							$('#isFirstParagraph').attr('disabled', 'disabled');
-						
-						$('#addParagraphModal').modal();
+					story.update(function() {
+						createNode(paragraph);
 					});
 				});
+						
 			});
 			/*******************************/
 			

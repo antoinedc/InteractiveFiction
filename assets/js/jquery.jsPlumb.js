@@ -589,6 +589,7 @@ jsPlumbUtil = {
 			// connection is confirmed. user can return false to reject connection.
 			var beforeDrop = params.beforeDrop;
 			this.isDropAllowed = function(sourceId, targetId, scope, connection, dropEndpoint) {
+				
 				var r = self._jsPlumb.checkCondition("beforeDrop", { 
 					sourceId:sourceId, 
 					targetId:targetId, 
@@ -598,6 +599,7 @@ jsPlumbUtil = {
 				});
 				if (beforeDrop) {
 					try { 
+						
 						r = beforeDrop({ 
 							sourceId:sourceId, 
 							targetId:targetId, 
@@ -608,6 +610,7 @@ jsPlumbUtil = {
 					}
 					catch (e) { _log("jsPlumb: beforeDrop callback failed", e); }
 				}
+				
 				return r;
 			};
 			
@@ -2992,7 +2995,7 @@ between this method and jsPlumb.reset).
 					// check if drop is allowed here.					
 					//var _continue = jpc.isDropAllowed(jpc.sourceId, _getId(_el), jpc.scope);		
 					var _continue = proxyComponent.isDropAllowed(jpc.sourceId, _getId(_el), jpc.scope, jpc, null);		
-					
+
 					// regardless of whether the connection is ok, reconfigure the existing connection to 
 					// point at the current info. we need this to be correct for the detach event that will follow.
 					// clear the source endpoint from the list to detach. we will detach this connection at this
@@ -6310,8 +6313,11 @@ between this method and jsPlumb.reset).
 									// the Connection have them, because they are on jsPlumbUIComponent.  shhh!), because
 									// it only makes sense to have it on a target endpoint.
 									_doContinue = _doContinue && self.isDropAllowed(jpc.sourceId, jpc.targetId, jpc.scope, jpc, self);
-															
+									
+									
+									
 									if (_doContinue) {
+										
 										// remove this jpc from the current endpoint
 										jpc.endpoints[idx].detachFromConnection(jpc);
 										if (jpc.suspendedEndpoint) jpc.suspendedEndpoint.detachFromConnection(jpc);
@@ -6328,8 +6334,10 @@ between this method and jsPlumb.reset).
 												jsPlumb.CurrentLibrary.initDraggable(self.element, dragOptions, true);
 										}
 										else {
+											
 											var suspendedElement = jpc.suspendedEndpoint.getElement(), suspendedElementId = jpc.suspendedEndpoint.elementId;
 											// fire a detach event
+											
 											fireDetachEvent({
 												source : idx == 0 ? suspendedElement : jpc.source, 
 												target : idx == 1 ? suspendedElement : jpc.target,
@@ -6346,8 +6354,10 @@ between this method and jsPlumb.reset).
 										_finaliseConnection(jpc, null, originalEvent);
 									}
 									else {
+										
 										// otherwise just put it back on the endpoint it was on before the drag.
-										if (jpc.suspendedEndpoint) {									
+										if (jpc.suspendedEndpoint) {	
+											
 											jpc.endpoints[idx] = jpc.suspendedEndpoint;
 											jpc.setHover(false);
 											jpc._forceDetach = true;
@@ -6358,6 +6368,7 @@ between this method and jsPlumb.reset).
 												jpc.target = jpc.suspendedEndpoint.element;
 												jpc.targetId = jpc.suspendedEndpoint.elementId;;
 											}
+											
 											jpc.suspendedEndpoint.addConnection(jpc);
 	
 											jpc.endpoints[0].repaint();

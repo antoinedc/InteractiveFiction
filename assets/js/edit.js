@@ -3,6 +3,7 @@ $(function(){
 	if (!$('#onEditStory').length)
 		return false;	
 	$(".w").tooltip({html: true});
+	$("svg").tooltip({html: true});
 		
 	
 	var originId = '';
