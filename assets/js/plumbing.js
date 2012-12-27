@@ -10,7 +10,7 @@ $(function() {
 		curColourIndex = curColourIndex + 1;
 		if (curColourIndex > maxColourIndex) curColourIndex = 1;
 		return "rgb(" + R + "," + G + "," + B + ")";
-	};
+	};	
 	
 	var isObjectEmpty = function(obj) {
 	
@@ -19,6 +19,14 @@ $(function() {
 			
 		return true;
 	};		
+	
+	var contains = function(array, val) {
+	
+		for (var i = 0; i < array.length; i++)
+			if (array[i] === val)
+				return true;
+		return false;
+	};
 	
 	var selected;
 	var Story = function(id) {
@@ -29,13 +37,30 @@ $(function() {
 		this.start = 0;
 		this.paragraphes = [];
 		this.characters = [];
+		this.layers = [];
+		var update_request = false;
 		
 		this.update = function(callback) {
 		
 			this.owner = 'antoine';
-			console.log(JSON.stringify($(this)));
-			$.post(BASE_URL + 'index.php/edit/update', {story: JSON.stringify($(this))}, function(data) {
 			
+			console.log(JSON.stringify($(this)));
+			
+			if (update_request)
+				update_request.abort();
+			
+				this.paragraphes.forEach(function(el, i) {
+				
+					if ($('div.w#' + el.id).length)
+					{
+						el.x = $('div.w#' + el.id).position().left;
+						el.y = $('div.w#' + el.id).position().top;
+					}
+				});
+			
+			update_request = $.post(BASE_URL + 'index.php/edit/update', {story: JSON.stringify($(this))}, function(data) {
+				
+				update_request = false;
 				if (data.status <= 0)
 				{
 					if (callback)
@@ -45,7 +70,75 @@ $(function() {
 				if (callback)
 					callback(true);
 				
+			}, 'json');		
+		};
+		
+		this.getParagraphsByLayer = function(layerId) {
+		
+			var res = [];
+			for (var i = 0; i < this.paragraphes.length; i++)
+				if (contains(this.paragraphes[i].layers, layerId))
+					res.push(this.paragraphes);
+			return res;
+		};
+		
+		this.getLayer = function(layerId) {
+			
+			var res = false
+			for (var i = 0; i < this.layers.length; i++)
+				if (this.layers[i].id == layerId)
+					res = this.layers[i];
+			
+			console.log(res);
+			return res;
+		};
+		
+		this.updateLayers = function() {
+		
+			for (var i = 0; i < this.layers.length; i++)
+			{
+				this.layers[i].paragraphes = [];
+				for (var j = 0; j < this.paragraphes.length; j++)
+					for (var k = 0; k < this.paragraphes[j].layers.length; k++)
+						if (this.layers[i].id == this.paragraphes[j].layers[k])
+							this.layers[i].paragraphes.push(this.paragraphes[j].id);
+			}
+			console.log('layers: ', this.layers);
+		};
+		
+		this.getActiveLayers = function() {
+			
+			var res = [];
+			for (var i = 0; i < this.layers.length; i++)
+				if (this.layers[i].active)
+					res.push(this.layers[i]);
+			return res;		
+		};
+		
+		this.getLayersAsSource = function() {
+			
+			var res = [];
+			for (var i = 0; i < this.layers.length; i++)
+				res.push({value: this.layers[i].id, text: this.layers[i].name});
+			
+			return res;
+		};
+		
+		this.addLayer = function(callback) {
+		
+			$.post(BASE_URL + 'index.php/edit/addLayer', {sid: this.id}, function(data) {
+				
+				if (data.status > 0)
+					callback(true, data.id, data.name);
+				else
+					callback(false);
 			}, 'json');
+		};
+		
+		this.removeLayer = function(id) {
+			
+			
+			
 		};
 		
 		this.setStart = function(pid) {
@@ -96,8 +189,9 @@ $(function() {
 				}
 		};
 		
-		this.addParagraph = function(isStart, isEnd, title, text, links, callback) {
-		
+		this.addParagraph = function(isStart, isEnd, title, text, links, layers, callback) {
+			
+			var that = this;
 			var newParagraph = new Paragraph(0);
 			newParagraph.sid = this.id;
 			newParagraph.isEnd = isEnd;
@@ -105,13 +199,15 @@ $(function() {
 			newParagraph.title = title;
 			newParagraph.text = text;
 			newParagraph.links = links;
+			newParagraph.layers = layers;
 			
 			var data = {
 			
 				sid: this.id,
 				content: text,
 				isFirst: isStart,
-				isEnd: isEnd
+				isEnd: isEnd,
+				layers: layers
 			};
 			
 			$.post(BASE_URL + 'index.php/edit/addParagraph', data, function(data) {
@@ -119,6 +215,7 @@ $(function() {
 				if (data.status > 0)
 				{
 					newParagraph.id = data.id.$id;
+					
 					if (callback) 
 						callback(true, newParagraph);
 				}
@@ -206,6 +303,13 @@ $(function() {
 		};
 	};
 	
+	var Layer = function(id, name) {
+	
+		this.id = id;
+		this.name = name;
+		this.paragraphes = [];
+	};
+	
 	var Paragraph = function(id) {
 	
 		this.id = id;
@@ -217,6 +321,7 @@ $(function() {
 		this.x = 50;
 		this.y = 50;
 		this.links = [];
+		this.layers = [0];
 		
 		this.addLink = function(source, target, text, actions, conditions, callback) {
 		
@@ -341,6 +446,7 @@ $(function() {
 					newParagraph.text = el.text;
 					newParagraph.x = el.x;
 					newParagraph.y = el.y;
+					newParagraph.layers = el.layers;
 					
 					if (el.links)
 						el.links.forEach(function(link, i) {
@@ -382,7 +488,10 @@ $(function() {
 					story.paragraphes.push(newParagraph);
 				});
 			
-			console.log(s.characters);
+			for (var i = 0; i < s.layers.length; i++)
+				story.layers.push(new Layer(s.layers[i].id, s.layers[i].name));
+			
+			console.log(s.characters);			
 			if (s.characters)
 				s.characters.forEach(function(el, i) {
 				
@@ -413,7 +522,10 @@ $(function() {
 	jsPlumb.ready(function() {
 		
 		initialize(function(story) {
-		
+			
+			function save_story() { story.update() };
+			setInterval(save_story, 5000);
+			
 			var sid = story.id;
 			/*var oldStory = story;
 
@@ -452,6 +564,96 @@ $(function() {
 					});
 				}
 			});
+			/***************/
+			
+			
+			/**Layers filter**/
+			for (var i = 0; i < story.layers.length; i++)
+				$('#layers-dropdown > .layers').append('<li><a href="#" class="layer-element" id="' + story.layers[i].id + '"><label class="checkbox"><input class="checkbox-filter-layers" id="' + story.layers[i].id + '" type="checkbox" /><span data-toggle="manual" class="layer-name">' + story.layers[i].name + '</span></label></a></li>');
+			
+			$('.layer-name').editable();
+			$('.layers').on({
+				
+				mouseenter: function() {
+			
+					$(this).children('label').append('<span id="' + this.id + '" class="edit-form"><i class="icon-remove pull-right"></i><i class="icon-pencil pull-right"></i></span');
+				}, 
+				mouseleave: function() {
+			
+					$(this).find('.edit-form').remove();
+				}
+			}, ".layer-element");
+			
+			$('#layers-dropdown').on('click', function(e) {
+			
+				e.stopPropagation();
+				
+				var cfl = $('.checkbox-filter-layers:checked').map(function() {
+					return this.id;
+				}).get();
+				
+				updateCanvasLayers(cfl);
+			});
+
+			$("#layers-dropdown > .layers").on("click", "li a label i[class^=icon-]", function(e) {
+			
+				e.preventDefault();
+				
+				var id = $(this).parent().attr('id');
+				if ($(this).hasClass('icon-pencil'))
+				{
+					console.log($(this).parents('label.checkbox').children('.layer-name'));
+					$(this).parents('label.checkbox').children('.layer-name').editable('toggle').on('save', function(event, params) {
+					
+						var layer = story.getLayer(id);
+						layer.name = params.newValue;
+						$(this).removeClass('editable-unsaved');
+					});
+				}
+				else if ($(this).hasClass('icon-remove'))
+				{
+					story.removeLayer(id);
+					$(this).parents('li').remove();
+				}
+			});
+			
+			$('#layers-dropdown > li > #new-layer').on('click', function(e) {
+			
+				e.stopPropagation();
+				
+				story.addLayer(function(status, id, name) {
+					
+					if (status)
+					{
+						$('#layers-dropdown > .layers').append('<li><a href="#" class="layer-element" id="' + id + '"><label class="checkbox"><input class="checkbox-filter-layers" id="' + id + '" type="checkbox" /><span data-toggle="manual" class="layer-name">' + name + '</span></label></a></li>');
+						story.layers.push(new Layer(id, name));
+					}	
+					else
+						alert('An error has occured, please retry.');
+				});		
+			});
+			
+			
+			var updateCanvasLayers = function(layers) {
+			
+				if (!layers.length)
+				{
+					$('.w').show();
+					return;
+				}
+				
+				$('.w').hide();
+				var toShow = [];
+				for (var i = 0; i < story.paragraphes.length; i++)
+					for (var j = 0; j < layers.length; j++)
+						if (contains(story.paragraphes[i].layers, layers[j]) && !contains(toShow, layers[j]))
+							toShow.push(story.paragraphes[i].id);
+				
+				for (var i = 0; i < toShow.length; i++)
+					$('.w#' + story.getParagraph(toShow[i]).id).show();
+					
+				
+			};
 			/***************/
 			
 			/***jsPlumb init***/
@@ -512,6 +714,7 @@ $(function() {
 				$('#'+paragraph.id+'>.ep').each(function(i, e) {
 		
 					var p = $(e).parent();
+					p.css({'left':paragraph.x, 'top':paragraph.y});
 					jsPlumb.makeSource($(e), {
 					
 						parent: p,
@@ -526,7 +729,7 @@ $(function() {
 					dropOptions:{ hoverClass:"dragHover" },
 					anchor: "Continuous"	,
 					beforeDrop: function(conn) {
-						console.log(conn);
+
 						if (conn.targetId == 'plumbing' && !$('.dragHover').length)
 						{
 							var isStart = (story.paragraphes.length?false:true);
@@ -534,7 +737,7 @@ $(function() {
 							var content = 'A new paragraph !';
 							var title = '';
 						
-							story.addParagraph(isStart, isEnd, title, content, [], function(status, paragraph) {
+							story.addParagraph(isStart, isEnd, title, content, [], ["0"], function(status, paragraph) {
 							
 								if (!status)
 								{
@@ -546,6 +749,7 @@ $(function() {
 									story.start = paragraph.id;
 									
 								story.paragraphes.push(paragraph);
+								story.updateLayers();
 								story.update(function() {
 								
 									createNode(paragraph, conn);
@@ -623,7 +827,54 @@ $(function() {
 			
 					$('#paragraph-title').val(paragraph.title);
 					
-			
+					var text = [];
+					for (var i = 0; i < paragraph.layers.length; i++)
+						text.push(story.getLayer(paragraph.layers[i]).name);
+					
+					var pid = $('#addParagraphModal').attr('data-pid');
+					
+					var paragraph = story.getParagraph(pid);
+					var checked = paragraph.layers;
+					$('#layers').html('<a href="#" id="select-layers" data-type="checklist" data-original-title="Select layers"></a>');
+					$('#select-layers').editable({
+					
+						value: checked,
+						emptytext: 'Select layers',
+						send: 'never',
+						source: story.getLayersAsSource(),
+						display: function(value, sourceData) {
+							
+							var toJoin = [];
+							var $el = $('#select-layers'),
+								checked, html = '';
+							if(!value) {
+								$el.empty();
+								return;
+							}            
+							
+							checked = $.grep(sourceData, function(o){
+								  return $.grep(value, function(v){ 
+									   return v == o.value; 
+								  }).length;
+							});
+							
+							$.each(checked, function(i, v) { 
+								toJoin.push($.fn.editableutils.escape(v.text));
+							});
+
+							html = toJoin.join(', ');
+							$el.html(html);
+						}
+					}).on('save', function(e, params) {
+					
+						var pid = $('#addParagraphModal').attr('data-pid');
+						
+						var paragraph = story.getParagraph(pid);
+					
+						paragraph.layers = params.newValue;
+						story.updateLayers();
+					});
+					
 					if (story.paragraphes.length > 1 && $('.w').length > 1)
 						$('#isFirstParagraph').removeAttr('disabled');
 						
@@ -658,7 +909,7 @@ $(function() {
 					var title = '';
 					var content = 'A new paragraph !';
 					
-					story.addParagraph(isStart, isEnd, title, content, []);				
+					story.addParagraph(isStart, isEnd, title, content, [], [0]);				
 					story.update();
 					
 					//$('#addLinkModal').modal('show');
@@ -685,130 +936,6 @@ $(function() {
 				createNode(story.paragraphes[i]);
 			}
 			
-			/*jsPlumb.makeTarget(jsPlumb.getSelector(".w"), {
-				
-				dropOptions:{ hoverClass:"dragHover" },
-				anchor:"Continuous"	,
-				beforeDrop: function(conn) {
-					
-					var modal = $('#addLinkModal');
-					$('#choice').attr('value', '');
-					$('.newValue').attr('value', '');
-					modal.attr('data-lid', '');					
-					modal.attr('data-conn-id', conn.connection.id);					
-					modal.attr('data-sourceid', conn.sourceId);
-					modal.attr('data-targetid', conn.targetId);
-					
-					if (conn.targetId == "plumbing")
-					{
-						var isStart = (story.paragraphes.length?false:true);
-						var isEnd = false;
-						var title = '';
-						var content = 'A new paragraph !';
-						
-						story.addParagraph(isStart, isEnd, title, content, [], function(status, paragraph) { 
-	
-							if (!status)
-							{
-								alert('Something went wrong, please retry.');
-								return;
-							}
-							
-							if (isStart)
-								story.start = paragraph.id;
-								
-							story.paragraphes.push(paragraph);
-							story.update(function() {
-							
-								createNode(paragraph);
-								modal.attr('data-targetid', paragraph.id);
-								$('#addLinkModal').modal('show');
-							});
-						});			
-					}
-					else
-						$('#addLinkModal').modal('show');
-					
-					return false;
-				}			
-			});
-			
-			jsPlumb.bind("jsPlumbConnection", function(conn) {
-					
-				conn.connection.setPaintStyle({strokeStyle:nextColour()});
-				console.log(conn);
-				conn.connection.bind('click', function(conn) {
-					
-					/**TODO: improve the way we pass these ids**
-					var modal = $('#addLinkModal');
-					modal.attr('data-lid', conn.getParameter('lid'));
-					modal.attr('data-pid', conn.sourceId);
-					modal.attr('data-sourceid', conn.sourceId);
-					modal.attr('data-targetid', conn.targetId);
-					modal.modal('show');		
-				});
-			});
-			
-			$('.w').on('click', function() {
-				
-				$('.w').css({
-					'border':'1px solid #346789'
-				});
-				
-				$(this).css({
-					'border': 'red 1px solid'
-				});
-				
-				selected = $(this).attr('id');
-				
-				$(document).keyup(function(e) {
-				
-					if (e.keyCode == 46)
-					{
-						if (!selected)
-							return;
-							
-						var pid = selected;
-						story.removeParagraph(pid);
-						story.update(function(status) {
-						
-							if (status)
-							{
-								jsPlumb.detachAllConnections(pid);
-								$('.w#' + pid).remove();
-							}
-						});
-					}
-				});
-			});
-			
-			$('.w').on('dblclick', function(e) {
-				
-				console.log($(this).attr('title'));
-				CKEDITOR.instances['newParagraph'].setData($(this).attr('data-original-title'));
-				$('#addParagraphModal').css('visibility','visible');
-				
-				$('#addParagraphModal').attr('data-pid', e.currentTarget.id);
-				var paragraph = story.getParagraph(e.currentTarget.id);
-				
-				$('#paragraph-title').val(paragraph.title);
-				
-				if (story.paragraphes.length > 1 && $('.w').length > 1)
-					$('#isFirstParagraph').removeAttr('disabled');
-				console.log(e.currentTarget.id, story.start);
-				$('#isEnd').attr('checked', false);
-				$('#isFirstParagraph').attr({
-				
-					'checked': story.start.$id == e.currentTarget.id
-				});
-				
-				if (story.start.$id == e.currentTarget.id)
-					$('#isFirstParagraph').attr('disabled', 'disabled');
-				console.log(paragraph.isEnd);
-				$('#isEnd').attr('checked', (paragraph.isEnd == "true" || paragraph.isEnd == true));
-				
-				$('#addParagraphModal').modal();
-			});*/
 			
 			var populate_properties_selector = function(parent, child) {
 			
@@ -1306,7 +1433,7 @@ $(function() {
 				var content = 'A new paragraph !';
 				var title = '';
 				
-				story.addParagraph(isStart, isEnd, title, content, [], function(status, paragraph) {
+				story.addParagraph(isStart, isEnd, title, content, [], ["0"], function(status, paragraph) {
 					
 					if (!status)
 					{
@@ -1316,7 +1443,10 @@ $(function() {
 					
 					if (isStart)
 						story.start = paragraph.id;
+					console.log(paragraph);
+					console.log('layers: ', story.layers);
 					story.paragraphes.push(paragraph);
+					story.updateLayers();
 					story.update(function() {
 						createNode(paragraph);
 					});

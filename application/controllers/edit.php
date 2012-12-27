@@ -17,6 +17,7 @@ class Edit extends CI_Controller {
 		$this->load->model('mongo/stories');
 		$this->load->model('mongo/paragraphes');
 		$this->load->model('mongo/links');
+		$this->load->model('mongo/layers');
 	}
 	
 	public function index()
@@ -93,7 +94,7 @@ class Edit extends CI_Controller {
 			else
 				$story->paragraphes[$i]['title'] = htmlspecialchars($story->paragraphes[$i]['title']);
 		}
-			
+		
 		$data_edit_story = array(
 									'baseUrl' => base_url(),
 									'srory_title' => $story->title,
@@ -181,6 +182,35 @@ class Edit extends CI_Controller {
 			echo json_encode(array('status' => 1, 'id' => $res));
 		else
 			echo json_encode(array('status' => -4));	
+	}
+	
+	public function addLayer()
+	{
+		$sid = $this->input->post('sid');
+		if (!$this->isOwnerOfTheStory($sid))
+		{
+			echo json_encode(array('status' => -3));
+			return;
+		}
+		
+		if (empty($sid))
+		{
+			echo json_encode(array('status' => -1));
+			return;
+		}
+		
+		$story = $this->stories->select(array('_id' => $sid));
+		
+		$layer = new Layers;
+		$layer->sid = $sid;
+		$layer->name = 'New layer';
+		$layer->paragraphes = array();
+		$res = $layer->insert();
+
+		if ($res)
+			echo json_encode(array('status' => 1, 'id' => $layer->getId()->{'$id'}, 'name' => $layer->name));
+		else
+			echo json_encode(array('status' => -4));
 	}
 	
 	public function updateParagraph($sid)
@@ -371,6 +401,7 @@ class Edit extends CI_Controller {
 		$story->start = $new_story->start;
 		$story->paragraphes = $new_story->paragraphes;
 		$story->characters = $new_story->characters;
+		$story->layers = $new_story->layers;
 		$res = $story->update();
 		
 		echo json_encode(array('status' => $res));

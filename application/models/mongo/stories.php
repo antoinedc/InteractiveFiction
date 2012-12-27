@@ -12,6 +12,7 @@ class Stories extends CI_Model {
 	var $start;
 	var $owner;
 	var $paragraphes;
+	var $layers;
 	var $characters;	
 	var $exportable;
 	
@@ -42,12 +43,14 @@ class Stories extends CI_Model {
 		);
 			
 		$data = array(	
-						'title' => $this->title ? $this->title : '',
-						'start' => $this->start ? $this->start : -1,
-						'owner' => new MongoId($this->session->userdata('uid')),
-						'paragraphes' => $this->paragraphes ? $this->paragraphes : array(),
-						'characters' => $this->characters ? $this->characters : $characters
-					);
+		
+			'title' => $this->title ? $this->title : '',
+			'start' => $this->start ? $this->start : -1,
+			'owner' => new MongoId($this->session->userdata('uid')),
+			'paragraphes' => $this->paragraphes ? $this->paragraphes : array(),
+			'characters' => $this->characters ? $this->characters : $characters,
+			'layers' => $this->layers ? $this->layers : array(array('id' =>  0, 'name' => 'Main layer', 'paragraphes' => ($this->paragraphes ? $this->paragraphes : array())))
+		);
 			
 		$id = $this->mongo_db->select($this->database)->insert($this->collectionName, array('exportable' => ($this->exportable === false ? false : true), 'development' => $data, 'production' => array()));
 		
@@ -73,11 +76,13 @@ class Stories extends CI_Model {
 				
 				$res = $res[0][$version];
 				if (!$res) return false;
+				
 				$this->title = $res['title'];
 				$this->start = $res['start'];
 				$this->owner = $res['owner'];
 				$this->paragraphes = $res['paragraphes'];			
 				$this->characters = $res['characters'];
+				$this->layers = $res['layers'];
 				
 				return $this;
 			}
@@ -99,6 +104,7 @@ class Stories extends CI_Model {
 				$this->owner = $res['owner'];
 				$this->paragraphes = $res['paragraphes'];
 				$this->characters = $res['characters'];
+				$this->layers = $res['layers'];
 				
 				return $this;
 			}
@@ -131,7 +137,8 @@ class Stories extends CI_Model {
 			'exportable' => $this->exportable,
 			'owner' => $this->owner,
 			'paragraphes' => $this->paragraphes ? $this->paragraphes : array(),
-			'characters' => $this->characters
+			'characters' => $this->characters,
+			'layers' => $this->layers ? $this->layers : array('_id' =>  new MongoId(), 'name' => 'Main layer', 'paragraphes' => ($this->paragraphes ? $this->paragraphes : array()))
 		);
 		
 		return $this->mongo_db->where('_id', $this->_id)->set('development', $data)->update($this->collectionName);

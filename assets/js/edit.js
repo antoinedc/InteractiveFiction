@@ -5,9 +5,10 @@ $(function(){
 	$(".w").tooltip({html: true});
 	$("svg").tooltip({html: true});
 		
-	
 	var originId = '';
 	var action;
+	
+
 
 	$('.addLinkModal').live('click', function() {
 		originId = $(this).parents('.paragraph').attr('id');
