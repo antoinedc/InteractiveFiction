@@ -15,6 +15,7 @@ class Paragraphes extends CI_Model {
 	var $title;
 	var $idref;
 	var $temp_links;
+	var $layers;
 	var $x;
 	var $y;
 	
@@ -38,6 +39,7 @@ class Paragraphes extends CI_Model {
 			'title' => $this->title,
 			'sid' => new MongoId($this->sid),
 			'isStart' => $this->isStart,
+			'layer' => $this->layers,
 			'isEnd' => $this->isEnd,
 			'links' => $this->links ? $this->links : array(),
 			'x' => $this->x ? $this->x : 50,
@@ -87,6 +89,7 @@ class Paragraphes extends CI_Model {
 				$this->sid = $res['sid'];
 				$this->isStart = $res['isStart'];
 				$this->isEnd = $res['isEnd'];
+				$this->layers = $res['layers'];
 				$this->links = $res['links'];
 				$this->x = $res['x'];
 				$this->y = $res['y'];
@@ -108,6 +111,7 @@ class Paragraphes extends CI_Model {
 						'development.paragraphes.$.sid' => $this->sid,
 						'development.paragraphes.$.isStart' => $this->isStart,
 						'development.paragraphes.$.isEnd' => $this->isEnd,
+						'development.paragraphes.$.layers' => $this->layers,
 						'development.paragraphes.$.links' => $this->links,
 						'development.paragraphes.$.x' => $this->x,
 						'development.paragraphes.$.y' => $this->y
