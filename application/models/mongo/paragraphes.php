@@ -106,16 +106,16 @@ class Paragraphes extends CI_Model {
 	function update()
 	{
 		$data = array(
-						'development.paragraphes.$.text' => $this->text,
-						'development.paragraphes.$.title' => $this->title,
-						'development.paragraphes.$.sid' => $this->sid,
-						'development.paragraphes.$.isStart' => $this->isStart,
-						'development.paragraphes.$.isEnd' => $this->isEnd,
-						'development.paragraphes.$.layers' => $this->layers,
-						'development.paragraphes.$.links' => $this->links,
-						'development.paragraphes.$.x' => $this->x,
-						'development.paragraphes.$.y' => $this->y
-					);
+			'development.paragraphes.$.text' => $this->text,
+			'development.paragraphes.$.title' => $this->title,
+			'development.paragraphes.$.sid' => $this->sid,
+			'development.paragraphes.$.isStart' => $this->isStart,
+			'development.paragraphes.$.isEnd' => $this->isEnd,
+			'development.paragraphes.$.layers' => $this->layers,
+			'development.paragraphes.$.links' => $this->links,
+			'development.paragraphes.$.x' => $this->x,
+			'development.paragraphes.$.y' => $this->y
+		);
 		
 		$paragraphes = $this->mongo_db->where(array('_id' => new MongoId($this->sid)))->select('development.paragraphes');
 		
