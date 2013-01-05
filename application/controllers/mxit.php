@@ -28,7 +28,19 @@ class Mxit extends CI_Controller {
 		require_once('MxitAPI.php');
 		$this->key = '99e8761245b4475399c118e0baac998e';
 		$this->secret = '146a86c8efc245c39d9ba95952e735f0';
-		
+		if (!function_exists('apache_request_headers')) { 
+			eval(' 
+				function apache_request_headers() { 
+					foreach($_SERVER as $key=>$value) { 
+						if (substr($key,0,5)=="HTTP_") { 
+							$key=str_replace(" ","-",ucwords(strtolower(str_replace("_"," ",substr($key,5))))); 
+							$out[$key]=$value; 
+						} 
+					} 
+					return $out; 
+				} 
+			'); 
+		} 
 		$headers = apache_request_headers();
 /*
 To uncomment for prod, use to force to access the app through mxit			
