@@ -228,6 +228,8 @@ To uncomment for prod, use to force to access the app through mxit
 					<li>menu: Go to the list of available stories</li>
 					<li>reset: Restart the current story</li>
 					<li>stats: Display stats of the current story</li>
+					<li>help: Display this help screen</li>
+					<li>story: oryo back at the story</li>
 				</ul>'
 			);
 		}
@@ -240,6 +242,8 @@ To uncomment for prod, use to force to access the app through mxit
 					<li>menu: Go to the list of available stories</li>
 					<li>reset: Restart the current story</li>
 					<li>stats: Display stats of the current story</li>
+					<li>help: Display this help screen</li>
+					<li>story: oryo back at the story</li>
 				</ul>'
 			);
 		}
@@ -269,7 +273,8 @@ To uncomment for prod, use to force to access the app through mxit
 		{
 			echo '<tr><td>' . $el['key'] . ':</td><td>' . $el['value'] . '</td></tr>';
 		}
-		echo '</table>';
+		echo '</table><br /><br />';
+		echo 'Type <a href="' . base_url() . 'index.php/mxit/?code=' . $this->code . '&sid='. $ this->sid . '&pid=' . $session->pid . '>story</a> to go back.';
 	}
 	
 	private function bookmark($sid, $pid, $sessionId)
