@@ -189,10 +189,7 @@ To uncomment for prod, use to force to access the app through mxit
 				}
 				
 				if ($paragraph['isEnd'] == 'true')
-					echo '<br /><br />-------------------<br />End of the story !<br /><a href="' . $baseLink . '">Go back at the beginning</a>';
-				
-				var_dump(apache_request_headers());
-						
+					echo '<br /><br />-------------------<br />End of the story !<br /><a href="' . $baseLink . '">Go back at the beginning</a>';						
 			}
 			else
 				$this->api->request_access(base_url() . 'index.php/mxit', 'profile/public');
@@ -266,7 +263,7 @@ To uncomment for prod, use to force to access the app through mxit
 		while (list($key, $val) = each($session->stats[$main_session_index]['properties']))
 			$stats[] = array('key' => $key, 'value' => $val);	
 		
-		echo '<table>';
+		echo '<table border="1">';
 		echo '<tr><th>Name</th><th>Value</th></tr>';
 		foreach ($stats as $el)
 		{
