@@ -264,10 +264,10 @@ To uncomment for prod, use to force to access the app through mxit
 			$stats[] = array('key' => $key, 'value' => $val);	
 		
 		echo '<table border="1">';
-		echo '<tr><th>Name</th><th>Value</th></tr>';
+		echo '<tr><th>Your stats:</th></tr>';
 		foreach ($stats as $el)
 		{
-			echo '<tr><td>' . $el['key'] . '</td><td>' . $el['value'] . '</td></tr>';
+			echo '<tr><td>' . $el['key'] . ':</td><td>' . $el['value'] . '</td></tr>';
 		}
 		echo '</table>';
 	}
