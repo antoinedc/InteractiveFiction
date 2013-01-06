@@ -44,7 +44,7 @@ $(function() {
 		
 			this.owner = 'antoine';
 			
-			console.log(JSON.stringify($(this)));
+			//console.log(JSON.stringify($(this)));
 			
 			if (update_request)
 				update_request.abort();
@@ -633,6 +633,20 @@ $(function() {
 				});		
 			});
 			
+			var editConnection = function(conn) {
+				
+				console.log(conn);
+				var lid = conn.getParameter('lid');
+				var sid = story.id;
+				var pid = conn.sourceId;
+				
+				$('#addLinkModal').attr('data-lid', lid)
+								  .attr('data-sid', sid)
+								  .attr('data-pid', pid);
+								  
+				$('#addLinkModal').modal('show');				
+			};
+			
 			
 			var updateCanvasLayers = function(layers) {
 			
@@ -681,12 +695,12 @@ $(function() {
 					top: story.getParagraph($(this).attr('id')).y
 				});
 			});
-			
+		
 			var createNode = function(paragraph, conn) {
 				
 				if (conn === undefined)
 				{
-					var html = $('<div title="' + paragraph.text + '" class="w" style="position:relative;" id="' + paragraph.id + '">\
+					var html = $('<div title="' + paragraph.title + '" class="w" style="position:relative;" id="' + paragraph.id + '">\
 									<div class="title" style="font-size:0.8em;">'
 										+ paragraph.title +
 									'</div>\
@@ -697,7 +711,7 @@ $(function() {
 				else
 				{
 					var html = $(conn.connection.target[0].outerHTML);
-					console.log(conn.connection);
+				
 					html.attr('id', paragraph.id);
 					html.addClass('w');
 					var content = '<div class="tooltip" style="display:none;">'
@@ -707,9 +721,9 @@ $(function() {
 									</div>';
 					html.append(content);
 				}
-				console.log(html);
+				
 				$('#canvas').append(html);
-
+				
 				jsPlumb.draggable(jsPlumb.getSelector(".w"));
 				$('#'+paragraph.id+'>.ep').each(function(i, e) {
 		
@@ -727,9 +741,9 @@ $(function() {
 				jsPlumb.makeTarget(jsPlumb.getSelector("#"+paragraph.id), {
 				
 					dropOptions:{ hoverClass:"dragHover" },
-					anchor: "Continuous"	,
+					anchor: "Continuous",
 					beforeDrop: function(conn) {
-
+						
 						if (conn.targetId == 'plumbing' && !$('.dragHover').length)
 						{
 							var isStart = (story.paragraphes.length?false:true);
@@ -816,7 +830,7 @@ $(function() {
 				
 				$('.w').on('dblclick', function(e) {
 					
-					CKEDITOR.instances['newParagraph'].setData($(this).attr('data-original-title'));
+					CKEDITOR.instances['newParagraph'].setData(story.getParagraph(e.currentTarget.id).text);
 					$('#addParagraphModal').css('visibility','visible');
 					
 					$('#addParagraphModal').attr('data-pid', e.currentTarget.id);
@@ -917,7 +931,7 @@ $(function() {
 					return false;
 				}
 			});
-			
+
 			$('.ep').each(function(i, e) {
 				
 				p = $(e).parent();
@@ -1101,13 +1115,15 @@ $(function() {
 			
 				$.each(e.links, function(index, el) {
 
-					jsPlumb.connect({
+					var conn = jsPlumb.connect({
 						source: el.origin, 
 						target: el.destination, 
 						parameters: {
 							"lid": el.id
 						}
 					});
+					
+					conn.bind('click', editConnection);
 					
 					/**for rendering with d3js**/
 					links.push({
@@ -1223,6 +1239,7 @@ $(function() {
 							var conn = jsPlumb.connect({source: source, target: target});
 							conn.setParameters({lid:link.id});
 							console.log(conn.getParameters('lid'));
+							conn.bind('click', editConnection);
 							$('#addLinkModal').modal('hide');
 						}
 						else

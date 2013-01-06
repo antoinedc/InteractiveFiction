@@ -274,7 +274,7 @@ To uncomment for prod, use to force to access the app through mxit
 			echo '<tr><td>' . $el['key'] . ':</td><td>' . $el['value'] . '</td></tr>';
 		}
 		echo '</table><br /><br />';
-		echo 'Type <a href="' . base_url() . 'index.php/mxit/?code=' . $this->code . '&sid='. $ this->sid . '&pid=' . $session->pid . '>story</a> to go back.';
+		echo 'Type <a href="' . base_url() . 'index.php/mxit/read?code=' . $this->session->userdata('code') . '&sid='. $this->sid . '&pid=' . $session->pid . '">story</a> to go back.';
 	}
 	
 	private function bookmark($sid, $pid, $sessionId)
