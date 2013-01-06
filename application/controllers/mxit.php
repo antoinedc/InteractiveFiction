@@ -209,7 +209,7 @@ To uncomment for prod, use to force to access the app through mxit
 				foreach($paragraph['links'] as $link)
 				{
 					if (!empty($link))
-						echo '<a href="' . $baseLink . ($link['destination'] == $story->start ? '' : '&pid=' . $link['destination']) . '">' . $link['text']. '</a><br />';			
+						echo '<a href="' . $baseLink . '&pid=' . $link['destination'] . '">' . $link['text']. '</a><br />';			
 				}
 				
 				if ($paragraph['isEnd'] == 'true')
