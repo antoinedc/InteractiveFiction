@@ -95,6 +95,7 @@ To uncomment for prod, use to force to access the app through mxit
 				$sid = $_GET['sid'];
 				$this->sid = $sid;
 				$pid = $this->input->get('pid');
+				$lid = $this->input->get('lid');
 				
 				$headers = apache_request_headers();
 				
@@ -108,75 +109,75 @@ To uncomment for prod, use to force to access the app through mxit
 				$this->sessionId = $sid . '-3-' . $this->mxit_user_id;
 				$session = $this->sessions->select($this->sessionId);
 				
-				if (empty($session))
+				//
+				
+				$mainCharacter = $story->getMainCharacter();
+		
+				$session = $this->sessions->select($this->sessionId);
+				if ($session && !$lid && !$pid)
 				{
-					$firstParagraph = $story->getFirstParagraph();
-					$firstPid = $firstParagraph['_id']->{'$id'};
-					$this->bookmark($sid, $firstPid, $this->sessionId);
-					$session = $this->sessions->select($this->sessionId);
-					
-					if ($session)
-						$currentParagraph = $story->getParagraphById($session->pid);
-					else
+					$pid = $session->pid;
+					$paragraph = $story->getParagraphById($pid);
+				}
+				else if (!$session && !$lid && !$pid)
+				{
+					$paragraph = $story->getFirstParagraph();
+					$pid = $paragraph['_id']->{'$id'};
+					$this->bookmark($sid, $pid, $this->sessionId);
+				}
+				else if ($session && $pid && $lid)
+				{
+					$paragraph = $story->getParagraphById($pid);
+					$linkToGo = false;
+					foreach ($paragraph['links'] as $el)
 					{
-						echo 'Bookmarking failed';
-						return;
+						if ($el['_id']->{'$id'} == $lid)
+						{
+							$linkToGo = $el;
+							$this->bookmark($sid, $linkToGo['destination'], $this->sessionId);
+							break;
+						}
 					}
+					
+					$main_session_index = -1;
+					for ($i = 0; $i < count($session->stats); $i++)
+						if ($session->stats[$i]['main'] == true || $session->stats[$i]['main'] == 'true')
+							$main_session_index = $i;
+					
+					foreach ($paragraph['links'] as $link)
+					{
+						if ($link['destination'] == $linkToGo['destination'])
+						{
+							if (count($link['action']))
+							{
+								for ($i = 0; $i < count($link['action']); $i++)
+								{
+									$action = $link['action'][$i];
+									
+									$operation = $action['operation'];
+									$key = $action['key'];
+									$value = $action['value'];
+									
+									if ($operation == '0')
+										$session->stats[$main_session_index]['properties'][$key] += $value;
+									else if ($operation == '1')
+										$session->stats[$main_session_index]['properties'][$key] -= $value;
+									else if ($operation == '2')
+										$session->stats[$main_session_index]['properties'][$key] *= $value;
+									else if ($operation == '3')
+										$session->stats[$main_session_index]['properties'][$key] /= $value;
+								
+									$session->update();
+								}
+								break;
+							}	
+						}
+					}
+					
+					$paragraph = $story->getParagraphById($linkToGo['destination']);
 				}
 				else
-				{
-					$session = $this->sessions->select($this->sessionId);
-					if ($pid)
-						$this->bookmark($sid, $pid, $this->sessionId);
-					$currentParagraph = $story->getParagraphById($pid);
-				}
-				
-				$main_session_index = -1;
-				for ($i = 0; $i < count($session->stats); $i++)
-					if ($session->stats[$i]['main'] == true || $session->stats[$i]['main'] == 'true')
-						$main_session_index = $i;
-				
-				foreach ($currentParagraph['links'] as $link)
-				{
-					echo $link['destination'] . ':' . $pid . '<br />';
-					if ($link['destination'] == $pid)
-					{
-						if (count($link['action']))
-						{
-							for ($i = 0; $i < count($link['action']); $i++)
-							{
-								$action = $link['action'][$i];
-								
-								$operation = $action['operation'];
-								$key = $action['key'];
-								$value = $action['value'];
-								
-								if ($operation == '0')
-									$session->stats[$main_session_index]['properties'][$key] += $value;
-								else if ($operation == '1')
-									$session->stats[$main_session_index]['properties'][$key] -= $value;
-								else if ($operation == '2')
-									$session->stats[$main_session_index]['properties'][$key] *= $value;
-								else if ($operation == '3')
-									$session->stats[$main_session_index]['properties'][$key] /= $value;
-							
-								$session->update();
-							}
-							break;
-						}	
-					}
-				}
-				
-				$paragraph = false;
-				$status = 0;
-				
-				foreach ($story->paragraphes as $p)
-					if ($p['_id']->{'$id'} == $session->pid)
-					{
-						$paragraph = $p;
-						$status = 1;
-						break;
-					}
+					$this->return_to_menu();
 						
 				if ($paragraph)
 					foreach ($paragraph['links'] as $i => $link)
@@ -211,7 +212,7 @@ To uncomment for prod, use to force to access the app through mxit
 				foreach($paragraph['links'] as $link)
 				{
 					if (!empty($link))
-						echo '<a href="' . $baseLink . '&pid=' . $link['destination'] . '">' . $link['text']. '</a><br />';			
+						echo '<a href="' . $baseLink . '&pid=' . $link['destination'] . '&lid=' . $link['_id']->{'$id'} . '">' . $link['text']. '</a><br />';			
 				}
 				
 				if ($paragraph['isEnd'] == 'true')
