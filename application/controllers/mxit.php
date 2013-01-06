@@ -177,7 +177,7 @@ To uncomment for prod, use to force to access the app through mxit
 						break;
 					}
 				
-				$session = $this->sessions->select($sessionId);
+				$session = $this->sessions->select($this->sessionId);
 				$main_session_index = -1;
 				for ($i = 0; $i < count($session->stats); $i++)
 					if ($session->stats[$i]['main'] == true || $session->stats[$i]['main'] == 'true')
