@@ -138,7 +138,8 @@ To uncomment for prod, use to force to access the app through mxit
 				
 				foreach ($currentParagraph['links'] as $link)
 				{
-					if ($link['destination'] == $session->pid)
+					echo $link['destination'] . ':' . $pid . '<br />';
+					if ($link['destination'] == $pid)
 					{
 						if (count($link['action']))
 						{
