@@ -128,7 +128,7 @@ To uncomment for prod, use to force to access the app through mxit
 					$session = $this->sessions->select($this->sessionId);
 					if ($pid)
 						$this->bookmark($sid, $pid, $this->sessionId);
-					$currentParagraph = $story->getParagraphById($session->pid);
+					$currentParagraph = $story->getParagraphById($pid);
 				}
 				
 				$main_session_index = -1;
