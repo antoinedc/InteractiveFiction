@@ -176,31 +176,38 @@ To uncomment for prod, use to force to access the app through mxit
 						$status = 1;
 						break;
 					}
-			
-				foreach ($paragraph['links'] as $i => $link)
-					foreach ($link['condition'] as $condition)
-					{
-						$key = $condition['key'];
-						if ($condition['operation'] == '0')
-							if ( ($session->stats[$main_session_index]['properties'][$key] < $condition['value'] && $condition['state'] == '0') || ( (!($session->stats[$main_session_index]['properties'][$key] < $condition['value'])) && $condition['state'] == '1') )
-								unset($paragraph['links'][$i]);
-						if ($condition['operation'] == '1')
-							if ( ($session->stats[$main_session_index]['properties'][$key] <= $condition['value'] && $condition['state'] == '0') || ( (!($session->stats[$main_session_index]['properties'][$key] <= $condition['value'])) && $condition['state'] == '1') )
-								unset($paragraph['links'][$i]);
-						if ($condition['operation'] == '2')
-							if ( ($session->stats[$main_session_index]['properties'][$key] == $condition['value'] && $condition['state'] == '0') || ( (!($session->stats[$main_session_index]['properties'][$key] == $condition['value'])) && $condition['state'] == '1') )
-								unset($paragraph['links'][$i]);
-						if ($condition['operation'] == '3')
-							if ( ($session->stats[$main_session_index]['properties'][$key] >= $condition['value'] && $condition['state'] == '0') || ( (!($session->stats[$main_session_index]['properties'][$key] >= $condition['value'])) && $condition['state'] == '1') )
-								unset($paragraph['links'][$i]);
-						if ($condition['operation'] == '4')
-							if ( ($session->stats[$main_session_index]['properties'][$key] > $condition['value'] && $condition['state'] == '0') || ( (!($session->stats[$main_session_index]['properties'][$key] > $condition['value'])) && $condition['state'] == '1') )
-								unset($paragraph['links'][$i]);				
-						if ($condition['operation'] == '5')
-							if ( ($session->stats[$main_session_index]['properties'][$key] != $condition['value'] && $condition['state'] == '0') || ( (!($session->stats[$main_session_index]['properties'][$key] != $condition['value'])) && $condition['state'] == '1') )
-								unset($paragraph['links'][$i]);	
-					}
 				
+				$session = $this->sessions->select($sessionId);
+				$main_session_index = -1;
+				for ($i = 0; $i < count($session->stats); $i++)
+					if ($session->stats[$i]['main'] == true || $session->stats[$i]['main'] == 'true')
+						$main_session_index = $i;
+						
+				if ($paragraph)
+					foreach ($paragraph['links'] as $i => $link)
+						foreach ($link['condition'] as $condition)
+						{
+							$key = $condition['key'];
+							if ($condition['operation'] == '0')
+								if ( ($session->stats[$main_session_index]['properties'][$key] < $condition['value'] && $condition['state'] == '0') || ( (!($session->stats[$main_session_index]['properties'][$key] < $condition['value'])) && $condition['state'] == '1') )
+									unset($paragraph['links'][$i]);
+							if ($condition['operation'] == '1')
+								if ( ($session->stats[$main_session_index]['properties'][$key] <= $condition['value'] && $condition['state'] == '0') || ( (!($session->stats[$main_session_index]['properties'][$key] <= $condition['value'])) && $condition['state'] == '1') )
+									unset($paragraph['links'][$i]);
+							if ($condition['operation'] == '2')
+								if ( ($session->stats[$main_session_index]['properties'][$key] == $condition['value'] && $condition['state'] == '0') || ( (!($session->stats[$main_session_index]['properties'][$key] == $condition['value'])) && $condition['state'] == '1') )
+									unset($paragraph['links'][$i]);
+							if ($condition['operation'] == '3')
+								if ( ($session->stats[$main_session_index]['properties'][$key] >= $condition['value'] && $condition['state'] == '0') || ( (!($session->stats[$main_session_index]['properties'][$key] >= $condition['value'])) && $condition['state'] == '1') )
+									unset($paragraph['links'][$i]);
+							if ($condition['operation'] == '4')
+								if ( ($session->stats[$main_session_index]['properties'][$key] > $condition['value'] && $condition['state'] == '0') || ( (!($session->stats[$main_session_index]['properties'][$key] > $condition['value'])) && $condition['state'] == '1') )
+									unset($paragraph['links'][$i]);				
+							if ($condition['operation'] == '5')
+								if ( ($session->stats[$main_session_index]['properties'][$key] != $condition['value'] && $condition['state'] == '0') || ( (!($session->stats[$main_session_index]['properties'][$key] != $condition['value'])) && $condition['state'] == '1') )
+									unset($paragraph['links'][$i]);	
+						}
+					
 				$baseLink = base_url() . 'index.php/mxit/read/?code=' . $_GET['code'] . '&sid=' . $story->getId();
 				
 				echo $paragraph['text'];
