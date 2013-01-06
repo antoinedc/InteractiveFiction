@@ -138,7 +138,7 @@ To uncomment for prod, use to force to access the app through mxit
 				
 				foreach ($currentParagraph['links'] as $link)
 				{
-					if ($link['destination'] == $pid)
+					if ($link['destination'] == $session->pid)
 					{
 						if (count($link['action']))
 						{
@@ -176,13 +176,6 @@ To uncomment for prod, use to force to access the app through mxit
 						$status = 1;
 						break;
 					}
-				
-				
-				$session = $this->sessions->select($this->sessionId);
-				$main_session_index = -1;
-				for ($i = 0; $i < count($session->stats); $i++)
-					if ($session->stats[$i]['main'] == true || $session->stats[$i]['main'] == 'true')
-						$main_session_index = $i;
 						
 				if ($paragraph)
 					foreach ($paragraph['links'] as $i => $link)
