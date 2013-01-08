@@ -136,12 +136,6 @@ class Home extends CI_Controller {
 										)
 									);
 									
-		//Add the sample story
-		$sample = $this->stories->select(array('_id' => '508fe8fad72ee9da2d000002'));
-		$new_story = $sample;
-		$new_story->owner = $uid;
-		$new_story->exportable = false;
-		$new_story->insert();
 		
 		redirect('home');
 	}
