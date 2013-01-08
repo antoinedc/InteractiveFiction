@@ -25,7 +25,7 @@ class Home extends CI_Controller {
 	public function index()
 	{
 		$location = get_class($this);
-		date_default_timezone_set("America/Los_Angeles");
+		@date_default_timezone_set() 
 		$visibility = ($this->session->userdata('email') ? 'private/' : 'public/');
 		
 		$changeLog = $this->input->post('changelog');
