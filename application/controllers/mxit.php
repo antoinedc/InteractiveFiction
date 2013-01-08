@@ -129,6 +129,7 @@ To uncomment for prod, use to force to access the app through mxit
 				{
 					$paragraph = $story->getParagraphById($pid);
 					$linkToGo = false;
+					
 					foreach ($paragraph['links'] as $el)
 					{
 						if ($el['_id']->{'$id'} == $lid)
@@ -138,6 +139,7 @@ To uncomment for prod, use to force to access the app through mxit
 							break;
 						}
 					}
+					echo 'a'.$linkToGo;
 					
 					$main_session_index = -1;
 					for ($i = 0; $i < count($session->stats); $i++)
@@ -173,12 +175,18 @@ To uncomment for prod, use to force to access the app through mxit
 							}	
 						}
 					}
-					
+					echo $linkToGo['destination'];
 					$paragraph = $story->getParagraphById($linkToGo['destination']);
 				}
 				else
 					$this->return_to_menu();
-						
+				
+				$session = $this->sessions->select($this->sessionId);
+				$main_session_index = -1;
+				for ($i = 0; $i < count($session->stats); $i++)
+					if ($session->stats[$i]['main'] == true || $session->stats[$i]['main'] == 'true')
+						$main_session_index = $i;
+							
 				if ($paragraph)
 					foreach ($paragraph['links'] as $i => $link)
 						foreach ($link['condition'] as $condition)
@@ -205,7 +213,7 @@ To uncomment for prod, use to force to access the app through mxit
 						}
 					
 				$baseLink = base_url() . 'index.php/mxit/read/?code=' . $_GET['code'] . '&sid=' . $story->getId();
-				
+				var_dump($paragraph);
 				echo $paragraph['text'];
 				echo "<br /><br />";
 				
